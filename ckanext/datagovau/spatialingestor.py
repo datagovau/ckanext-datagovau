@@ -746,7 +746,7 @@ def _load_grid_resources(grid_res, table_name, tempdir):
     return native_crs
 
 
-def _apply_sld(name, workspace, layer_name, url=None, filename=None):
+def _apply_sld(name, workspace, layer_name, url=None, filepath=None):
     geo_addr, geo_user, geo_pass, geo_public_addr = _get_geoserver_data()
 
     style_url = geo_addr + 'rest/workspaces/' + workspace + '/styles/' + name
@@ -757,11 +757,15 @@ def _apply_sld(name, workspace, layer_name, url=None, filename=None):
             url)
 
         if r and r.ok:
-            payload = r.content
-    elif filename:
-        payload = open(filename, 'rb')
+            filepath, headers = urllib.urlretrieve(url, "input.sld")
+        else:
+            return
+    elif filepath:
+        pass
     else:
         return
+
+    payload = open(filepath, 'rb')
 
     r = _make_request(
         requests.get,
@@ -792,21 +796,32 @@ def _apply_sld(name, workspace, layer_name, url=None, filename=None):
         headers={'Content-type': 'application/json'},
         auth=(geo_user, geo_pass))
 
+    sld_text = open(filepath, 'r').read()
+    mapping = {
+        "application/vnd.ogc.se+xml": "www.opengis.net/se",
+        "application/vnd.ogc.sld+xml": "www.opengis.net/sld"
+    }
+    for key, value in mapping.items():
+        if value in sld_text:
+            content_type = key
+            break
+    else:
+        return
+
     r = _make_request(
         requests.put,
         url + '/' + name,
         data=payload,
-        headers={'Content-type': 'application/vnd.ogc.se+xml'},
+        headers={'Content-type': content_type},
         auth=(geo_user, geo_pass))
 
     if r.status_code == 400:
-        # Legacy SLD file format detected
+        # Delete out old style in workspace
         r = _make_request(
-            requests.put,
-            url + '/' + name,
-            data=payload,
-            headers={'Content-type': 'application/vnd.ogc.sld+xml'},
+            requests.delete,
+            style_url,
             auth=(geo_user, geo_pass))
+        return
 
     r = _make_request(
         requests.put,
@@ -835,7 +850,7 @@ def _apply_sld_resources(sld_res, workspace, layer_name):
         sld_res['url'])
 
     if r and r.ok:
-        _apply_sld(name, workspace, layer_name, url=sld_res['url'], filename=None)
+        _apply_sld(name, workspace, layer_name, url=sld_res['url'], filepath=None)
 
 
 def _convert_resources(table_name, temp_dir, shp_resources, kml_resources, tab_resources, tiff_resources,
@@ -1322,7 +1337,7 @@ def do_ingesting(dataset_id, force):
                 workspace,
                 layer_name,
                 url=None,
-                filename=sldfiles[0])
+                filepath=sldfiles[0])
 
         # With layers created, we can apply any SLDs
         if len(sld_resources):
