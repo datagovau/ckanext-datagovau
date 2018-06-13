@@ -17,7 +17,7 @@ Example:
             <div class="nums">
                 <p class="dl">
                     <span class="dt">{{ _('Followers') }}</span>
-                    <span class="dd">{{ h.SI_number_span(h.get_action('dataset_follower_count', {'id': pkg.id})) }}</span>
+                    <span class="dd">{{ h.SI_number_span(h.follow_count('dataset', pkg.id)) }}</span>
                 </p>
             </div>
             {% if not hide_follow_button %}

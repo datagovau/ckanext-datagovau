@@ -19,8 +19,8 @@ function addTitleToSearch() {
 }
 
 function addTextToI() {
-    _addReaderTextToButtons('i.icon-remove', 'Remove item');
-    _addReaderTextToButtons('form.site-search  i.icon-search', 'Search');
+    _addReaderTextToButtons('i.fa fa-times', 'Remove item');
+    _addReaderTextToButtons('form.site-search  i.fa fa-search', 'Search');
 }
 
 function insertRequiredNoteBeforeForm() {

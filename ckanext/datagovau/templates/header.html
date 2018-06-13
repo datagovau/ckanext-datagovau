@@ -7,7 +7,7 @@
 {% if c.userobj.sysadmin %}
 <li>
     <a href="{{ h.url_for(controller='admin', action='index') }}" title="{{ _('Sysadmin settings') }}">
-        <i class="icon-legal"> Sysadmin settings</i>
+        <i class="fa fa-gavel"> Sysadmin settings</i>
     </a>
 </li>
 {% endif %}
@@ -23,21 +23,21 @@
     {% set notifications_tooltip = ngettext('Dashboard (%(num)d new item)', 'Dashboard (%(num)d new items)',
     new_activities) %}
     <a href="{{ h.url_for(controller='user', action='dashboard') }}" title="{{ notifications_tooltip }}">
-        <i class="icon-dashboard"> Dashboard</i>
+        <i class="fa fa-tachometer"> Dashboard</i>
         <span>{{ new_activities }}</span>
     </a>
 </li>
 {% block header_account_settings_link %}
 <li>
     <a href="{{ h.url_for(controller='user', action='edit', id=c.userobj.name) }}" title="{{ _('Edit settings') }}">
-        <i class="icon-cog"> Edit settings</i>
+        <i class="fa fa-cog"> Edit settings</i>
     </a>
 </li>
 {% endblock %}
 {% block header_account_log_out_link %}
 <li>
     <a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">
-        <i class="icon-signout"> Log out</i>
+        <i class="fa fa-sign-out"> Log out</i>
     </a>
 </li>
 {% endblock %}
@@ -52,10 +52,10 @@
         ('organizations_index', _('Organizations')),
         ('about', _('About')),
         ('stats', _('Site Statistics')),
-        ('datarequests_index', _('Request Data') + h.get_open_datarequests_badge())
+        ('datarequests_index', _('Request Data') + h.get_open_datarequests_badge()),
+        ('ckanext_showcase_index', _('Use Cases'))
         ) }}
 
-        <li><a href="/showcase">Use Cases</a></li>
         <li><a href="http://nationalmap.gov.au">National Map</a></li>
         <li><a href="https://toolkit.data.gov.au/">Toolkit</a></li>
         {% endblock %}

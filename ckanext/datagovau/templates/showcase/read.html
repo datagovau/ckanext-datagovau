@@ -9,7 +9,7 @@
   {% block package_description %}
     {% if pkg.private %}
       <span class="dataset-private label label-inverse pull-right">
-        <i class="icon-lock"></i>
+        <i class="fa fa-lock"></i>
         {{ _('Private') }}
       </span>
     {% endif %}
@@ -35,11 +35,11 @@
     {% endblock %}
 <p>
     {% if pkg.url %}
-      <a class="btn btn-primary ckanext-showcase-launch" href="{{ pkg.url }}" target="_blank"><i class="icon-external-link"></i> {{ _('Launch website') }}</a>
+      <a class="btn btn-primary ckanext-showcase-launch" href="{{ pkg.url }}" target="_blank"><i class="fa fa-external-link"></i> {{ _('Launch website') }}</a>
     {% endif %}
 
         {% for package in c.showcase_pkgs %}
-<br/><br/>      <a class="btn btn-primary ckanext-showcase-launch" href="{{ h.url_for(controller='package', action='read', id=package.name) }}" target="_blank"><i class="icon-external-link"></i> Launch {{package.title}} dataset</a>
+<br/><br/>      <a class="btn btn-primary ckanext-showcase-launch" href="{{ h.url_for(controller='package', action='read', id=package.name) }}" target="_blank"><i class="fa fa-external-link"></i> Launch {{package.title}} dataset</a>
         {% endfor %}
 </p>
 {% endblock %}

@@ -6,7 +6,8 @@ import ckan.lib as lib
 import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as toolkit
-import ckanext.datastore.db as datastore_db
+import ckanext.datastore as datastore_db
+import ckanext.datastore.backend as datastore_backend
 import feedparser
 from ckan.lib import uploader, formatters
 from pylons import config
@@ -59,7 +60,7 @@ def get_ddg_site_statistics():
         stats['open_count'] = logic.get_action('package_search')({}, {"fq": "isopen:true", "rows": 1})['count']
 
         stats['api_count'] = logic.get_action('resource_search')({}, {"query": ["format:wms"]})['count'] + len(
-            datastore_db.get_all_resources_ids_in_datastore())
+            datastore_backend.get_all_resources_ids_in_datastore())
 
         if 'unpub_data_count' not in stats:
             stats['unpub_data_count'] = 0

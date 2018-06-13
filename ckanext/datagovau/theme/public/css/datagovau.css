@@ -174,3 +174,7 @@ a.skip-link:focus {
     outline: 0;
     transition: background .5s, color .5s;
 }
+
+.search-form .search-input.search-giant button {
+    margin-top: -15px;
+}
