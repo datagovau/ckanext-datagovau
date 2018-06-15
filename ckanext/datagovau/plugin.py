@@ -192,6 +192,7 @@ class DataGovAuPlugin(p.SingletonPlugin,
                 'get_user_datasets_public': helpers.get_user_datasets_public,
                 'get_ddg_site_statistics': helpers.get_ddg_site_statistics,
                 'get_resource_file_size': helpers.get_resource_file_size,
+                'dga_group_tree_section': helpers.dga_group_tree_section,
                 'blogfeed': helpers.blogfeed}
 
     # IActions

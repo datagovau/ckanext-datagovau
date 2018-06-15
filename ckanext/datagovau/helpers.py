@@ -103,3 +103,7 @@ def blogfeed():
     for entry in d.entries:
         entry.date = time.strftime("%a, %d %b %Y", entry.published_parsed)
     return d
+
+def dga_group_tree_section(grp_id, grp_type):
+    result = logic.get_action('group_tree_section') ({},{'id': grp_id, 'type': grp_type})
+    return result
