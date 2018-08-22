@@ -11,5 +11,9 @@
 
     {% block scripts %}
     {{ super() }}
+	<script src="https://cdn.ravenjs.com/3.26.2/raven.min.js" crossorigin="anonymous"></script>
+<script>
+Raven.config('https://b456c7ab8f784b569ce32faa04eb238e@sentry.system.data.gov.au/4').install()
+</script>
     {% resource 'ckanext-datagovau/js/datagovau.js' %}
     {% endblock %}
