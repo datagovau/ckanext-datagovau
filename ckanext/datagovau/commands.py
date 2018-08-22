@@ -89,7 +89,7 @@ class SpatialIngestor(CkanCommand):
                 # log.info("Ingesting %s" % dataset.id)
                 do_ingesting(pkg_id, force)
         else:
-            # log.info("Ingesting %s" % scope)
+            log.info("Ingesting %s" % scope)
             do_ingesting(scope, True)
 
     def _purge(self, scope):

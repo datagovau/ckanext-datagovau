@@ -143,12 +143,14 @@ def _get_db_settings():
 
 
 def _make_request(command, url, **kwargs):
+    print(url)
     count = 0
     time_out = _get_request_timeout()
     while count < time_out:
         try:
             r = command(url, **kwargs)
-        except:
+        except Exception,e:
+            print(e)
             count += 10
             time.sleep(10)
         else:
@@ -415,7 +417,7 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
             '-nlt', 'PROMOTE_TO_MULTI',
             '-overwrite'
         ]
-
+	print(pargs)
     res = ogr2ogr.main(pargs)
     if not res:
         _failure("Ogr2ogr: Failed to convert file to PostGIS")
@@ -1358,6 +1360,7 @@ def do_ingesting(dataset_id, force):
 
         _success()
     except IngestionSkip as e:
+        logger.info('{}: {}'.format(type(e), e))
         pass  # logger.info('{}: {}'.format(type(e), e))
     except IngestionFail as e:
         logger.info('{}: {}'.format(type(e), e))
