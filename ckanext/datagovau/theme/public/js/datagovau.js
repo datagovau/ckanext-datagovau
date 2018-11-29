@@ -81,7 +81,7 @@ function _repTag(old, updated) {
 }
 
 function gazSearch(gazURL) {
-    if (gazURL.match("^{") && gazURL.match("}$")) {
+    if (gazURL && gazURL.match("^{") && gazURL.match("}$")) {
         $('#spatial').val(gazURL);
     }
     else {
