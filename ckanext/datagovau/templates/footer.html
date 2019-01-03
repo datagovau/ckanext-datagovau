@@ -2,9 +2,37 @@
 
 {% block footer_links_ckan %}
 {% set api_url = 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
-<li><a href="{{ api_url }}">{{ _('CKAN API') }}</a></li>
-<li><a href="http://www.okfn.org/">{{ _('Open Knowledge Foundation') }}</a></li>
-<li><a href="http://www.opendefinition.org/okd/"><img src="//assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="Open Data"></a></li>
+
+<nav class="au-footer__navigation col-md-3 col-sm-6 col-xs-6 span3">                                 
+<h3 class="au-display-lg">Data.gov.au</h3>                                                           
+<ul class="au-link-list">                                                                            
+  <li><a href="https://search.data.gov.au/page/about">About</a></li>                                 
+  <li><a href="https://search.data.gov.au/suggest">Suggest a dataset</a></li>                        
+  <li><a href="https://search.data.gov.au/page/privacy-policy">Privacy Policy</a></li>               
+  <li><a href="https://search.data.gov.au/suggest#feedback">Give feedback</a></li>                   
+</ul>                                                                                                
+</nav>                                                                                               
+                                                                                                     
+<nav class="au-footer__navigation col-md-3 col-sm-6 col-xs-6 span3">                                 
+<h3 class="au-display-lg">Publishers</h3>                                                            
+<ul class="au-link-list">                                                                            
+  <li><a href="https://data.gov.au/user/login">Login</a></li>                                        
+  <li><a href="https://data.gov.au/stats">Site statistics</a></li>                                   
+  <li><a href="https://toolkit.data.gov.au">Open data toolkit</a></li>                               
+</ul>                                                                                                
+</nav>                                                                                               
+                                                                                                     
+<nav class="au-footer__navigation col-md-3 col-sm-6 col-xs-6 span3">                                 
+<h3 class="au-display-lg">Developers</h3>                                                            
+<ul class="au-link-list">                                                                            
+  <li><a href="https://search.data.gov.au/api/v0/apidocs/index.html">Metadata API</a></li>           
+  <li><a href="{{ api_url }}">{{ _('Data API') }}</a></li>                                           
+  <li><a href="https://ckan.org">Powered by CKAN</a></li>                                            
+  <li><a href="http://www.okfn.org/">{{ _('Open Knowledge Foundation') }}</a></li>
+  <li><a href="http://www.opendefinition.org/okd/"><img src="//assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="Open Data"></a></li>
+</ul>                                                                                                
+</nav>                                                                                               
+
 {% endblock %}
 
 {% block footer_lang %}

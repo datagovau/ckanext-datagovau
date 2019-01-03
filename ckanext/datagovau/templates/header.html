@@ -49,15 +49,15 @@
         {% block header_site_navigation_tabs %}
         {{ h.build_nav_main(
         ('search', _('Datasets')),
-        ('organizations_index', _('Organizations')),
-        ('about', _('About')),
+        ('organizations_index', _('Organisations')),
         ('stats', _('Site Statistics')),
-        ('datarequests_index', _('Request Data') + h.get_open_datarequests_badge()),
-        ('ckanext_showcase_index', _('Use Cases'))
+        ('datarequests_index', _('Request Data') + h.get_open_datarequests_badge())
         ) }}
 
-        <li><a href="http://nationalmap.gov.au">National Map</a></li>
-        <li><a href="https://toolkit.data.gov.au/">Toolkit</a></li>
+        <!--<li><a href="http://nationalmap.gov.au">National Map</a></li>
+        <li><a href="https://toolkit.data.gov.au/">Toolkit</a></li>-->
+        <li><a href="https://community.digital.gov.au/c/open-data">Community</a></li>
+        <li><a href="https://search.data.gov.au/about">About</a></li>
         {% endblock %}
     </ul>
 </nav>
