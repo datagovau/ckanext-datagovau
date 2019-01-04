@@ -49,13 +49,9 @@
         {% block header_site_navigation_tabs %}
         {{ h.build_nav_main(
         ('search', _('Datasets')),
-        ('organizations_index', _('Organisations')),
-        ('stats', _('Site Statistics')),
-        ('datarequests_index', _('Request Data') + h.get_open_datarequests_badge())
+        ('organizations_index', _('Organisations'))
         ) }}
 
-        <!--<li><a href="http://nationalmap.gov.au">National Map</a></li>
-        <li><a href="https://toolkit.data.gov.au/">Toolkit</a></li>-->
         <li><a href="https://community.digital.gov.au/c/open-data">Community</a></li>
         <li><a href="https://search.data.gov.au/about">About</a></li>
         {% endblock %}
