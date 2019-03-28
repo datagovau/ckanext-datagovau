@@ -27,6 +27,7 @@ import sys
 import tempfile
 import time
 import urllib
+import urllib2
 from datetime import datetime
 
 import ckan.model as model
@@ -41,6 +42,9 @@ from osgeo import osr
 from pylons import config
 
 from ckanext.datagovau import ogr2ogr, gdal_retile
+opener = urllib2.build_opener()
+opener.addheaders = [('Authorization','c3557c21-bfda-44e7-a5c3-c97de603d56b')]
+urllib2.install_opener(opener)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -283,13 +287,15 @@ def _group_resources(dataset):
                             "kmz" in _format and _valid_source_format("kmz")):
                 kml.append(resource)
             elif ("shp" in _format and _valid_source_format("shp")) or (
-                            "shapefile" in _format and _valid_source_format("shapefile")):
+                            "shapefile" in _format and _valid_source_format("shapefile") or ("shz" in _format and _valid_source_format("shz"))):
                 shp.append(resource)
             elif "tab" in _format and _valid_source_format("tab"):
                 tab.append(resource)
             elif "grid" in _format and _valid_source_format("grid"):
                 grid.append(resource)
             elif "geotif" in _format and _valid_source_format("geotif"):
+                tiff.append(resource)
+            elif "geotiff" in _format and _valid_source_format("geotiff"):
                 tiff.append(resource)
             elif "sld" in _format:
                 sld.append(resource)
@@ -329,11 +335,11 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
         "Using SHP file " + shp_res['url'])
 
     if not any([shp_res['url'].lower().endswith(x) for x in ["shp", "shapefile"]]):
-        (filepath, headers) = urllib.urlretrieve(
-            shp_res['url'], "input.zip")
+        with open("input.zip", "wb") as f:
+            f.write(urllib2.urlopen(shp_res['url']).read())
         logger.debug('SHP downloaded')
 
-        subprocess.call(['unzip', '-j', filepath])
+        subprocess.call(['unzip', '-j', "input.zip"])
         logger.debug('SHP unzipped')
     else:
         urllib.urlretrieve(
@@ -433,9 +439,9 @@ def _load_kml_resources(kml_res, table_name):
     # if kml ogr2ogr http://gis.stackexchange.com/questions/33102
     # /how-to-import-kml-file-with-custom-data-to-postgres-postgis-database
     if kml_res['format'] == "kmz" or 'kmz' in kml_res['url'].lower():
-        (filepath, headers) = urllib.urlretrieve(
-            kml_res['url'], "input.zip")
-        subprocess.call(['unzip', '-j', filepath])
+        with open("input.zip", "wb") as f:
+            f.write(urllib2.urlopen(kml_res['url']).read())
+        subprocess.call(['unzip', '-j', "input.zip"])
         logger.debug("KMZ unziped")
         kmlfiles = glob.glob("*.[kK][mM][lL]")
         if len(kmlfiles) == 0:
@@ -756,15 +762,19 @@ def _apply_sld(name, workspace, layer_name, url=None, filepath=None):
     if url:
         r = _make_request(
             requests.get,
-            url)
-
+            url, headers={'Authorization': 'c3557c21-bfda-44e7-a5c3-c97de603d56b'})
         if r and r.ok:
-            filepath, headers = urllib.urlretrieve(url, "input.sld")
+            with open("input.sld", "wb") as f:
+                f.write(r.text)
+            filepath="input.sld"
         else:
+            logger.error("error downloading SLD")
             return
     elif filepath:
+        logger.info("sld downloaded")
         pass
     else:
+        logger.error("error accessing SLD")
         return
 
     payload = open(filepath, 'rb')
@@ -778,7 +788,7 @@ def _apply_sld(name, workspace, layer_name, url=None, filepath=None):
     if r and r.ok:
         url = style_url
 
-        # Delete out old style in workspace
+        logger.info("Delete out old style in workspace")
         r = _make_request(
             requests.delete,
             url,
@@ -800,30 +810,36 @@ def _apply_sld(name, workspace, layer_name, url=None, filepath=None):
 
     sld_text = open(filepath, 'r').read()
     mapping = {
+        "application/vnd.ogc.sld+xml": "www.opengis.net/sld",
         "application/vnd.ogc.se+xml": "www.opengis.net/se",
-        "application/vnd.ogc.sld+xml": "www.opengis.net/sld"
     }
     for key, value in mapping.items():
         if value in sld_text:
             content_type = key
             break
     else:
+        logger.error("couldn't pick a sld content type")
         return
-
+    logger.info("sld content type: "+content_type)
     r = _make_request(
         requests.put,
-        url + '/' + name,
+        url + '/' + name+"?raw=true",
         data=payload,
         headers={'Content-type': content_type},
         auth=(geo_user, geo_pass))
 
     if r.status_code == 400:
-        # Delete out old style in workspace
+        logger.info("Delete out old style in workspace")
         r = _make_request(
             requests.delete,
             style_url,
             auth=(geo_user, geo_pass))
-        return
+        r = _make_request(
+            requests.put,
+            url + '/' + name,
+            data=payload,
+            headers={'Content-type': content_type},
+            auth=(geo_user, geo_pass))
 
     r = _make_request(
         requests.put,
@@ -849,11 +865,12 @@ def _apply_sld_resources(sld_res, workspace, layer_name):
 
     r = _make_request(
         requests.get,
-        sld_res['url'])
+        sld_res['url'], headers={'Authorization': 'c3557c21-bfda-44e7-a5c3-c97de603d56b'})
 
     if r and r.ok:
         _apply_sld(name, workspace, layer_name, url=sld_res['url'], filepath=None)
-
+    else:
+        logger.error("could not download SLD resource")
 
 def _convert_resources(table_name, temp_dir, shp_resources, kml_resources, tab_resources, tiff_resources,
                        grid_resources):
@@ -1170,7 +1187,7 @@ def check_if_may_skip(dataset_id, force=False):
     if dataset.get('harvest_source_id', '') != '' or str(dataset.get('spatial_harvester', False)).lower()[0] == 't':
         raise IngestionSkip('Harvested datasets are not eligible for ingestion')
 
-    if str(dataset.get('private', False)).lower()[0] == 't':
+    if str(dataset.get('private', False)).lower()[0] == 't' and org_name not in ('infrastructure-australia'):
         raise IngestionSkip('Private datasets are not eligible for ingestion')
 
     if dataset.get('state', '') != 'active':
@@ -1340,10 +1357,13 @@ def do_ingesting(dataset_id, force):
                 layer_name,
                 url=None,
                 filepath=sldfiles[0])
-
+        else:
+            logger.info("no sld file in package")
         # With layers created, we can apply any SLDs
         if len(sld_resources):
             _apply_sld_resources(sld_resources[0], workspace, layer_name)
+        else:
+            logger.info("no sld resources")
 
         # Move on to creating CKAN assets
         ws_addr = geo_public_addr + _get_valid_qname(dataset['name']) + "/"
