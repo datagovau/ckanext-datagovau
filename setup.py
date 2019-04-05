@@ -17,7 +17,7 @@ setup(
 	namespace_packages=['ckanext', 'ckanext.datagovau'],
 	include_package_data=True,
 	zip_safe=False,
-	install_requires=['requests', 'feedparser', 'pylons', 'ckan', 'python-dateutil'],
+	install_requires=['requests', 'feedparser', 'pylons', 'python-dateutil'],
 	entry_points=\
 	"""
         [ckan.plugins]

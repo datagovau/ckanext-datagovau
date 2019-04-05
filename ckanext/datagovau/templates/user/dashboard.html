@@ -2,7 +2,25 @@
 
 {% block maintag %}<div role="main">{% endblock %}
 
-{% block page_primary_action %}<a name="main_content" id="main_content" tabindex="-1"></a>{{ super() }}{% endblock %}
+{% block page_primary_action %}
+  <a name="main_content" id="main_content" tabindex="-1"></a>
+  {% set organizations_available = h.organizations_available('create_dataset') %}
+  {% if organizations_available | length == 0 %}
+  <div class="alert alert-warning">
+    <p>Before you can publish datasets, you must become a member of an organisation.</p><p> Refer to <a href="https://toolkit.data.gov.au/Starting_on_datagovau.html#Getting_an_Account">"Getting an Account" in the toolkit</a> for more information.</p>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    You can view statistics on the usage of your datasets in the Site Usage area for your organisation:
+    <ul>
+    {% for org in organizations_available %}
+      <li><A href="/data/site-usage/dataset/{{org.name}}"><u>{{org.title}}</u></A></li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {{ super() }}
+  {% endblock %}
 
 {% block breadcrumb_content %}
   <li><a href="{{ h.url_for(controller='user', action='dashboard') }}">{{ _('Dashboard') }}</a></li>
