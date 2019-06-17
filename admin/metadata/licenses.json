@@ -79,6 +79,20 @@
     "title": "Creative Commons Attribution Share-Alike 3.0 Australia",
     "url": "http://creativecommons.org/licenses/by-sa/3.0/au/"
   },
+    {
+      "title": "Creative Commons Attribution Share Alike 4.0 International",
+      "id": "cc-by-sa-4.0",
+      "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode",
+    "domain_content": false,
+    "domain_data": false,
+    "domain_software": false,
+    "family": "",
+    "id": "cc-nc",
+    "is_okd_compliant": false,
+    "is_osi_compliant": false,
+    "maintainer": "",
+    "status": "active"
+    },
   {
     "domain_content": false,
     "domain_data": false,
