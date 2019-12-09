@@ -223,7 +223,6 @@ def _get_dataset_from_id(dataset_id):
             {'id': dataset_id})
     except:
         pass
-
     return dataset
 
 
@@ -512,7 +511,7 @@ def _load_tab_resources(tab_res, table_name):
     url = tab_res['url'].replace('https', 'http')
     logger.debug("using TAB file " + url)
     filepath, headers = urllib.urlretrieve(url, "input.zip")
-    logger.debug("TAB archive downlaoded")
+    logger.debug("TAB archive downloaded")
 
     subprocess.call(['unzip', '-j', filepath])
     logger.debug("TAB unziped")
@@ -552,7 +551,7 @@ def _load_tiff_resources(tiff_res, table_name):
 
     if not any([url.lower().endswith(x) for x in ['tif', 'tiff']]):
         filepath, headers = urllib.urlretrieve(url, "input.zip")
-        logger.debug("GeoTIFF archive downlaoded")
+        logger.debug("GeoTIFF archive downloaded")
 
         subprocess.call(['unzip', '-j', filepath])
         logger.debug("GeoTIFF unziped")
@@ -650,7 +649,7 @@ def _load_grid_resources(grid_res, table_name, tempdir):
     logger.debug("Using ArcGrid file " + grid_res['url'])
 
     filepath, headers = urllib.urlretrieve(grid_res['url'], "input.zip")
-    logger.debug("ArcGrid downlaoded")
+    logger.debug("ArcGrid downloaded")
 
     subprocess.call(['unzip', '-j', filepath])
     logger.debug('ArcGrid unzipped')
@@ -758,7 +757,7 @@ def _apply_sld(name, workspace, layer_name, url=None, filepath=None):
     geo_addr, geo_user, geo_pass, geo_public_addr = _get_geoserver_data()
 
     style_url = geo_addr + 'rest/workspaces/' + workspace + '/styles/' + name
-
+    logger.debug(url)
     if url:
         r = _make_request(
             requests.get,
@@ -1001,7 +1000,8 @@ def _update_package_with_bbox(bbox, latlngbbox, ftdata,
     ftdata['featureType']['latLonBoundingBox'] = llbbox_obj
     update = False
     if float(llminx) < -180 or float(llmaxx) > 180:
-        _failure(dataset['title'] + " has invalid automatic projection:" +
+        print(ftdata)
+        _failure(dataset['title'] + " has invalid automatic projection: " +
                  native_crs)
     else:
         ftdata['featureType']['srs'] = native_crs
@@ -1205,6 +1205,7 @@ def check_if_may_skip(dataset_id, force=False):
         raise IngestionSkip("Can not determine unique spatial file to ingest")
 
     if force:
+        logger.info("not checking last update because force")
         return dataset, all_resources
 
     activity_list = get_action('package_activity_list')(
@@ -1268,6 +1269,8 @@ def clean_assets(dataset_id, skip_grids=False, display=False):
 
 
 def do_ingesting(dataset_id, force):
+    #if 'closures' not in dataset_id and 'bb8a51163f4c' not in dataset_id:
+    #    return
     tempdir = None
     try:
         dataset, grouped_resources = check_if_may_skip(dataset_id, force)
@@ -1349,6 +1352,7 @@ def do_ingesting(dataset_id, force):
             _failure("Failed to create Geoserver layer {}: {}".format(_layer_base_url, r.content))
 
         sldfiles = glob.glob("*.[sS][lL][dD]")
+        logger.debug(sldfiles, sld_resources)
         if len(sldfiles):
             _apply_sld(
                 os.path.splitext(
@@ -1361,9 +1365,12 @@ def do_ingesting(dataset_id, force):
             logger.info("no sld file in package")
         # With layers created, we can apply any SLDs
         if len(sld_resources):
-            _apply_sld_resources(sld_resources[0], workspace, layer_name)
+            if sld_resources[0].get('url','') == '':
+                logger.info("bad sld resource url")
+            else:
+                _apply_sld_resources(sld_resources[0], workspace, layer_name)
         else:
-            logger.info("no sld resources")
+            logger.info("no sld resources or sld url invalid")
 
         # Move on to creating CKAN assets
         ws_addr = geo_public_addr + _get_valid_qname(dataset['name']) + "/"
