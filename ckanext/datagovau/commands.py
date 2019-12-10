@@ -69,13 +69,15 @@ class SpatialIngestor(CkanCommand):
             self._drop_user(self.args[1])
 
     def _ingest(self, scope):
-        if scope in ('all', 'updated'):
+        if scope in ('all', 'updated', 'updated-orgs'):
             force = True if scope == 'all' else False
-            pkg_ids = [
-                r[0]
-                for r in model.Session.query(
-                    model.Package.id).filter_by(state='active').all()
-            ]
+            if scope == 'updated-orgs':
+                pkg_ids = [ r[0] for r in model.Session.query(model.Package.id).filter_by(state='active').filter( 
+                           model.Package.owner_org.in_(['3965c5cd-d88f-4735-92db-af28d3ad9155', #nntt
+										 'a56f8067-b250-4c32-9609-f2191dc88a3a' #geelong
+                                        ])).all()]
+            else:
+                pkg_ids = [ r[0] for r in model.Session.query(model.Package.id).filter_by(state='active').all()]
 
             total = len(pkg_ids)
 
@@ -84,7 +86,7 @@ class SpatialIngestor(CkanCommand):
 
             for counter, pkg_id in enumerate(pkg_ids):
                 sys.stdout.write(
-                    "\rIngesting Package ID {0}/{1}".format(counter + 1, total))
+                    "\rIngesting Package ID {0}/{1} ({2})\r".format(counter + 1, total, pkg_id))
                 sys.stdout.flush()
                 # log.info("Ingesting %s" % dataset.id)
                 do_ingesting(pkg_id, force)

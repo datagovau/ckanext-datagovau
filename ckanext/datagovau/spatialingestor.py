@@ -28,6 +28,7 @@ import tempfile
 import time
 import urllib
 import urllib2
+import inspect
 from datetime import datetime
 
 import ckan.model as model
@@ -65,11 +66,15 @@ sleep_duration = 20  # in seconds
 num_retries = 30
 
 
-class IngestionFail(Exception):
+class IngestionException(Exception):
+    def __str__(self):
+        dataset = inspect.trace()[-1][0].f_locals['dataset'] or {}
+        return "{0} ({1})".format(self.message, str(dataset.get('name')))
+class IngestionFail(IngestionException):
     pass
 
 
-class IngestionSkip(Exception):
+class IngestionSkip(IngestionException):
     pass
 
 
@@ -1204,10 +1209,6 @@ def check_if_may_skip(dataset_id, force=False):
     if any([len(x) > 1 for x in grouped_resources]):
         raise IngestionSkip("Can not determine unique spatial file to ingest")
 
-    if force:
-        logger.info("not checking last update because force")
-        return dataset, all_resources
-
     activity_list = get_action('package_activity_list')(
         {'user': _get_username(), 'model': model},
         {'id': dataset['id']})
@@ -1217,7 +1218,11 @@ def check_if_may_skip(dataset_id, force=False):
         {'id': _get_username()})
 
     if activity_list and activity_list[0]['user_id'] == user['id']:
-        raise IngestionSkip('Not updated since last ingest')
+        if force:
+            logger.info("ignoring that we did last update because forced manual update")
+            return dataset, all_resources
+        else:
+            raise IngestionSkip('Not updated since last ingest')
 
     return dataset, all_resources
 
