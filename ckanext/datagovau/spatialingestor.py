@@ -68,7 +68,7 @@ num_retries = 30
 
 class IngestionException(Exception):
     def __str__(self):
-        dataset = inspect.trace()[-1][0].f_locals['dataset'] or {}
+        dataset = inspect.trace()[-1][0].f_locals.get('dataset',{}) or {}
         return "{0} ({1})".format(self.message, str(dataset.get('name')))
 class IngestionFail(IngestionException):
     pass
@@ -1106,9 +1106,12 @@ def _delete_resources(dataset):
         dataset['resources'])
 
     for res in geoserver_resources:
-        get_action('resource_delete')(
-            {'model': model, 'user': _get_username(), 'ignore_auth': True}, res)
-
+        try:
+            get_action('resource_delete')(
+                {'model': model, 'user': _get_username(), 'ignore_auth': True}, res)
+        except Exception, e:
+            print(e)
+            pass
     return _get_dataset_from_id(dataset['id'])
 
 
