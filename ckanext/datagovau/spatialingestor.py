@@ -293,7 +293,7 @@ def _group_resources(dataset):
             elif ("shp" in _format and _valid_source_format("shp")) or (
                             "shapefile" in _format and _valid_source_format("shapefile") or ("shz" in _format and _valid_source_format("shz"))):
                 shp.append(resource)
-            elif "tab" in _format and _valid_source_format("tab"):
+            elif ("tab" in _format and _valid_source_format("tab")) or ("mapinfo" in _format and _valid_source_format("mapinfo")):
                 tab.append(resource)
             elif "grid" in _format and _valid_source_format("grid"):
                 grid.append(resource)
@@ -515,15 +515,16 @@ def _load_kml_resources(kml_res, table_name):
 def _load_tab_resources(tab_res, table_name):
     url = tab_res['url'].replace('https', 'http')
     logger.debug("using TAB file " + url)
-    filepath, headers = urllib.urlretrieve(url, "input.zip")
+    with open("input.zip", "wb") as f:
+        f.write(urllib2.urlopen(tab_res['url']).read())
     logger.debug("TAB archive downloaded")
 
-    subprocess.call(['unzip', '-j', filepath])
+    subprocess.call(['unzip', '-j', "input.zip"])
     logger.debug("TAB unziped")
 
     tabfiles = glob.glob("*.[tT][aA][bB]")
     if len(tabfiles) == 0:
-        _failure("No tab files found in zip " + tab_res['url'])
+        _failure("No mapinfo tab files found in zip " + tab_res['url'])
 
     tab_file = tabfiles[0]
 
@@ -542,8 +543,14 @@ def _load_tab_resources(tab_res, table_name):
         '-nlt', 'PROMOTE_TO_MULTI',
         '-overwrite'
     ]
-
+    #logger.debug(' '.join(pargs))
     res = ogr2ogr.main(pargs)
+    logger.debug(res)
+    if not res:
+        _failure("Ogr2ogr: Failed to convert file to PostGIS")
+    os.environ["PGCLIENTENCODING"]="windows-1252"
+    res = ogr2ogr.main(pargs)
+    logger.debug(res)
     if not res:
         _failure("Ogr2ogr: Failed to convert file to PostGIS")
 
@@ -1195,7 +1202,8 @@ def check_if_may_skip(dataset_id, force=False):
     if dataset.get('harvest_source_id', '') != '' or str(dataset.get('spatial_harvester', False)).lower()[0] == 't':
         raise IngestionSkip('Harvested datasets are not eligible for ingestion')
 
-    if str(dataset.get('private', False)).lower()[0] == 't' and org_name not in ('infrastructure-australia'):
+    if str(dataset.get('private', False)).lower()[0] == 't' and dataset['name'] != 'test333':
+    # and org_name not in ('infrastructure-australia'):
         raise IngestionSkip('Private datasets are not eligible for ingestion')
 
     if dataset.get('state', '') != 'active':
