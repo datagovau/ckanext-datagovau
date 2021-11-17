@@ -9,8 +9,6 @@ import ckan.lib.dictization.model_save as model_save
 import ckan.logic.auth.create as create
 import ckan.authz as authz
 import ckan.logic as logic
-from ckan.common import _
-
 
 def datagovau_check_group_auth(context, data_dict):
     if not data_dict:
@@ -181,10 +179,11 @@ class DataGovAuPlugin(p.SingletonPlugin,
         # that CKAN will use this plugin's custom templates.
         # here = os.path.dirname(__file__)
         # rootdir = os.path.dirname(os.path.dirname(here))
-
+        
         toolkit.add_template_directory(config, 'templates')
         toolkit.add_public_directory(config, 'theme/public')
-        toolkit.add_resource('theme/public', 'ckanext-datagovau')
+        toolkit.add_resource("assets", "datagovau")
+        
         toolkit.add_resource('public/scripts/vendor/jstree', 'jstree')
 
     def get_helpers(self):
@@ -211,10 +210,11 @@ class HierarchyForm(p.SingletonPlugin, DefaultOrganizationForm):
         return ('organization',)
 
     def setup_template_variables(self, context, data_dict):
-        from pylons import tmpl_context as c
-
         model = context['model']
         group_id = data_dict.get('id')
+
+        from ckan.common import c
+
         if group_id:
             group = model.Group.get(group_id)
             c.allowable_parent_groups = \

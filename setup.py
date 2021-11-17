@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 
 version = '0.1'
-
+# Keep in case we still need pylons...Just use the line below in place
+# of the install_requires argument in the call to setup().
+#install_requires=['requests', 'feedparser', 'pylons', 'python-dateutil'],
 setup(
 	name='ckanext-datagovau',
 	version=version,
@@ -17,7 +19,7 @@ setup(
 	namespace_packages=['ckanext', 'ckanext.datagovau'],
 	include_package_data=True,
 	zip_safe=False,
-	install_requires=['requests', 'feedparser', 'pylons', 'python-dateutil'],
+	install_requires=['requests', 'feedparser', 'python-dateutil'],
 	entry_points=\
 	"""
         [ckan.plugins]

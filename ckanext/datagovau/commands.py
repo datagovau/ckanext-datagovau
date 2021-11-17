@@ -9,6 +9,7 @@ import paste.script
 import psycopg2
 from ckan import model
 from ckan.lib.cli import CkanCommand
+from ckantoolkit import config
 
 from ckanext.datagovau.spatialingestor import do_ingesting, check_if_may_skip, clean_assets, _get_geoserver_data_dir
 
@@ -165,7 +166,7 @@ class ReconcileGeoserverAndDatastore(CkanCommand):
         self._load_config()
 
         from datetime import datetime
-        from pylons import config
+        
         import requests
 
         from ckan import model

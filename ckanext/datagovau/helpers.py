@@ -10,7 +10,12 @@ import ckanext.datastore as datastore_db
 import ckanext.datastore.backend as datastore_backend
 import feedparser
 from ckan.lib import uploader, formatters
-from pylons import config
+
+from flask import Flask
+from flask_caching import Cache
+app = Flask(__name__)
+with app.app_context():
+    cache = Cache( app, config={'CACHE_TYPE': 'SimpleCache', "CACHE_DEFAULT_TIMEOUT": 600})
 
 log = logging.getLogger('ckanext_datagovau')
 
@@ -47,7 +52,7 @@ def get_user_datasets_public(user_dict):
 
 def get_ddg_site_statistics():
     def fetch_ddg_stats():
-        stats = {'dataset_count': logic.get_action('package_search')({}, {"rows": 1})['count']}
+        stats = {'dataset_count': logic.get_action('package_search')({}, {"rows": 0})['count']}
 
         for fDict in \
                 logic.get_action('package_search')({}, {"facet.field": ["unpublished"], "rows": 1})['search_facets'][
@@ -67,19 +72,13 @@ def get_ddg_site_statistics():
 
         return stats
 
-    if toolkit.asbool(config.get('ckanext.stats.cache_enabled', 'True')):
-        from pylons import cache
+    key = "ddg_site_stats"
 
-        key = 'ddg_site_stats'
-        res_stats = cache.get_cache('ddg_ext', type='memory').get_value(key=key,
-                                                                        createfunc=fetch_ddg_stats,
-                                                                        expiretime=toolkit.asint(
-                                                                            config.get(
-                                                                                'ckanext.stats.cache_fast_timeout',
-                                                                                '600')))
-    else:
-        res_stats = fetch_ddg_stats()
-
+    with app.app_context():
+        res_stats = cache.get(key)
+        if res_stats is None: 
+            res_stats=fetch_ddg_stats()
+            cache.set(key, res_stats)
     return res_stats
 
 

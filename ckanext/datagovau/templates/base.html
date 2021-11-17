@@ -8,12 +8,12 @@
 
     {% block styles %}
       {{ super() }}
-      {% resource 'ckanext-datagovau/css/datagovau.css' %}
+      {% asset 'datagovau/css' %}
     {% endblock %}
 
     {% block scripts %}
     {{ super() }}
 <script src="https://cdn.ravenjs.com/3.26.2/raven.min.js" crossorigin="anonymous"></script>
 <script>Raven.config('https://9a2ad27f1c3543bdb6e364d258128a3e@sentry.cloud.gov.au/12').install()</script>
-    {% resource 'ckanext-datagovau/js/datagovau.js' %}
+    {% asset 'datagovau/js' %}
     {% endblock %}

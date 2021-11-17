@@ -1,0 +1,296 @@
+scheming_version: 2
+dataset_type: dataset
+about: A reimplementation of the default CKAN dataset schema
+about_url: http://github.com/ckan/ckanext-scheming
+
+dataset_fields:
+
+- field_name: title
+  label: Title
+  preset: title
+  required: true
+  form_placeholder: e.g., A descriptive title
+
+- field_name: name
+  label: URL
+  required: true
+  preset: dataset_slug
+  form_placeholder: eg. my-dataset
+
+- field_name: notes
+  label: Description
+  form_snippet: markdown.html
+  form_placeholder: e.g., Some useful notes about the data
+
+- field_name: tag_string
+  label: Keywords
+  preset: tag_string_autocomplete
+  form_placeholder: e.g., economy, mental health, government
+
+- field_name: license_id
+  label: License
+  required: true
+  form_snippet: license.html
+  help_text: "License definitions and additional information can be found at http://opendefinition.org/"
+
+# "Unpublished" checkbox on the legacy New Dataset (Step 1) form
+# implemented as a ckanext-scheming "select" with True/False choices.
+- field_name: unpublished
+  required: true
+  label: Unpublished
+  help_text: "Whether this dataset is unpublished; i.e., there are no public data files or links available."
+  preset: select
+  choices:
+    - value: "True"
+      label: True
+    - value: "False"
+      label: False
+  
+- field_name: owner_org
+  label: Organization
+  preset: dataset_organization
+
+#- field_name: url
+#  label: Source
+#  form_placeholder: http://example.com/dataset.json
+#  display_property: foaf:homepage
+#  display_snippet: link.html
+
+#- field_name: version
+#  label: Version
+#  validators: ignore_missing unicode package_version_validator
+#  form_placeholder: '1.0'
+
+# Commented out--if included this form snippet appears
+# twice--???
+# This is a known bug in ckanext-scheming and has an associated
+# open github issue:
+# https://github.com/ckan/ckanext-scheming/issues/222
+#- field_name: private
+#  label: Visibility
+#  preset: select
+#  choices:
+#    - value: true
+#      label: Private
+#    - value: false
+#      label: Public
+
+- field_name: spatial_coverage
+  required: true
+  label: Geospatial Coverage
+  form_placeholder: The geographical area covered by the data; e.g., Canberra (GA1487)
+  help_text: 'Please input one of the following: 1) a point/polygon/bounding box; 2) an administrative boundary API; or 3) a location name and ID from the <a href="https://toolkit.data.gov.au/index.php?title=How_to_use_data.gov.au#Extent">National Gazetteer'
+  
+- field_name: temporal_coverage-from
+  required: true
+  label: Temporal Coverage From
+  form_placeholder: The date at which timespan the dataset relates to  starts e.g., 2014-01-01
+  help_text: What is the temporal coverage of your dataset? Please choose a single date or a from and to date.
+  form_snippet: date.html
+
+- field_name:  temporal_coverage-to
+  required: true
+  label: Temporal Coverage To
+  form_placeholder: The date at which timespan the dataset relates to ends e.g., 2014-12-31
+  help_text: The date at which timespan the dataset relates to ends e.g., 2014-12-31
+  form_snippet: date.html
+
+- field_name: language
+  label: Language
+  form_placeholder: English
+  form_snippet: text.html
+
+- field_name: data_state
+  label: Data Status
+  required: true
+  help_text: The status of the data with regard to whether it is kept updated (active, yes) or historic (inactive, no)
+  preset: select
+  choices:
+    - value: active
+      label: Active
+    - value: inactive
+      label: Inactive
+
+- field_name: update_freq
+  label: Update Frequency
+  required: true
+  preset: select
+  choices:
+    - value: daily
+      label: Daily
+    - value: weekly
+      label: Weekly
+    - value: monthly
+      label: Monthly
+    - value: quarterly
+      label: Quarterly
+    - value: biennaully
+      label: Biennaully
+    - value: biannually
+      label: Biannually
+    - value: annually
+      label: Annually
+    - value: infrequently
+      label: Infrequently
+    - value: never
+      label: Never/Static
+    - value: other
+      label: Other (specify in dataset description/notes)
+
+# Disable this field as it is currently throwing an error.
+# On the production site it is implemented as a checkbox
+# and results in a boolean value.  This archetype is not
+# available ckanext-scheming and needs to be added for it
+# to work as it does on the legacy site.
+- field_name: contact_info
+  required: true
+  label: Whether the user contact details should be public as well as the organisation contact details.
+  preset: select
+  choices:
+    - value: "False"
+      label: No
+    - value: "True"
+      label: Yes
+
+- field_name: group
+  label: Add AGIFT Function/Theme
+  required: true
+  help_text: 'The Australian Government Interactive Functions Thesaurus (AGIFT) top-level function to which the resource relates.'
+  preset: select
+  choices:
+    - value: ""
+      label: Please Select
+    - value: ada735db-98c9-42cb-8969-dc356ea4281e
+      label: Business Support and Regulation       
+    - value: 7d67a152-2ac6-4f5f-b1e5-f6a2791067cc
+      label: Civic Infrastructure
+    - value: cf4060c4-f279-43a9-ab5c-4fbe7889b7ba
+      label: Communications
+    - value: bd09f325-4aea-4873-9204-66cdf638fc34
+      label: Community Services
+    - value: e95def3e-5061-44d0-ad1e-4cd355a3a897
+      label: Cultural Affairs
+    - value: 1923cbaf-000b-4e9a-bbe7-805fc206afd7
+      label: Defence
+    - value: 32f2e899-6198-410d-97e5-2c675d25ca78
+      label: Education and Training
+    - value: 83562e4e-2850-4063-8f4e-26352b903f22
+      label: Employment
+    - value: 707bd86f-3a3f-4810-93da-04e2b6d59a11
+      label: Environment
+    - value: 7170b37f-994d-4056-b5fc-5ada01041f5a
+      label: Finance Management
+    - value: 757e2041-51f1-45ce-871d-9b292d617601
+      label: Governance
+    - value: 104574bd-92b3-4866-97c0-373797dbca43
+      label: Health Care
+    - value: 1d8af52d-65fe-48ac-b256-a3e0eb691202
+      label: Immigration
+    - value: 980b8179-746b-4ff8-b7e6-f8f8ee3cc865
+      label: Indigenous Affairs
+    - value: 42a3cfce-63ca-4386-a52d-416d8aa24094
+      label: International Relations
+    - value: 0d2300ca-dda4-47da-b533-cddd8d0776f4
+      label: Justice Administration
+    - value: 68cb2a35-4bd0-4522-9265-5ddf37d6790b
+      label: Maritime Services
+    - value: c5cd3a09-753f-423d-97e6-300cec4dcdba
+      label: Natural Resources
+    - value: 4695b1f2-5fbd-4bfd-9d09-4db32fb84e89
+      label: Primary Industries
+    - value: 049a32a5-dac6-48c0-9add-e7847e85b7b3
+      label: Science
+    - value: 84e5ab19-4de6-4cbd-ba6b-457a4273c982
+      label: Security
+    - value: 79e3bdb0-071a-408d-b1d7-1dd20173b65b
+      label: Sport and Recreation
+    - value: d4bf189c-d5ce-48d1-98c1-7ff350342e44
+      label: Statistical Services
+    - value: b0ded30e-bf78-43d1-9fee-1d90818c30c3
+      label: Tourism
+    - value: 25780283-7622-4cbd-b254-efbcaa9a647d
+      label: Trade
+    - value: 29fe1336-5109-464d-b6f1-743b8dd772c6
+      label: Transport
+      
+- field_name: author
+  label: Author
+  required: true
+  form_placeholder: Name of the Author of dataset
+  display_property: dc:creator
+  help_text: Name of authoring Agency/Organisation (if different from publisher)
+
+- field_name: contact_point
+  label: Contact
+  required: true
+  form_placeholder: Email address for questions about content of dataset
+  display_property: dc:creator
+  display_snippet: email.html
+  display_email_name_field: author
+
+- field_name: jurisdiction
+  label: Jurisdiction
+  required: true
+  form_placeholder: Commonwealth of Australia
+  
+- field_name: geospatial_topic
+  label: Geospatial Topic
+  required: false
+# This should be multiple_select but multiple selection
+# is not working in tests on firefox.  Just allows one
+# selection as far as I can tell.
+#  preset: multiple_select
+  preset: select
+  choices_helper: agls_geospatial_topics
+  # Note that this datastore_choices_resource value
+  # is merely a placeholder and is ignored by the
+  # agls helper that delivers the choices.
+  datastore_choices_resource: geospatial_topics
+  help_text: 'The high level ISO1 9115 topics. Optional but recommended.'
+
+- field_name: data_model
+  label: Data Models
+  form_snippet: markdown.html
+  form_placeholder: 'Information on any relevant data models,  ontologies, taxonomies, et cetera specific to this dataset.'
+  help_text: 'Please add any links to information on relevant data models, ontologies, taxonomies etc specific to your dataset. You can upload data models to the data.gov.au data model repository.'
+
+- field_name: field_of_research
+  label: Fields of Research (Optional)
+  required: false
+  preset: select
+  choices_helper: agls_fields_of_research
+  datastore_choices_resource: fields_of_resarch 
+  datastore_choices_limit: 2000
+  help_text: 'The Australian and New Zealand Standard Research Classification (ANZSRC; 2008) field or fields of research relevant to the dataset.'
+
+resource_fields:
+
+- field_name: url
+  label: URL
+  preset: resource_url_upload
+
+- field_name: name
+  label: Name
+  form_placeholder: eg. January 2011 Gold Prices
+
+- field_name: description
+  label: Description
+  form_snippet: markdown.html
+  form_placeholder: Some useful notes about the data
+
+- field_name: format
+  label: Format
+  preset: resource_format_autocomplete
+
+# Zip Extract is brought in by a checkbox.  Not yet able
+# to figure out how to implement this using ckanext-scheming.
+#- field_name: zip_extract
+#  label: Extract Resources from Zip Files
+#  help_text: Whether any resources inside zip files should be extracted into separate resources.
+
+- field_name: last_modified
+  label: Date Last Modified
+  required: true
+  preset: date
+  help_text: "When was the file uploaded was last modified? If left blank, assumed to be the date of last modification of resource information on this site."
+

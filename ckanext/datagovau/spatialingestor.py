@@ -40,7 +40,7 @@ from ckan.plugins import toolkit
 from ckan.plugins.toolkit import get_action
 from dateutil import parser
 from osgeo import osr
-from pylons import config
+from ckantoolkit import config
 
 from ckanext.datagovau import ogr2ogr, gdal_retile
 opener = urllib2.build_opener()
