@@ -12,10 +12,10 @@ from ckan.lib.cli import CkanCommand
 from ckantoolkit import config
 
 from ckanext.datagovau.spatialingestor import (
-    do_ingesting,
+    _get_geoserver_data_dir,
     check_if_may_skip,
     clean_assets,
-    _get_geoserver_data_dir,
+    do_ingesting,
 )
 
 log = logging.getLogger("ckanext_datagovau")
@@ -203,7 +203,6 @@ class ReconcileGeoserverAndDatastore(CkanCommand):
         from datetime import datetime
 
         import requests
-
         from ckan import model
         from ckan.lib import cli, search
         from ckan.plugins import toolkit

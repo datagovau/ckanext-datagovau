@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 version = "0.1"
 # Keep in case we still need pylons...Just use the line below in place

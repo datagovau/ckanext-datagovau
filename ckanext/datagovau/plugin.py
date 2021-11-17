@@ -1,14 +1,13 @@
+import ckan.authz as authz
+import ckan.lib.dictization.model_save as model_save
+import ckan.logic as logic
+import ckan.logic.auth.create as create
 import ckan.plugins as p
 import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultOrganizationForm
 
 import ckanext.datagovau.helpers as helpers
 import ckanext.datagovau.logic.action as action
-
-import ckan.lib.dictization.model_save as model_save
-import ckan.logic.auth.create as create
-import ckan.authz as authz
-import ckan.logic as logic
 
 
 def datagovau_check_group_auth(context, data_dict):

@@ -17,6 +17,7 @@ import calendar
 import errno
 import glob
 import grp
+import inspect
 import json
 import logging
 import os
@@ -27,22 +28,21 @@ import sys
 import tempfile
 import time
 import urllib
-import urllib2
-import inspect
 from datetime import datetime
 
 import ckan.model as model
 import lxml.etree as et
 import psycopg2
 import requests
+import urllib2
 from ckan.lib import cli
 from ckan.plugins import toolkit
 from ckan.plugins.toolkit import get_action
+from ckantoolkit import config
 from dateutil import parser
 from osgeo import osr
-from ckantoolkit import config
 
-from ckanext.datagovau import ogr2ogr, gdal_retile
+from ckanext.datagovau import gdal_retile, ogr2ogr
 
 opener = urllib2.build_opener()
 opener.addheaders = [("Authorization", "c3557c21-bfda-44e7-a5c3-c97de603d56b")]

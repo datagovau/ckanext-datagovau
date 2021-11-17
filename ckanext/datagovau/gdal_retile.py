@@ -33,9 +33,7 @@ import math
 import os
 import sys
 
-from osgeo import gdal
-from osgeo import ogr
-from osgeo import osr
+from osgeo import gdal, ogr, osr
 
 try:
     progress = gdal.TermProgress_nocb

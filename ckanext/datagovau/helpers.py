@@ -5,9 +5,10 @@ import time
 import ckan.lib as lib
 import ckan.logic as logic
 import ckan.model as model
-import ckanext.datastore.backend as datastore_backend
 import feedparser
-from ckan.lib import uploader, formatters
+from ckan.lib import formatters, uploader
+
+import ckanext.datastore.backend as datastore_backend
 from ckanext.toolbelt.decorators import Cache, Collector
 
 helper, get_helpers = Collector("dga").split()
