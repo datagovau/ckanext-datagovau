@@ -1,9 +1,8 @@
 import ckan.authz as authz
 import ckan.lib.dictization.model_save as model_save
-import ckan.logic as logic
 import ckan.logic.auth.create as create
 import ckan.plugins as p
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 from ckan.lib.plugins import DefaultOrganizationForm
 
 import ckanext.datagovau.helpers as helpers
@@ -33,7 +32,7 @@ def datagovau_check_group_auth(context, data_dict):
             id = group_blob
         grp = model.Group.get(id)
         if grp is None:
-            raise logic.NotFound(_("Group was not found."))
+            raise tk.ObjectNotFound(tk._("Group was not found."))
         groups.add(grp)
 
     if pkg:
@@ -127,7 +126,7 @@ model_save.package_membership_list_save = (
 )
 
 
-class DataGovAuPlugin(p.SingletonPlugin, toolkit.DefaultDatasetForm):
+class DataGovAuPlugin(p.SingletonPlugin, tk.DefaultDatasetForm):
     """An example IDatasetForm CKAN plugin.
 
     Uses a tag vocabulary to add a custom metadata field to datasets.
@@ -192,11 +191,11 @@ class DataGovAuPlugin(p.SingletonPlugin, toolkit.DefaultDatasetForm):
         # here = os.path.dirname(__file__)
         # rootdir = os.path.dirname(os.path.dirname(here))
 
-        toolkit.add_template_directory(config, "templates")
-        toolkit.add_public_directory(config, "theme/public")
-        toolkit.add_resource("assets", "datagovau")
+        tk.add_template_directory(config, "templates")
+        tk.add_public_directory(config, "theme/public")
+        tk.add_resource("assets", "datagovau")
 
-        toolkit.add_resource("public/scripts/vendor/jstree", "jstree")
+        tk.add_resource("public/scripts/vendor/jstree", "jstree")
 
     def get_helpers(self):
         return helpers.get_helpers()

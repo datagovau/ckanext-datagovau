@@ -2,12 +2,10 @@ import logging
 import os
 import time
 
-import ckan.lib as lib
-import ckan.logic as logic
 import ckan.model as model
 import feedparser
 from ckan.lib import formatters, uploader
-
+import ckan.plugins.toolkit as tk
 import ckanext.datastore.backend as datastore_backend
 from ckanext.toolbelt.decorators import Cache, Collector
 
@@ -15,7 +13,7 @@ helper, get_helpers = Collector("dga").split()
 
 cache = Cache(600)
 
-log = logging.getLogger("ckanext_datagovau")
+log = logging.getLogger(__name__)
 
 
 @helper("get_user_datasets")
@@ -23,12 +21,13 @@ def get_user_datasets(user_dict):
     # Need to test packages carefully to make sure they haven't been purged from the DB (like what happens
     # in a harvest purge), as the activity list does not have the associated entries cleaned out.
     # [SXTPDFINXZCB-145]
+    # TODO: not the fastest way, right?
     def pkg_test(input):
         try:
             result = input["data"].get("package")
 
             # Test just to catch an exception if need be
-            data = logic.get_action("package_show")(
+            data = tk.get_action("package_show")(
                 context, {"id": input["data"]["package"]["id"]}
             )
         except:
@@ -39,12 +38,10 @@ def get_user_datasets(user_dict):
     created_datasets_list = user_dict["datasets"]
 
     active_datasets_list = [
-        logic.get_action("package_show")(
-            context, {"id": x["data"]["package"]["id"]}
+        tk.get_action("package_show")(
+            context.copy(), {"id": x["data"]["package"]["id"]}
         )
-        for x in lib.helpers.get_action(
-            "user_activity_list", {"id": user_dict["id"]}
-        )
+        for x in tk.get_action("user_activity_list")(context.copy(), {"id": user_dict["id"]})
         if pkg_test(x)
     ]
     raw_list = sorted(
@@ -65,27 +62,27 @@ def get_user_datasets_public(user_dict):
     ]
 
 
-@cache
 @helper("get_ddg_site_statistics")
+@cache
 def get_ddg_site_statistics():
     stats = {
-        "dataset_count": logic.get_action("package_search")({}, {"rows": 0})[
+        "dataset_count": tk.get_action("package_search")({}, {"rows": 0})[
             "count"
         ]
     }
 
-    for fDict in logic.get_action("package_search")(
-        {}, {"facet.field": ["unpublished"], "rows": 1}
+    for fDict in tk.get_action("package_search")(
+        {}, {"facet.field": ["unpublished"], "rows": 0}
     )["search_facets"]["unpublished"]["items"]:
         if fDict["name"] == "Unpublished datasets":
             stats["unpub_data_count"] = fDict["count"]
             break
 
-    stats["open_count"] = logic.get_action("package_search")(
-        {}, {"fq": "isopen:true", "rows": 1}
+    stats["open_count"] = tk.get_action("package_search")(
+        {}, {"fq": "isopen:true", "rows": 0}
     )["count"]
 
-    stats["api_count"] = logic.get_action("resource_search")(
+    stats["api_count"] = tk.get_action("resource_search")(
         {}, {"query": ["format:wms"]}
     )["count"] + len(datastore_backend.get_all_resources_ids_in_datastore())
 
@@ -121,7 +118,7 @@ def blogfeed():
 
 @helper
 def group_tree_section(grp_id, grp_type):
-    result = logic.get_action("group_tree_section")(
+    result = tk.get_action("group_tree_section")(
         {}, {"id": grp_id, "type": grp_type}
     )
     return result
