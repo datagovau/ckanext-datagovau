@@ -14,7 +14,7 @@ Example:
 
 #}
 
-{% with truncate=truncate or 0, url=h.url_for(controller='organization', action='read', id=organization.name) %}
+{% with truncate=truncate or 0, url=h.url_for('organization.read', id=organization.name) %}
 <div class="module module-narrow module-shallow context-info">
     {% if has_context_title %}
     <h2 class="module-heading"><i class="fa fa-building"></i> {{ _('Organization') }}</h2>
@@ -32,7 +32,7 @@ Example:
         {% if organization.description %}
         <p>
             {{ h.markdown_extract(organization.description, 180) }}
-            {% link_for _('read more'), controller='organization', action='about', id=organization.name %}
+            {% link_for _('read more'), named_route='organization.about', id=organization.name %}
         </p>
         {% else %}
         <p class="empty">{{ _('There is no description for this organization') }}</p>

@@ -10,31 +10,31 @@ Example:
 
 #}
 {% if pkg.get('unpublished','') == 'True' %}
-<div class="well">
-This dataset is not publicly available. It is listed on data.gov.au as an <i>unpublished dataset</i> to improve discovery.
-Interested data users should contact the data custodian on the details below to discuss terms of access.
-</div>
+    <div class="well">
+	This dataset is not publicly available. It is listed on data.gov.au as an <i>unpublished dataset</i> to improve discovery.
+	Interested data users should contact the data custodian on the details below to discuss terms of access.
+    </div>
 {% else %}
-<section id="dataset-resources" class="resources">
-    <h3>{{ _('Data and Resources') }}</h3>
-    {% block resource_list %}
-    {% if resources %}
-    <ul class="{% block resource_list_class %}resource-list{% endblock %}">
-        {% block resource_list_inner %}
-        {% for resource in resources %}
-        {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
-        {% endfor %}
-        {% endblock %}
-    </ul>
-    {% else %}
-    {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
-    {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
-    <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
+    <section id="dataset-resources" class="resources">
+	<h3>{{ _('Data and Resources') }}</h3>
+	{% block resource_list %}
+	    {% if resources %}
+		<ul class="{% block resource_list_class %}resource-list{% endblock %}">
+		    {% block resource_list_inner %}
+			{% for resource in resources %}
+			    {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
+			{% endfor %}
+		    {% endblock %}
+		</ul>
+	    {% else %}
+		{% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
+		    {% trans url=h.url_for('resource.new', id=pkg.name) %}
+		    <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
     {% endtrans %}
-    {% else %}
+		{% else %}
     <p class="empty">{{ _('This dataset has no data') }}</p>
-    {% endif %}
-    {% endif %}
-    {% endblock %}
-</section>
+		{% endif %}
+	    {% endif %}
+	{% endblock %}
+    </section>
 {% endif %}

@@ -182,16 +182,9 @@ class DataGovAuPlugin(p.SingletonPlugin,
         return search_results
 
     def update_config(self, config):
-        # Add this plugin's templates dir to CKAN's extra_template_paths, so
-        # that CKAN will use this plugin's custom templates.
-        # here = os.path.dirname(__file__)
-        # rootdir = os.path.dirname(os.path.dirname(here))
-
         toolkit.add_template_directory(config, 'templates')
-        toolkit.add_public_directory(config, 'theme/public')
         toolkit.add_resource("assets", "datagovau")
 
-        toolkit.add_resource('public/scripts/vendor/jstree', 'jstree')
 
     def get_helpers(self) -> dict[str, Any]:
         return helpers.get_helpers()

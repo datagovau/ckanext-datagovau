@@ -2,9 +2,9 @@
 
 
 {% block breadcrumb_content %}
-<li><h3 class="nav-styled">{% link_for _('Organizations'), controller='organization', action='index' %}</h3></li>
-{% if c.group_dict['groups'] %}
-<li><h3 class="nav-styled">{% link_for h.group_name_to_title(c.group_dict['groups'][0]['name']), controller='organization', action='read', id=c.group_dict['groups'][0]['name'] %}</h3></li>
-{% endif %}
-<li class="active"><h3 class="nav-styled">{% link_for c.group_dict.display_name|truncate(35), controller='organization', action='read', id=c.group_dict.name %}</h3></li>
+    <li><h3 class="nav-styled">{% link_for _('Organizations'), named_route='organization.index' %}</h3></li>
+    {% if c.group_dict['groups'] %}
+	<li><h3 class="nav-styled">{% link_for h.group_name_to_title(c.group_dict['groups'][0]['name']), named_route='organization.read', id=c.group_dict['groups'][0]['name'] %}</h3></li>
+    {% endif %}
+    <li class="active"><h3 class="nav-styled">{% link_for c.group_dict.display_name|truncate(35), named_route='organization.read', id=c.group_dict.name %}</h3></li>
 {% endblock %}
