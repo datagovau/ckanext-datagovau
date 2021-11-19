@@ -63,8 +63,8 @@ log_handler = logging.StreamHandler()
 log_handler.setFormatter(
     logging.Formatter("%(asctime)s - [%(levelname)8s] - %(message)s")
 )
-logger.addHandler(log_handler)
-logger.setLevel(logging.DEBUG)
+# logger.addHandler(log_handler)
+# logger.setLevel(logging.DEBUG)
 
 logger.info = logger.warn = logger.debug = logger.error = print
 
@@ -129,7 +129,7 @@ def _get_geoserver_data():
     ]
     db_details_match = re.match(u''.join(regex), GEOSERVER_ADMIN_URL)
     geoserver_info = db_details_match.groupdict()
-    
+
     protocol = "https://"
 
     if geoserver_info.get('db_type') == 'sslgeoserver':
@@ -151,7 +151,7 @@ def _get_geoserver_data():
 
 
 def _get_db_settings():
-    
+
     regex = [
         u'^\\s*(?P<db_type>\\w*)', u'://', u'(?P<db_user>[^:]*)', u':?',
         u'(?P<db_pass>[^@]*)', u'@', u'(?P<db_host>[^/:]*)', u':?',
@@ -175,10 +175,10 @@ def _get_db_settings():
 
 
 def _make_request(command, url, **kwargs):
-    
+
     count = 0
     time_out = int(_get_request_timeout())
-    
+
     while count < time_out:
         try:
             r = command(url, **kwargs)
@@ -412,7 +412,7 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
                 "EPSG:4326": [
                     "MapInfo Generic Lat/Long",
                     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984"']
-                
+
             }
             for key, values in mapping.items():
                 if any([v in prj_txt for v in values]):
@@ -572,7 +572,7 @@ def _load_tab_resources(tab_res, table_name):
         '-nlt', 'PROMOTE_TO_MULTI',
         '-overwrite'
     ]
-    
+
     res = ogr2ogr.main(pargs)
     logger.debug(res)
     if not res:
@@ -1017,7 +1017,7 @@ def _perform_workspace_requests(datastore, workspace, table_name=None):
     if not r or not r.ok:
         _failure("Failed to create Geoserver store {}: {}".format(_base_url, r.content))
 
-    
+
 def _update_package_with_bbox(bbox, latlngbbox, ftdata,
                               dataset, native_crs, bgjson):
     def _clear_box(string):

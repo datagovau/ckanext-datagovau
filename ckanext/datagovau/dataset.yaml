@@ -26,6 +26,12 @@ dataset_fields:
   label: Keywords
   preset: tag_string_autocomplete
   form_placeholder: e.g., economy, mental health, government
+  class: ""
+  form_attrs:
+    data-module: "autocomplete"
+    data-module-tags: ""
+    data-module-source: "/api/2/util/tag/autocomplete?incomplete=?"
+    class: ""
 
 - field_name: license_id
   label: License
@@ -33,53 +39,22 @@ dataset_fields:
   form_snippet: license.html
   help_text: "License definitions and additional information can be found at http://opendefinition.org/"
 
-# "Unpublished" checkbox on the legacy New Dataset (Step 1) form
-# implemented as a ckanext-scheming "select" with True/False choices.
 - field_name: unpublished
   required: true
   label: Unpublished
   help_text: "Whether this dataset is unpublished; i.e., there are no public data files or links available."
-  preset: select
-  choices:
-    - value: "True"
-      label: True
-    - value: "False"
-      label: False
+  preset: dga_checkbox
 
 - field_name: owner_org
   label: Organization
   preset: dataset_organization
 
-#- field_name: url
-#  label: Source
-#  form_placeholder: http://example.com/dataset.json
-#  display_property: foaf:homepage
-#  display_snippet: link.html
-
-#- field_name: version
-#  label: Version
-#  validators: ignore_missing unicode package_version_validator
-#  form_placeholder: '1.0'
-
-# Commented out--if included this form snippet appears
-# twice--???
-# This is a known bug in ckanext-scheming and has an associated
-# open github issue:
-# https://github.com/ckan/ckanext-scheming/issues/222
-#- field_name: private
-#  label: Visibility
-#  preset: select
-#  choices:
-#    - value: true
-#      label: Private
-#    - value: false
-#      label: Public
-
 - field_name: spatial_coverage
   required: true
   label: Geospatial Coverage
   form_placeholder: The geographical area covered by the data; e.g., Canberra (GA1487)
-  help_text: 'Please input one of the following: 1) a point/polygon/bounding box; 2) an administrative boundary API; or 3) a location name and ID from the <a href="https://toolkit.data.gov.au/index.php?title=How_to_use_data.gov.au#Extent">National Gazetteer'
+  help_allow_html: true
+  help_text: 'Please input one of the following: 1) a point/polygon/bounding box; 2) an administrative boundary API; or 3) a location name and ID from the <a href="https://toolkit.data.gov.au/index.php?title=How_to_use_data.gov.au#Extent">National Gazetteer</a>'
 
 - field_name: temporal_coverage-from
   required: true
@@ -137,81 +112,19 @@ dataset_fields:
     - value: other
       label: Other (specify in dataset description/notes)
 
-# Disable this field as it is currently throwing an error.
-# On the production site it is implemented as a checkbox
-# and results in a boolean value.  This archetype is not
-# available ckanext-scheming and needs to be added for it
-# to work as it does on the legacy site.
+
 - field_name: contact_info
   required: true
   label: Whether the user contact details should be public as well as the organisation contact details.
-  preset: select
-  choices:
-    - value: "False"
-      label: No
-    - value: "True"
-      label: Yes
+  preset: dga_checkbox
 
 - field_name: group
   label: Add AGIFT Function/Theme
   required: true
+  form_include_blank_choice: true
   help_text: 'The Australian Government Interactive Functions Thesaurus (AGIFT) top-level function to which the resource relates.'
   preset: select
-  choices:
-    - value: ""
-      label: Please Select
-    - value: ada735db-98c9-42cb-8969-dc356ea4281e
-      label: Business Support and Regulation
-    - value: 7d67a152-2ac6-4f5f-b1e5-f6a2791067cc
-      label: Civic Infrastructure
-    - value: cf4060c4-f279-43a9-ab5c-4fbe7889b7ba
-      label: Communications
-    - value: bd09f325-4aea-4873-9204-66cdf638fc34
-      label: Community Services
-    - value: e95def3e-5061-44d0-ad1e-4cd355a3a897
-      label: Cultural Affairs
-    - value: 1923cbaf-000b-4e9a-bbe7-805fc206afd7
-      label: Defence
-    - value: 32f2e899-6198-410d-97e5-2c675d25ca78
-      label: Education and Training
-    - value: 83562e4e-2850-4063-8f4e-26352b903f22
-      label: Employment
-    - value: 707bd86f-3a3f-4810-93da-04e2b6d59a11
-      label: Environment
-    - value: 7170b37f-994d-4056-b5fc-5ada01041f5a
-      label: Finance Management
-    - value: 757e2041-51f1-45ce-871d-9b292d617601
-      label: Governance
-    - value: 104574bd-92b3-4866-97c0-373797dbca43
-      label: Health Care
-    - value: 1d8af52d-65fe-48ac-b256-a3e0eb691202
-      label: Immigration
-    - value: 980b8179-746b-4ff8-b7e6-f8f8ee3cc865
-      label: Indigenous Affairs
-    - value: 42a3cfce-63ca-4386-a52d-416d8aa24094
-      label: International Relations
-    - value: 0d2300ca-dda4-47da-b533-cddd8d0776f4
-      label: Justice Administration
-    - value: 68cb2a35-4bd0-4522-9265-5ddf37d6790b
-      label: Maritime Services
-    - value: c5cd3a09-753f-423d-97e6-300cec4dcdba
-      label: Natural Resources
-    - value: 4695b1f2-5fbd-4bfd-9d09-4db32fb84e89
-      label: Primary Industries
-    - value: 049a32a5-dac6-48c0-9add-e7847e85b7b3
-      label: Science
-    - value: 84e5ab19-4de6-4cbd-ba6b-457a4273c982
-      label: Security
-    - value: 79e3bdb0-071a-408d-b1d7-1dd20173b65b
-      label: Sport and Recreation
-    - value: d4bf189c-d5ce-48d1-98c1-7ff350342e44
-      label: Statistical Services
-    - value: b0ded30e-bf78-43d1-9fee-1d90818c30c3
-      label: Tourism
-    - value: 25780283-7622-4cbd-b254-efbcaa9a647d
-      label: Trade
-    - value: 29fe1336-5109-464d-b6f1-743b8dd772c6
-      label: Transport
+  choices_helper: dga_agift_themes
 
 - field_name: author
   label: Author
@@ -236,17 +149,12 @@ dataset_fields:
 - field_name: geospatial_topic
   label: Geospatial Topic
   required: false
-# This should be multiple_select but multiple selection
-# is not working in tests on firefox.  Just allows one
-# selection as far as I can tell.
-#  preset: multiple_select
-  preset: select
+  preset: multiple_select
   choices_helper: dga_geospatial_topics
-  # Note that this datastore_choices_resource value
-  # is merely a placeholder and is ignored by the
-  # agls helper that delivers the choices.
-  datastore_choices_resource: geospatial_topics
   help_text: 'The high level ISO1 9115 topics. Optional but recommended.'
+  form_select_attrs:
+    data-module: autocomplete
+    class: ""
 
 - field_name: data_model
   label: Data Models
@@ -282,11 +190,10 @@ resource_fields:
   label: Format
   preset: resource_format_autocomplete
 
-# Zip Extract is brought in by a checkbox.  Not yet able
-# to figure out how to implement this using ckanext-scheming.
-#- field_name: zip_extract
-#  label: Extract Resources from Zip Files
-#  help_text: Whether any resources inside zip files should be extracted into separate resources.
+- field_name: zip_extract
+  label: Extract Resources from Zip Files
+  help_text: Whether any resources inside zip files should be extracted into separate resources.
+  preset: dga_checkbox
 
 - field_name: last_modified
   label: Date Last Modified

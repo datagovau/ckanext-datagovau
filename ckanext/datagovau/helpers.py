@@ -120,3 +120,11 @@ def fields_of_research(field):
         {"value": t, "label": t}
         for t in agls_utils.fields_of_research()
     ]
+
+@helper
+def agift_themes(field):
+    groups = tk.get_action("group_list")({}, {"all_fields": True})
+    return [
+        {"value": g["id"], "label": g["display_name"]}
+        for g in groups
+    ]
