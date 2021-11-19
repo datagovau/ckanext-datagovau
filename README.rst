@@ -23,3 +23,9 @@ or copy ``ckanext/datagovau/theme/public/licenses.json`` to the same folder as y
 and set ``licenses_group_url = file://%(here)s/licenses.json``
 
 
+
+... ALTER TABLE group_revision ADD CONSTRAINT group_revision_continuity_id_fkey FOREIGN KEY (continuity_id) REFERENCES "group" (id);
+
+
+... ckan agls vocabulary  create geospatial_topics
+... ckan agls vocabulary  create fields_of_research

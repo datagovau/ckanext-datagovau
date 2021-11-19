@@ -1,6 +1,0 @@
-{% ckan_extends %}
-{% block page_primary_action %}<a name="main_content" id="main_content" tabindex="-1"></a>{{ super() }}{% endblock %}
-
-{% block custom_breadcrumb_content %}
-  <li class="active"><a href="{{ h.url_for('user_dashboard_groups') }}">{{ _('My Groups') }}</a></li>
-{% endblock %}

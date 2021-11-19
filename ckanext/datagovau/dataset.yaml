@@ -45,7 +45,7 @@ dataset_fields:
       label: True
     - value: "False"
       label: False
-  
+
 - field_name: owner_org
   label: Organization
   preset: dataset_organization
@@ -80,7 +80,7 @@ dataset_fields:
   label: Geospatial Coverage
   form_placeholder: The geographical area covered by the data; e.g., Canberra (GA1487)
   help_text: 'Please input one of the following: 1) a point/polygon/bounding box; 2) an administrative boundary API; or 3) a location name and ID from the <a href="https://toolkit.data.gov.au/index.php?title=How_to_use_data.gov.au#Extent">National Gazetteer'
-  
+
 - field_name: temporal_coverage-from
   required: true
   label: Temporal Coverage From
@@ -161,7 +161,7 @@ dataset_fields:
     - value: ""
       label: Please Select
     - value: ada735db-98c9-42cb-8969-dc356ea4281e
-      label: Business Support and Regulation       
+      label: Business Support and Regulation
     - value: 7d67a152-2ac6-4f5f-b1e5-f6a2791067cc
       label: Civic Infrastructure
     - value: cf4060c4-f279-43a9-ab5c-4fbe7889b7ba
@@ -212,7 +212,7 @@ dataset_fields:
       label: Trade
     - value: 29fe1336-5109-464d-b6f1-743b8dd772c6
       label: Transport
-      
+
 - field_name: author
   label: Author
   required: true
@@ -232,7 +232,7 @@ dataset_fields:
   label: Jurisdiction
   required: true
   form_placeholder: Commonwealth of Australia
-  
+
 - field_name: geospatial_topic
   label: Geospatial Topic
   required: false
@@ -241,7 +241,7 @@ dataset_fields:
 # selection as far as I can tell.
 #  preset: multiple_select
   preset: select
-  choices_helper: agls_geospatial_topics
+  choices_helper: dga_geospatial_topics
   # Note that this datastore_choices_resource value
   # is merely a placeholder and is ignored by the
   # agls helper that delivers the choices.
@@ -258,8 +258,8 @@ dataset_fields:
   label: Fields of Research (Optional)
   required: false
   preset: select
-  choices_helper: agls_fields_of_research
-  datastore_choices_resource: fields_of_resarch 
+  choices_helper: dga_fields_of_research
+  datastore_choices_resource: fields_of_resarch
   datastore_choices_limit: 2000
   help_text: 'The Australian and New Zealand Standard Research Classification (ANZSRC; 2008) field or fields of research relevant to the dataset.'
 
@@ -293,4 +293,3 @@ resource_fields:
   required: true
   preset: date
   help_text: "When was the file uploaded was last modified? If left blank, assumed to be the date of last modification of resource information on this site."
-

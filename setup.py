@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.1"
+version = "1.0.0a"
 # Keep in case we still need pylons...Just use the line below in place
 # of the install_requires argument in the call to setup().
 # install_requires=['requests', 'feedparser', 'pylons', 'python-dateutil'],
@@ -19,14 +19,9 @@ setup(
     namespace_packages=["ckanext", "ckanext.datagovau"],
     include_package_data=True,
     zip_safe=False,
-    install_requires=["requests", "feedparser", "python-dateutil"],
+    install_requires=[],
     entry_points="""
         [ckan.plugins]
 		datagovau = ckanext.datagovau.plugin:DataGovAuPlugin
-		datagovau_hierarchy = ckanext.datagovau.plugin:HierarchyForm
-
-		[paste.paster_command]
-		cleanupdatastoregeoserver = ckanext.datagovau.commands:ReconcileGeoserverAndDatastore
-        spatial-ingestor = ckanext.datagovau.commands:SpatialIngestor
 	""",
 )

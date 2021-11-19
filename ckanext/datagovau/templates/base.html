@@ -4,6 +4,13 @@
       <meta name="google-site-verification" content="B8scmW2_LMm4IW_ogXK9lojznO57GBpYlWrFjfGz3X8" />
 <meta name="twitter:site" content="@datagovau" />
 <meta name="og:site_name" content="data.gov.au" />
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KPSGPGD');</script>
+      <!-- End Google Tag Manager -->
     {% endblock %}
 
     {% block styles %}
@@ -13,7 +20,7 @@
 
     {% block scripts %}
     {{ super() }}
+
 <script src="https://cdn.ravenjs.com/3.26.2/raven.min.js" crossorigin="anonymous"></script>
-<script>Raven.config('https://9a2ad27f1c3543bdb6e364d258128a3e@sentry.cloud.gov.au/12').install()</script>
     {% asset 'datagovau/js' %}
     {% endblock %}
