@@ -10,6 +10,7 @@ remote-harvest = https://github.com/ckan/ckanext-harvest.git branch master
 # remote-dga-stats = https://github.com/DataShades/ckanext-dsa-stats.git branch py3
 remote-dcat = https://github.com/ckan/ckanext-dcat.git branch master
 remote-officedocs = https://github.com/DataShades/ckanext-officedocs.git branch py3
+# remote-metaexport = https://github.com/DataShades/ckanext-metaexport.git branch py3
 remote-pdfview = https://github.com/ckan/ckanext-pdfview.git branch master
 remote-zippreview = https://github.com/AusDTO/dga-ckanext-zippreview.git branch Develop
 remote-spatial = https://github.com/ckan/ckanext-spatial.git branch master
