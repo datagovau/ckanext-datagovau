@@ -36,6 +36,7 @@ import ckan.model as model
 import lxml.etree as et
 import psycopg2
 import requests
+from osgeo import osr
 
 from ckan.plugins import toolkit
 from ckan import model
@@ -358,7 +359,6 @@ def _set_geoserver_ownership(data_dir):
 
 
 def _load_esri_shapefiles(shp_res, table_name, tempdir):
-    from osgeo import osr
 
     logger.debug('shaptialingestor::_load_esri_shapefiles():: shp_res = ', shp_res)
     logger.debug(

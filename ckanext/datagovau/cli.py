@@ -14,10 +14,6 @@ from ckan import model
 
 from ckantoolkit import config
 
-from ckanext.datagovau.spatialingestor import (do_ingesting,
-                                               check_if_may_skip,
-                                               clean_assets,
-                                               _get_geoserver_data_dir)
 
 log = logging.getLogger('ckanext_datagovau')
 
@@ -49,22 +45,22 @@ def perform_ingest(scope):
 
         where scope is one of: 'all', 'updated', 'updated-orgs', or <dataset-id>.
     """
-
+    from ckanext.datagovau.spatialingestor import do_ingesting
     if scope in ('all', 'updated', 'updated-orgs'):
         force = True if scope == 'all' else False
         if scope == 'updated-orgs':
-            pkg_ids = [ r[0] for r in model.Session.query(model.Package.id).filter_by(state='active').filter( 
+            pkg_ids = [ r[0] for r in model.Session.query(model.Package.id).filter_by(state='active').filter(
                 model.Package.owner_org.in_(['3965c5cd-d88f-4735-92db-af28d3ad9155', #nntt
                                             'a56f8067-b250-4c32-9609-f2191dc88a3a' #geelong
                                             ])).all()]
         else:
             pkg_ids = [ r[0] for r in model.Session.query(model.Package.id).filter_by(state='active').all()]
-            
+
             total = len(pkg_ids)
-            
+
             sys.stdout.write(" Found {0} Package IDs".format(total))
             sys.stdout.write("\nIngesting Package ID 0/0")
-            
+
         for counter, pkg_id in enumerate(pkg_ids):
             sys.stdout.write(
                 "\rIngesting Package ID {0}/{1} ({2})\r".format(counter + 1, total, pkg_id))
@@ -87,17 +83,18 @@ def perform_purge(scope):
 
         where scope is one of: 'all' or 'erroneous'.
     """
+    from ckanext.datagovau.spatialingestor import check_if_may_skip, clean_assets
     if scope in ['all', 'erroneous']:
         pkg_ids = [
             r[0]
             for r in model.Session.query(model.Package.id).all()
             ]
-        
+
         total = len(pkg_ids)
-        
+
         sys.stdout.write(" Found {0} Package IDs".format(total))
         sys.stdout.write("\nPurging Package ID 0/0")
-        
+
         for counter, pkg_id in enumerate(pkg_ids):
             sys.stdout.write(
                 "\rPurging Package ID {0}/{1}".format(counter + 1, total))
@@ -166,4 +163,3 @@ def perform_drop_user(username):
 #    Placeholder for now.
 #    """
 #    pass
-
