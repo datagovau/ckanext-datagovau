@@ -1,4 +1,4 @@
-gdal
+# gdal
 requests
 feedparser
 python-dateutil
@@ -6,3 +6,4 @@ python-dateutil
 ckanext-scheming~=2.1.0
 ckanext-googleanalytics[requirements]~=2.0
 ckanext-toolbelt~=0.0.7
+ckanext-hierarchy~=1.0.0

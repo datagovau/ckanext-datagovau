@@ -41,7 +41,6 @@ from ckan.plugins import toolkit
 from ckan import model
 from ckan.plugins.toolkit import get_action
 from dateutil import parser
-from osgeo import osr
 from ckantoolkit import config
 
 from ckanext.datagovau import ogr2ogr, gdal_retile
@@ -359,6 +358,7 @@ def _set_geoserver_ownership(data_dir):
 
 
 def _load_esri_shapefiles(shp_res, table_name, tempdir):
+    from osgeo import osr
 
     logger.debug('shaptialingestor::_load_esri_shapefiles():: shp_res = ', shp_res)
     logger.debug(

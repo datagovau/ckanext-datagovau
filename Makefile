@@ -2,11 +2,10 @@
 #                             requirements: start                             #
 ###############################################################################
 ckan_tag = ckan-2.9.4
-ext_list = xloader dcat officedocs pdfview zippreview spatial cesiumpreview harvest hierarchy agls
+ext_list = xloader dcat officedocs pdfview zippreview spatial cesiumpreview harvest agls
 
 
 remote-xloader = https://github.com/ckan/ckanext-xloader.git branch master
-remote-hierarchy = https://github.com/ckan/ckanext-hierarchy.git branch master
 remote-harvest = https://github.com/ckan/ckanext-harvest.git branch master
 # remote-dga-stats = https://github.com/DataShades/ckanext-dsa-stats.git branch py3
 remote-dcat = https://github.com/ckan/ckanext-dcat.git branch master

@@ -1,0 +1,72 @@
+scheming_version: 2
+organization_type: organization
+about_url: http://github.com/ckan/ckanext-scheming
+fields:
+  - field_name: title
+    label: Name
+    validators: ignore_missing unicode
+    form_snippet: large_text.html
+    form_attrs:
+      data-module: slug-preview-target
+    form_placeholder: My Organization
+
+  - field_name: name
+    label: URL
+    validators: not_empty unicode name_validator group_name_validator
+    form_snippet: slug.html
+    form_placeholder: my-organization
+
+  - field_name: notes
+    label: Description
+    form_snippet: markdown.html
+    form_placeholder: A little information about my organization...
+
+  - field_name: url
+    label: Image URL
+    form_placeholder: http://example.com/my-image.jpg
+
+  - field_name: jurisdiction
+    label: Jurisdiction
+    required: true
+    preset: select
+    choices:
+      - value: Commonwealth of Australia
+        label: Commonwealth of Australia
+      - value: Australian Capital Territory Government
+        label: Australian Capital Territory Government
+      - value: South Australian Government
+        label: South Australian Government
+      - value: New South Wales Government
+        label: New South Wales Government
+      - value: Victoria Government
+        label: Victoria Government
+      - value: Northern Territory Government
+        label: Northern Territory Government
+      - value: Queensland Government
+        label: Queensland Government
+      - value: Western Australian Government
+        label: Western Australian Government
+      - value: Tasmanian Government
+        label: Tasmanian Government
+      - value: Local Government
+        label: Local Government
+
+  - field_name: ospatial_coverage
+    label: Geospatial Coverage
+    form_placeholder: Geospatial coverage of organisation jurisdiction as a gazetteer URL
+    required: true
+
+  - field_name: website
+    label: Website
+    form_placeholder: Website/homepage of organisation
+    required: true
+
+  - field_name: email
+    label: Email
+    form_placeholder: 'Email contact for general open data enquiries'
+    required: true
+
+  - field_name: telephone
+    label: Telephone
+    form_placeholder: 'Telephone contact for general open data enquiries'
+    required: true
