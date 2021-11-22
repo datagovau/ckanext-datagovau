@@ -51,7 +51,7 @@ fields:
       - value: Local Government
         label: Local Government
 
-  - field_name: ospatial_coverage
+  - field_name: spatial_coverage
     label: Geospatial Coverage
     form_placeholder: Geospatial coverage of organisation jurisdiction as a gazetteer URL
     required: true
