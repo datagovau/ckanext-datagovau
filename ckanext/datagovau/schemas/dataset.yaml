@@ -130,7 +130,7 @@ dataset_fields:
 
 - field_name: group
   label: Add AGIFT Function/Theme
-  required: true
+  # required: true
   form_include_blank_choice: true
   help_text: 'The Australian Government Interactive Functions Thesaurus (AGIFT) top-level function to which the resource relates.'
   preset: select

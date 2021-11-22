@@ -1,4 +1,4 @@
-{% set stats = h.get_ddg_site_statistics() %}
+{% set stats = h.dga_get_ddg_site_statistics() %}
 
 <div class="box stats">
     <div class="inner">
@@ -38,7 +38,7 @@
         News</h2><i class='ckan-icon ckan-icon-feed'></i><a href='https://blog.data.gov.au/blogs/rss.xml'>&nbsp;Subscribe
         to the blog </a></div>
 
-    {% for entry in h.blogfeed().entries %}
+    {% for entry in h.dga_blogfeed().entries %}
     <div class='module module-shallow module-narrow module-dark info box'><h3><a
             href='{{entry.link}}'>{{entry.title}}</a></h3>
         <font color='black'>Posted on {{entry.date}}</font></div>

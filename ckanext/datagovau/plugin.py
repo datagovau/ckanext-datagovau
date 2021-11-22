@@ -161,12 +161,11 @@ class DataGovAuPlugin(p.SingletonPlugin,
     def after_search(self, search_results, data_dict):
         if 'unpublished' in search_results['facets']:
             search_results['facets']['unpublished']['Published datasets'] = search_results['count'] - \
-                                                                            search_results['facets']['unpublished'].get(
-                                                                                'True', 0)
-            if 'True' in search_results['facets']['unpublished']:
+                                                                            search_results['facets']['unpublished'].get("true", 0)
+            if 'true' in search_results['facets']['unpublished']:
                 search_results['facets']['unpublished']['Unpublished datasets'] = \
-                    search_results['facets']['unpublished']['True']
-                del search_results['facets']['unpublished']['True']
+                    search_results['facets']['unpublished']['true']
+                del search_results['facets']['unpublished']['true']
             restructured_facet = {
                 'title': 'unpublished',
                 'items': []
