@@ -63,7 +63,7 @@ dataset_fields:
     data-module-source: /api/2/util/gazetteer/autocomplete?q=?
     class: ""
 
-- field_name: temporal_coverage-from
+- field_name: temporal_coverage_from
   required: true
   label: Temporal Coverage From
   form_placeholder: The date at which timespan the dataset relates to  starts e.g., 2014-01-01
@@ -71,8 +71,8 @@ dataset_fields:
   form_snippet: date.html
   validators: scheming_required isodate
 
-- field_name:  temporal_coverage-to
-  required: true
+- field_name:  temporal_coverage_to
+  required: false
   label: Temporal Coverage To
   form_placeholder: The date at which timespan the dataset relates to ends e.g., 2014-12-31
   help_text: The date at which timespan the dataset relates to ends e.g., 2014-12-31
