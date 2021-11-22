@@ -6,9 +6,9 @@ fields:
     label: Name
     validators: ignore_missing unicode
     form_snippet: large_text.html
+    form_placeholder: My Organization
     form_attrs:
       data-module: slug-preview-target
-    form_placeholder: My Organization
 
   - field_name: name
     label: URL
@@ -24,6 +24,10 @@ fields:
   - field_name: url
     label: Image URL
     form_placeholder: http://example.com/my-image.jpg
+
+  - field_name: __
+    label: Parent
+    form_snippet: org_hierarchy.html
 
   - field_name: jurisdiction
     label: Jurisdiction
