@@ -183,6 +183,7 @@ class DataGovAuPlugin(p.SingletonPlugin,
     def update_config(self, config):
         toolkit.add_template_directory(config, 'templates')
         toolkit.add_resource("assets", "datagovau")
+        toolkit.add_public_directory("assets")
 
 
     def get_helpers(self) -> dict[str, Any]:

@@ -3,6 +3,7 @@ dga-css:
   output: DGA/%(version)s-dga.css
   contents:
     - dga.css
+
 dga-js:
   filters: rjsmin
   output: DGA/%(version)s-datagovau.js
