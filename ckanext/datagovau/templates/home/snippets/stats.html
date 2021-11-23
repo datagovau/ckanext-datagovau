@@ -33,14 +33,19 @@
     </div>
 </div>
 
-<div id="feeddiv">
-    <div class='module module-shallow module-narrow module-dark info box' style='color:black'><h2>Latest data.gov.au
-        News</h2><i class='ckan-icon ckan-icon-feed'></i><a href='https://blog.data.gov.au/blogs/rss.xml'>&nbsp;Subscribe
-        to the blog </a></div>
+<div class="box feed-latest-news">
+    <div class="inner">
+	<h2 class="page-heading">{{ _("Latest data.gov.au News") }}</h2>
+	<p>
+	    <i class='ckan-icon ckan-icon-feed'></i><a href='https://blog.data.gov.au/blogs/rss.xml'>&nbsp;Subscribe to the blog</a></div>
+	</p>
 
-    {% for entry in h.dga_blogfeed().entries %}
-    <div class='module module-shallow module-narrow module-dark info box'><h3><a
-            href='{{entry.link}}'>{{entry.title}}</a></h3>
-        <font color='black'>Posted on {{entry.date}}</font></div>
-    {% endfor %}
+	{% for entry in h.dga_blogfeed().entries %}
+	    <div class='module module-shallow module-narrow module-dark info box'>
+		<h3>
+		    <a href='{{entry.link}}'>{{entry.title}}</a>
+		</h3>
+		<span color='black'>Posted on {{entry.date}}</span>
+	    </div>
+	{% endfor %}
 </div>

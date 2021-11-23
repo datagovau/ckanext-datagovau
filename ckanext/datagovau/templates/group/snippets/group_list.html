@@ -1,0 +1,9 @@
+{% ckan_extends %}
+
+{% block group_list %}
+    <ul class="media-grid">
+	{% block group_list_inner %}
+	    {{ super() }}
+	{% endblock %}
+    </ul>
+{% endblock %}

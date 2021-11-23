@@ -3,7 +3,7 @@
 {% block secondary_content %}
   {{ super() }}
 
-  {% set dataset_extent = c.pkg_dict['spatial'] or h.get_pkg_dict_extra(c.pkg_dict, 'spatial', '') %}
+  {% set dataset_extent = pkg['spatial'] or h.get_pkg_dict_extra(pkg, 'spatial', '') %}
   {% if dataset_extent %}
     {% snippet "spatial/snippets/dataset_map_sidebar.html", extent=dataset_extent %}
   {% endif %}

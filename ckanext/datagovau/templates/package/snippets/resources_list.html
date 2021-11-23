@@ -9,7 +9,7 @@ Example:
 {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
 
 #}
-{% if pkg.get('unpublished','') == 'True' %}
+{% if pkg.unpublished %}
     <div class="well">
 	This dataset is not publicly available. It is listed on data.gov.au as an <i>unpublished dataset</i> to improve discovery.
 	Interested data users should contact the data custodian on the details below to discuss terms of access.
@@ -21,18 +21,19 @@ Example:
 	    {% if resources %}
 		<ul class="{% block resource_list_class %}resource-list{% endblock %}">
 		    {% block resource_list_inner %}
+			{% set can_edit = h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive %}
 			{% for resource in resources %}
-			    {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
+			    {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource, can_edit=can_edit, is_activity_archive=is_activity_archive %}
 			{% endfor %}
 		    {% endblock %}
 		</ul>
 	    {% else %}
-		{% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
-		    {% trans url=h.url_for('resource.new', id=pkg.name) %}
+		{% if h.check_access('resource_create', {'package_id': pkg['id']}) and not is_activity_archive %}
+		    {% trans url=h.url_for(pkg.type ~ '_resource.new', id=pkg.name) %}
 		    <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
-    {% endtrans %}
+          {% endtrans %}
 		{% else %}
-    <p class="empty">{{ _('This dataset has no data') }}</p>
+          <p class="empty">{{ _('This dataset has no data') }}</p>
 		{% endif %}
 	    {% endif %}
 	{% endblock %}

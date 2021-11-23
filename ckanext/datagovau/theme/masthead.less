@@ -1,0 +1,39 @@
+.account-masthead {
+    background: @dga-account-bg;
+    .account {
+	li {
+	    a {
+		&:not(.image):after {
+		    content: attr(title);
+		}
+	    }
+	    &.notifications {
+		.badge {
+		    display: none;
+		}
+	    }
+	}
+
+    }
+}
+
+.masthead {
+    &.navbar {
+	background-color: @dga-header-bg;
+    }
+    .nav li {
+	a, a:focus, a:active{
+	    color: black;
+	    &:hover {
+		color: #fff;
+	    }
+	}
+    }
+
+    .logo {
+	img {
+	    max-height: 100%;
+	}
+    }
+
+}

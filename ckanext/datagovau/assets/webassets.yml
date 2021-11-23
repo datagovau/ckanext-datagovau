@@ -1,17 +1,13 @@
-css:
-  # filters: cssrewrite
-  output: DGA/datagovau.css
-  contents: datagovau.css
-datagovau:
-  # filters: cssrewrite
-  output: DGA/datagovau.js
-  contents: datagovau.js
-jquery:
-  contents: https://code.jquery.com/jquery-3.6.0.min.js
-jquery-ui:
-  contents: https://code.jquery.com/ui/1.12.1/jquery-ui.min.js
-js:
-  contents: 
-    - jquery
-    - jquery-ui
-    - datagovau
+dga-css:
+  filters: cssrewrite
+  output: DGA/%(version)s-dga.css
+  contents:
+    - dga.css
+dga-js:
+  filters: rjsmin
+  output: DGA/%(version)s-datagovau.js
+  extras:
+    preload:
+      - base/main
+  contents:
+    - datagovau.js

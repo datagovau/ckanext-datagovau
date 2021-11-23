@@ -1,4 +1,5 @@
 {% ckan_extends %}
+
 {% block meta %}
     {{ super() }}
     <meta name="google-site-verification" content="B8scmW2_LMm4IW_ogXK9lojznO57GBpYlWrFjfGz3X8" />
@@ -9,12 +10,11 @@
 
 {% block styles %}
     {{ super() }}
-    {% asset 'datagovau/css' %}
+    {% asset 'datagovau/dga-css' %}
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-
     <script src="https://cdn.ravenjs.com/3.26.2/raven.min.js" crossorigin="anonymous"></script>
-    {% asset 'datagovau/js' %}
+    {% asset 'datagovau/dga-js' %}
 {% endblock %}

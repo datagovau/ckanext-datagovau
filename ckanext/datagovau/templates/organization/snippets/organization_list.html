@@ -5,11 +5,11 @@ organizations - A list of organizations.
 
 Example:
 
-    {% snippet "organization/snippets/organization_list.html" %}
+{% snippet "organization/snippets/organization_list.html" %}
 
 #}
 <ul class="media-grid organisation">
-  {% for organization in organizations %}
-    {% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index %}
-  {% endfor %}
+    {% for organization in organizations %}
+	{% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
+    {% endfor %}
 </ul>

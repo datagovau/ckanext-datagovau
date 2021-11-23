@@ -1,0 +1,122 @@
+.context-info {
+    .info .dl .dd {
+	margin-top: 3px;
+	margin-left: 0;
+    }
+    .nums {
+	.dl {
+	    float: left;
+	    width: 50%;
+	    margin: 5px 0 0 0;
+	    color: #444444;
+	    .dt {
+		display: block;
+		font-size: 13px;
+		font-weight: 300;
+	    }
+	    .dd {
+		display: block;
+		font-size: 30px;
+		font-weight: 700;
+		line-height: 36px;
+		margin-left: 0;
+		.smallest {
+		    font-size: 13px;
+		}
+		.smaller {
+		    font-size: 16px;
+		}
+		.small {
+		    font-size: 21px;
+		}
+
+	    }
+	}
+    }
+}
+
+p>a {
+    text-decoration: underline;
+}
+.module .pagination li span {
+    border-top: none;
+    border-bottom: none;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+/*# http://a11yproject.com/posts/how-to-hide-content/ */
+
+.visually-hidden {
+    /*#http://developer.yahoo.com/blogs/ydn/posts/2012/10/clip-your-hidden-content-for-better-accessibility/*/
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px);
+    /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden;
+    body:hover  & {
+	a, input, button {
+	    display: none !important;
+	}
+    }
+
+}
+.dataset-resources li a {background-color: #555;}
+.label[data-format=html], .label[data-format*=html] {background-color: #4666ce;}
+.label[data-format=json], .label[data-format*=json] {background-color: #960000;}
+.label[data-format=xml], .label[data-format*=xml] {background-color: #304d0f;}
+.label[data-format=text], .label[data-format*=text] {background-color: #5770b3;}
+.label[data-format=csv], .label[data-format*=csv] {background-color: #b35722;}
+.label[data-format=xls], .label[data-format*=xls] {background-color: #14820c;}
+.label[data-format=api], .label[data-format*=api] {background-color: #c714bb;}
+.hidden-table, .table-view .module-plot-canvas, .table-view span.plot, span.table {
+    display: none;
+}
+.table-view span.table, span.plot {
+    display: inline;
+}
+.table-view .hidden-table {
+    display: table;
+}
+.table-plot-switch {
+    margin: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+li .truncator-more {
+    display: none;
+}
+li:hover .truncator-more {
+    display: inline;
+}
+#details:not(.in) {
+    visibility: hidden;
+}
+.homepage {
+    background-color: #E8E8E8;
+}
+.feed-latest-news {
+    margin-top: 20px;
+}
+
+.attribution .ckan-footer-logo {
+    overflow: hidden;
+}
+h3.nav-styled {
+    display: inline;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+.search-form .search-input.search-giant button {
+    margin-top: -15px;
+}
+
+
+.page-header{
+    margin-bottom: -10px;
+}

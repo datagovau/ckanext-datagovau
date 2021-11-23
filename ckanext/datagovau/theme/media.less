@@ -1,0 +1,36 @@
+.media-grid{
+    padding: 15px;
+    padding-bottom: 0px;
+    .media-item {
+	width: 100%;
+	margin: 0px;
+	.media-image {
+	    float: right;
+	}
+    }
+
+    &.organisation {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	&:before, &:after {
+	    content: none;
+	}
+	.media-item {
+	    margin-bottom: 15px;
+	    text-align: center;
+	    .media-image {
+		float: none;
+		margin: auto;
+	    }
+
+	}
+	@media (min-width: @screen-sm-min) {
+	    flex-direction: row;
+	    .media-item {
+		width: 49%;
+	    }
+	}
+    }
+}

@@ -11,3 +11,5 @@ distribute-*
 .idea/
 !/admin/config/nginx/ckan_prod.conf
 deps.mk
+
+node_modules/
