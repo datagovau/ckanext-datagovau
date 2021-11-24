@@ -43,7 +43,6 @@ dataset_fields:
   display_property: "dc:rights"
 
 - field_name: unpublished
-  required: true
   label: Unpublished
   help_text: "Whether this dataset is unpublished; i.e., there are no public data files or links available."
   preset: dga_checkbox
@@ -62,6 +61,11 @@ dataset_fields:
     data-module: autocomplete
     data-module-source: /api/2/util/gazetteer/autocomplete?q=?
     class: ""
+
+- field_name: spatial
+  form_snippet: null
+  display_snippet: null
+  validators: dga_spatial_from_coverage
 
 - field_name: temporal_coverage_from
   required: true
@@ -123,7 +127,6 @@ dataset_fields:
 
 
 - field_name: contact_info
-  required: true
   label: Expose User Contact Information
   help_text: Whether the user contact details should be public as well as the organisation contact details.
   preset: dga_checkbox
@@ -197,6 +200,12 @@ resource_fields:
 - field_name: format
   label: Format
   preset: resource_format_autocomplete
+  help_text: This will be guessed automatically. Leave blank if you wish
+  form_attrs:
+    data-module: autocomplete
+    data-module-source: "/api/2/util/resource/format_autocomplete?incomplete=?"
+    class: ""
+
 
 - field_name: zip_extract
   label: Extract Resources from Zip Files
@@ -207,4 +216,5 @@ resource_fields:
   label: Date Last Modified
   required: true
   preset: date
+  output_validators: isodate convert_to_json_if_date
   help_text: "When was the file uploaded was last modified? If left blank, assumed to be the date of last modification of resource information on this site."

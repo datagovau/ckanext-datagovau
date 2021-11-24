@@ -6,9 +6,10 @@ dga-css:
 
 dga-js:
   filters: rjsmin
-  output: DGA/%(version)s-datagovau.js
+  output: DGA/%(version)s-dga.js
   extras:
     preload:
       - base/main
   contents:
-    - datagovau.js
+    - dga-setup.js
+    - dga-breadcrumbs.js

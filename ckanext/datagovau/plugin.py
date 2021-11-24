@@ -6,13 +6,12 @@ import ckan.plugins.toolkit as toolkit
 
 import ckanext.datagovau.helpers as helpers
 
-# Get new, click-based commands
-from ckanext.datagovau.cli import get_commands
-
 import ckan.lib.dictization.model_save as model_save
 import ckan.logic.auth.create as create
 import ckan.authz as authz
 import ckan.logic as logic
+
+from . import validators, cli
 
 def datagovau_check_group_auth(context, data_dict):
     if not data_dict:
@@ -134,12 +133,15 @@ class DataGovAuPlugin(p.SingletonPlugin,
     p.implements(p.ITemplateHelpers, inherit=False)
     p.implements(p.IPackageController, inherit=True)
     p.implements(p.IFacets, inherit=True)
-
-    # IClick commands.
+    p.implements(p.IValidators)
     p.implements(p.IClick)
 
+    # IClick
+
     def get_commands(self):
-        return get_commands()
+        return cli.get_commands()
+
+    # IFacets
 
     def dataset_facets(self, facets, package_type):
         if 'jurisdiction' in facets:
@@ -147,6 +149,8 @@ class DataGovAuPlugin(p.SingletonPlugin,
         if 'unpublished' in facets:
             facets['unpublished'] = 'Published Status'
         return facets
+
+    # IPackageController
 
     def before_search(self, search_params):
         """
@@ -180,11 +184,20 @@ class DataGovAuPlugin(p.SingletonPlugin,
 
         return search_results
 
+    # IConfigurer
+
     def update_config(self, config):
         toolkit.add_template_directory(config, 'templates')
         toolkit.add_resource("assets", "datagovau")
         toolkit.add_public_directory(config, "assets")
 
 
+    # ITemplateHelpers
+
     def get_helpers(self) -> dict[str, Any]:
         return helpers.get_helpers()
+
+    # IValidators
+
+    def get_validators(self):
+        return validators.get_validators()

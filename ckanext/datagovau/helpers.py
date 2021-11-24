@@ -17,23 +17,25 @@ cache = Cache(duration=600)
 
 
 @helper
-@cache
+# @cache
 def get_ddg_site_statistics() -> types.DdgStatistics:
     package_search = tk.get_action("package_search")
     total = package_search({}, {"rows": 0})["count"]
-    unpublished = package_search(
-        {}, {"facet.field": ["unpublished"], "rows": 0}
-    )
+    unpublished = package_search({}, {"fq": "unpublished:true", "rows": 0})[
+        "count"
+    ]
     open_count = package_search({}, {"fq": "isopen:true", "rows": 0})["count"]
-    api_count = tk.get_action("resource_search")(
-        {}, {"query": ["format:wms"]}
-    )["count"] + len(datastore_backend.get_all_resources_ids_in_datastore())
+    api_count = package_search(
+        {},
+        {
+            "fq": "(res_extras_datastore_active:true OR res_format:WMS)",
+            "rows": 0,
+        },
+    )["count"]
 
     return types.DdgStatistics(
         dataset_count=total,
-        unpub_data_count=unpublished["facets"]["unpublished"].get(
-            "Unpublished datasets", 0
-        ),
+        unpub_data_count=unpublished,
         open_count=open_count,
         api_count=api_count,
     )
