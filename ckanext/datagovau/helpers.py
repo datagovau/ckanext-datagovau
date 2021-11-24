@@ -20,15 +20,18 @@ cache = Cache(duration=600)
 # @cache
 def get_ddg_site_statistics() -> types.DdgStatistics:
     package_search = tk.get_action("package_search")
-    total = package_search({}, {"rows": 0})["count"]
-    unpublished = package_search({}, {"fq": "unpublished:true", "rows": 0})[
-        "count"
-    ]
-    open_count = package_search({}, {"fq": "isopen:true", "rows": 0})["count"]
+    total = package_search({}, {"include_private": True, "rows": 0})["count"]
+    unpublished = package_search(
+        {}, {"fq": "unpublished:true", "include_private": True, "rows": 0}
+    )["count"]
+    open_count = package_search(
+        {}, {"fq": "isopen:true", "include_private": True, "rows": 0}
+    )["count"]
     api_count = package_search(
         {},
         {
             "fq": "(res_extras_datastore_active:true OR res_format:WMS)",
+            "include_private": True,
             "rows": 0,
         },
     )["count"]
