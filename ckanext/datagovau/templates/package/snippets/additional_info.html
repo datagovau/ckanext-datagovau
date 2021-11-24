@@ -7,9 +7,14 @@
 	    <th scope="row" class="dataset-label">Fields of Research</th>
 	    <td class="dataset-details">
 		<ul class="">
-		    {% for field in pkg.field_of_research %}
-			<li>{{ field }}</li>
-		    {% endfor %}
+		    {% if pkg.field_of_research is string %}
+			<li>{{ pkg.field_of_research }}</li>
+		    {% else %}
+
+			{% for field in pkg.field_of_research %}
+			    <li>{{ field }}</li>
+			{% endfor %}
+		    {% endif %}
 		</ul>
 	    </td>
         </tr>
@@ -23,9 +28,14 @@
             <th scope="row" class="dataset-label">Geospatial Topics</th>
             <td class="dataset-details">
 		<ul class="">
-		    {% for field in pkg.geospatial_topic %}
-			<li>{{ field }}</li>
-		    {% endfor %}
+		    {% if pkg.geospatial_topic is string %}
+			<li>{{ pkg.geospatial_topic }}</li>
+		    {% else %}
+			{% for field in pkg.geospatial_topic %}
+			    <li>{{ field }}</li>
+			{% endfor %}
+		    {% endif %}
+
 		</ul>
 	    </td>
         </tr>
