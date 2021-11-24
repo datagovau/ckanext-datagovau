@@ -1,0 +1,33 @@
+{% ckan_extends %}
+
+
+{% block agls_field_of_research %}
+    {% if pkg.get('field_of_research') %}
+        <tr>
+	    <th scope="row" class="dataset-label">Fields of Research</th>
+	    <td class="dataset-details">
+		<ul class="">
+		    {% for field in pkg.field_of_research %}
+			<li>{{ field }}</li>
+		    {% endfor %}
+		</ul>
+	    </td>
+        </tr>
+    {% endif %}
+{% endblock agls_field_of_research %}
+
+
+{% block agls_geospatial_topic %}
+    {% if pkg.get('geospatial_topic') %}
+        <tr>
+            <th scope="row" class="dataset-label">Geospatial Topics</th>
+            <td class="dataset-details">
+		<ul class="">
+		    {% for field in pkg.geospatial_topic %}
+			<li>{{ field }}</li>
+		    {% endfor %}
+		</ul>
+	    </td>
+        </tr>
+    {% endif %}
+{% endblock agls_geospatial_topic %}

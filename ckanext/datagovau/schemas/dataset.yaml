@@ -101,6 +101,7 @@ dataset_fields:
 
 - field_name: update_freq
   label: Update Frequency
+  help_text: "How often the dataset is updated. Eg: Daily, Weekly, Never"
   required: true
   preset: select
   choices:
@@ -177,9 +178,13 @@ dataset_fields:
 - field_name: field_of_research
   label: Fields of Research (Optional)
   required: false
-  preset: select
+  preset: multiple_select
   choices_helper: dga_fields_of_research
   help_text: 'The Australian and New Zealand Standard Research Classification (ANZSRC; 2008) field or fields of research relevant to the dataset.'
+  form_select_attrs:
+    data-module: autocomplete
+    class: ""
+
 
 resource_fields:
 
