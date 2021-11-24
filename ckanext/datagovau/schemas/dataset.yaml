@@ -141,7 +141,6 @@ dataset_fields:
 
 - field_name: author
   label: Author
-  required: true
   form_placeholder: Name of the Author of dataset
   display_property: dc:creator
   help_text: Name of authoring Agency/Organisation (if different from publisher)
