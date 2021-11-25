@@ -57,3 +57,22 @@ class DataGovAuPlugin(p.SingletonPlugin):
     def before_index(self, pkg_dict):
         pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
         return pkg_dict
+
+    def before_search(self, search_params):
+        stat_facet = search_params["extras"].get("ext_dga_stat_group")
+        if stat_facet:
+            search_params.setdefault("fq_list", []).append(
+                _dga_stat_group_to_fq(stat_facet)
+            )
+        return search_params
+
+
+_stat_fq = {
+    "api": "res_extras_datastore_active:true OR res_format:WMS",
+    "open": "isopen:true",
+    "unpublished": "unpublished:true",
+}
+
+
+def _dga_stat_group_to_fq(group: str) -> str:
+    return _stat_fq.get(group, "*:*")

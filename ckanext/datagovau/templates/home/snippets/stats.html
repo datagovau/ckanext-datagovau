@@ -11,19 +11,19 @@
                 </a>
             </li>
             <li>
-                <a href="{{ h.url_for("dataset.search", q="res_extras_datastore_active:true OR res_format:WMS") }}">
+                <a href="{{ h.url_for("dataset.search", ext_dga_stat_group="api") }}">
                     <b>{{ h.SI_number_span(stats.api_count) }}</b>
                     {{ _('API enabled resource') if stats.api_count == 1 else _('API enabled resources') }}
                 </a>
             </li>
             <li>
-                <a href="{{ h.url_for("dataset.search", q="isopen:true") }}">
+                <a href="{{ h.url_for("dataset.search", ext_dga_stat_group="open") }}">
                     <b>{{ h.SI_number_span(stats.open_count) }}</b>
                     {{ _('openly licenced dataset') if stats.open_count == 1 else _('openly licenced datasets') }}
                 </a>
             </li>
             <li>
-                <a href="{{ h.url_for("dataset.search", q="unpublished:true") }}">
+                <a href="{{ h.url_for("dataset.search", ext_dga_stat_group="unpublished") }}">
                     <b>{{ h.SI_number_span(stats.unpub_data_count) }}</b>
                     {{ _('unpublished dataset') if stats.unpub_data_count == 1 else _('unpublished datasets') }}
                 </a>

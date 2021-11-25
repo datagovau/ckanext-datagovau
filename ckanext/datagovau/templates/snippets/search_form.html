@@ -1,0 +1,34 @@
+{% ckan_extends %}
+
+{% block search_facets %}
+    {% if facets %}
+	<p class="filter-list">
+
+	    {# DGA stat filters: start #}
+	    {% set dga_stat_group = h.dga_stat_group_to_facet_label(request.args.ext_dga_stat_group) %}
+	    {% if dga_stat_group %}
+		<span class="filtered pill">
+		    {{ dga_stat_group }}
+		    <a href="{{ facets.remove_field("ext_dga_stat_group") }}" class="remove" title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
+		</span>
+	    {% endif %}
+	    {# DGA stat filters: end #}
+
+            {% for field in facets.fields %}
+		{% set search_facets_items = facets.search.get(field)['items'] if facets.search and field in facets.search else [] %}
+		<span class="facet">{{ facets.titles.get(field) }}:</span>
+		{% for value in facets.fields[field] %}
+		    <span class="filtered pill">
+			{%- if facets.translated_fields and (field,value) in facets.translated_fields -%}
+			    {{ facets.translated_fields[(field,value)] }}
+			{%- else -%}
+			    {{ h.list_dict_filter(search_facets_items, 'name', 'display_name', value) }}
+			{%- endif %}
+			<a href="{{ facets.remove_field(field, value) }}" class="remove" title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
+		    </span>
+		{% endfor %}
+            {% endfor %}
+	</p>
+	<a class="show-filters btn btn-default">{{ _('Filter Results') }}</a>
+    {% endif %}
+{% endblock %}
