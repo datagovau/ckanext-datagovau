@@ -64,7 +64,10 @@ def fields_of_research(_field: dict[str, Any]) -> types.SchemingChoices:
 @helper
 def agift_themes(_field: dict[str, Any]) -> types.SchemingChoices:
     groups = tk.get_action("group_list")({}, {"all_fields": True})
-    return [{"value": g["id"], "label": g["display_name"]} for g in groups]
+    empty = {
+        "value": "", "label": "Please Select"
+    }
+    return [empty] + [{"value": g["id"], "label": g["display_name"]} for g in groups]
 
 
 _stat_labels = {
