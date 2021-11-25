@@ -218,6 +218,7 @@ resource_fields:
   label: Extract Resources from Zip Files
   help_text: Whether any resources inside zip files should be extracted into separate resources.
   preset: dga_checkbox
+  display_snippet: null
 
 - field_name: last_modified
   label: Date Last Modified

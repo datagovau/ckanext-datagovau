@@ -30,7 +30,7 @@
 		    {% if pkg.geospatial_topic is string %}
 			<li>{{ pkg.geospatial_topic }}</li>
 		    {% else %}
-			{% for field in pkg.geospatial_topic %}
+			{% for field in pkg.geospatial_topic if field %}
 			    <li>{{ field }}</li>
 			{% endfor %}
 		    {% endif %}
