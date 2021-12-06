@@ -47,9 +47,10 @@ pipeline {
                         git config --global user.email "pipeline@data.gov.au"
                         git config --global user.name "Jenkins"
                    
-                        cd ${WORKSPACE}
                         env
-                        dga-ckan_web/build.sh --clean
+                        export WORKSPACE=${WORKSPACE}/dga-ckan_web
+                        cd ${WORKSPACE}
+                        ./build.sh --clean
 
                         /home/tools/push.sh
                     '''.stripIndent()
@@ -94,8 +95,11 @@ pipeline {
                             
                             cp -r dga-selenium-tests/sides/* dga-ckan_web/test/selenium/sides/
 
+                            export WORKSPACE=${WORKSPACE}/dga-ckan_web
+                            cd ${WORKSPACE}
+                            
                             /home/tools/pull.sh
-                            cd dga-ckan_web
+                            
                             test/selenium/pull.sh
                             test/selenium/run.sh --browser chrome
 
@@ -133,10 +137,13 @@ pipeline {
 
                             cp -r dga-selenium-tests/sides/* dga-ckan_web/test/selenium/sides/
 
+                            export WORKSPACE=${WORKSPACE}/dga-ckan_web
+                            cd ${WORKSPACE}
+                            
                             /home/tools/pull.sh
 
-                            dga-ckan_web/test/selenium/pull.sh
-                            dga-ckan_web/test/selenium/run.sh --browser firefox
+                            ./test/selenium/pull.sh
+                            ./test/selenium/run.sh --browser firefox
 
                         '''.stripIndent()
                     }
@@ -148,65 +155,7 @@ pipeline {
                         }
                     }
                 }
-                stage('spatial-ingestor') {
-                    agent {
-                        docker {
-                            image TOOLS_IMAGE
-                            args TOOLS_ARGS
-                        }
-                    }
-
-                    steps {
-                        sh '''\
-                            #!/bin/bash
-                            set -ex
-
-                            /home/tools/pull.sh
-
-                            test/spatial/pull.sh
-
-                            #test/spatial/test_spatial-ingestor.sh test-19-11-2021-11-50-point-marking-dta-canberra-kml
-                            test/spatial/test_spatial-ingestor.sh test-19-11-2021-17-02-point-marking-dta-canberra-kmz
-                            test/spatial/test_spatial-ingestor.sh test-16-11-202112-55-city-of-greater-bendigo-capital-works
-
-                        '''.stripIndent()
-                    }
-                    post {
-                        always {
-                            junit 'test/spatial/.output/**/*.xml'
-                            sh '''
-                                rm -rf test/selenium/.logs test/selenium/.output
-                            '''.stripIndent()
-                        }
-                    }
-                }
-
-                stage('CVE scan') {
-                    when {
-                        not { allOf { branch 'Staging'; branch 'Production' } }
-                        beforeAgent true
-                    }
-                    agent {
-                        docker {
-                            image TOOLS_IMAGE
-                            args TOOLS_ARGS
-                        }
-                    }
-
-                    steps {
-                        sh '''\
-                            #!/bin/bash
-                            set -e
-
-                            /home/tools/cve-scan.sh
-                        '''.stripIndent()
-                    }
-                    post {
-                        always {
-                            archiveArtifacts artifacts: 'cve-scan.json', fingerprint: true
-                        }
-                    }
-                }
+                
             }
         }
 
