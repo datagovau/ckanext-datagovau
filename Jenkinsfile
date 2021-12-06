@@ -48,7 +48,7 @@ pipeline {
                         git config --global user.name "Jenkins"
                    
                         cd ${WORKSPACE}
-
+                        env
                         dga-ckan_web/build.sh --clean
 
                         /home/tools/push.sh
