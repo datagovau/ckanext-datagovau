@@ -36,12 +36,12 @@ import ckan.model as model
 import lxml.etree as et
 import psycopg2
 import requests
-from osgeo import osr
 
 from ckan.plugins import toolkit
 from ckan import model
 from ckan.plugins.toolkit import get_action
 from dateutil import parser
+from osgeo import osr
 from ckantoolkit import config
 
 from ckanext.datagovau import ogr2ogr, gdal_retile
@@ -63,8 +63,8 @@ log_handler = logging.StreamHandler()
 log_handler.setFormatter(
     logging.Formatter("%(asctime)s - [%(levelname)8s] - %(message)s")
 )
-# logger.addHandler(log_handler)
-# logger.setLevel(logging.DEBUG)
+logger.addHandler(log_handler)
+logger.setLevel(logging.DEBUG)
 
 logger.info = logger.warn = logger.debug = logger.error = print
 
@@ -129,7 +129,7 @@ def _get_geoserver_data():
     ]
     db_details_match = re.match(u''.join(regex), GEOSERVER_ADMIN_URL)
     geoserver_info = db_details_match.groupdict()
-
+    
     protocol = "https://"
 
     if geoserver_info.get('db_type') == 'sslgeoserver':
@@ -151,7 +151,7 @@ def _get_geoserver_data():
 
 
 def _get_db_settings():
-
+    
     regex = [
         u'^\\s*(?P<db_type>\\w*)', u'://', u'(?P<db_user>[^:]*)', u':?',
         u'(?P<db_pass>[^@]*)', u'@', u'(?P<db_host>[^/:]*)', u':?',
@@ -175,10 +175,10 @@ def _get_db_settings():
 
 
 def _make_request(command, url, **kwargs):
-
+    
     count = 0
     time_out = int(_get_request_timeout())
-
+    
     while count < time_out:
         try:
             r = command(url, **kwargs)
@@ -372,7 +372,7 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
         subprocess.call(['unzip', '-j', "input.zip"])
         logger.debug('SHP unzipped')
     else:
-        urllib.urlretrieve(
+        urllib.request.urlretrieve(
             shp_res['url'], "input.shp")
         logger.debug('SHP downloaded')
 
@@ -412,7 +412,7 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
                 "EPSG:4326": [
                     "MapInfo Generic Lat/Long",
                     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984"']
-
+                
             }
             for key, values in mapping.items():
                 if any([v in prj_txt for v in values]):
@@ -438,9 +438,11 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
         '-lco', 'GEOMETRY_NAME=geom',
         "-lco", "PRECISION=NO",
         '-nln', table_name,
+        '-s_srs', native_crs,
         '-t_srs', native_crs,
         '-nlt', 'PROMOTE_TO_MULTI',
-        '-overwrite'
+        '-overwrite',
+        '-skipfailures'
     ]
 
     if not srs_found:
@@ -453,11 +455,18 @@ def _load_esri_shapefiles(shp_res, table_name, tempdir):
             '-lco', 'GEOMETRY_NAME=geom',
             "-lco", "PRECISION=NO",
             '-nln', table_name,
+            '-s_srs', native_crs,
             '-t_srs', native_crs,
             '-nlt', 'PROMOTE_TO_MULTI',
-            '-overwrite'
+            '-overwrite',
+            '-skipfailures'
         ]
 
+
+    logger.debug('spatialingestor::_load_esri_shapefiles():: srs_found = ',
+                 srs_found)
+    logger.debug('spatialingestor::_load_esri_shapefiles():: native_crs = ',
+                 native_crs)
     res = ogr2ogr.main(pargs)
     if not res:
         _failure("Ogr2ogr: Failed to convert file to PostGIS")
@@ -483,7 +492,7 @@ def _load_kml_resources(kml_res, table_name):
         else:
             kml_file = kmlfiles[0]
     else:
-        filepath, headers = urllib.urlretrieve(kml_res['url'], "input.kml")
+        filepath, headers = urllib.request.urlretrieve(kml_res['url'], "input.kml")
         kml_file = "input.kml"
 
     logger.debug("Changing kml folder name in " + kml_file)
@@ -517,7 +526,7 @@ def _load_kml_resources(kml_res, table_name):
     else:
         logger.debug('no Folder tag found')
     with open(table_name + ".kml", "w") as ofile:
-        ofile.write(et.tostring(tree))
+        ofile.write(et.tostring(tree, encoding="unicode"))
     logger.debug("converting to pgsql " + table_name + ".kml")
 
     pargs = [
@@ -572,7 +581,7 @@ def _load_tab_resources(tab_res, table_name):
         '-nlt', 'PROMOTE_TO_MULTI',
         '-overwrite'
     ]
-
+    
     res = ogr2ogr.main(pargs)
     logger.debug(res)
     if not res:
@@ -591,13 +600,13 @@ def _load_tiff_resources(tiff_res, table_name):
     logger.debug("using GeoTIFF file " + url)
 
     if not any([url.lower().endswith(x) for x in ['tif', 'tiff']]):
-        filepath, headers = urllib.urlretrieve(url, "input.zip")
+        filepath, headers = urllib.request.urlretrieve(url, "input.zip")
         logger.debug("GeoTIFF archive downloaded")
 
         subprocess.call(['unzip', '-j', filepath])
         logger.debug("GeoTIFF unziped")
     else:
-        urllib.urlretrieve(url, "input.tiff")
+        urllib.request.urlretrieve(url, "input.tiff")
 
     tifffiles = glob.glob("*.[tT][iI][fF]") + glob.glob("*.[tT][iI][fF][fF]")
     if len(tifffiles) == 0:
@@ -689,7 +698,7 @@ def _load_grid_resources(grid_res, table_name, tempdir):
     grid_res['url'] = grid_res['url'].replace('https', 'http')
     logger.debug("Using ArcGrid file " + grid_res['url'])
 
-    filepath, headers = urllib.urlretrieve(grid_res['url'], "input.zip")
+    filepath, headers = urllib.request.urlretrieve(grid_res['url'], "input.zip")
     logger.debug("ArcGrid downloaded")
 
     subprocess.call(['unzip', '-j', filepath])
@@ -1017,13 +1026,16 @@ def _perform_workspace_requests(datastore, workspace, table_name=None):
     if not r or not r.ok:
         _failure("Failed to create Geoserver store {}: {}".format(_base_url, r.content))
 
-
+    
 def _update_package_with_bbox(bbox, latlngbbox, ftdata,
                               dataset, native_crs, bgjson):
     def _clear_box(string):
         return string.replace(
             "BOX", "").replace("(", "").replace(
             ")", "").replace(",", " ").split(" ")
+
+
+    print('spatialingestor::_update_package_with_bbox:: entry.')
 
     minx, miny, maxx, maxy = _clear_box(bbox)
     bbox_obj = {
@@ -1033,6 +1045,8 @@ def _update_package_with_bbox(bbox, latlngbbox, ftdata,
         'maxy': maxy,
         'crs': native_crs}
 
+    print('spatialingestor::_update_package_with_bbox:: bbox_obj = ', bbox_obj)
+
     llminx, llminy, llmaxx, llmaxy = _clear_box(latlngbbox)
     llbbox_obj = {
         'minx': llminx,
@@ -1041,6 +1055,8 @@ def _update_package_with_bbox(bbox, latlngbbox, ftdata,
         'maxy': llmaxy,
         'crs': 'EPSG:4326'
     }
+
+    print('spatialingestor::_update_package_with_bbox:: llbbox_obj = ', llbbox_obj)
 
     ftdata['featureType']['nativeBoundingBox'] = bbox_obj
     ftdata['featureType']['latLonBoundingBox'] = llbbox_obj
@@ -1055,9 +1071,26 @@ def _update_package_with_bbox(bbox, latlngbbox, ftdata,
         if 'spatial' not in dataset or dataset['spatial'] != bgjson:
             dataset['spatial'] = bgjson
             update = True
+
+    print('spatialingestor::_update_package_with_bbox:: update = ', update)
+    
     if update:
-        get_action('package_update')(
-            {'user': _get_username(), 'model': model}, dataset)
+        print('spatialingestor::_update_package_with_bbox:: calling get_action() for package_update...')
+        print('user = ',_get_username())
+        print('model = ', model)
+        print('dataset = ', dataset)
+
+        try:
+            get_action('package_update')(
+                {'model': model, 'user': _get_username()}, dataset)
+            print('spatialingestor::_update_package_with_bbox:: after get_action() for package_update...')
+            
+        except Exception as e:
+            print(e)
+            pass
+
+        
+
     return bbox_obj
 
 
@@ -1349,14 +1382,17 @@ def do_ingesting(dataset_id, force):
             shp_resources, kml_resources, tab_resources, tiff_resources, grid_resources,
             tempdir)
 
-        logger.debug('spatialingestor::do_ingesting():: workspace = ',workspace)
+        logger.debug('spatialingestor::do_ingesting():: using_grid = ', using_grid)
+        logger.debug('spatialingestor::do_ingesting():: table_name = ', table_name)
+        logger.debug('spatialingestor::do_ingesting():: workspace = ', workspace)
+        logger.debug('spatialingestor::do_ingesting():: native_crs = ', native_crs)
 
         # load bounding boxes from database
         bbox = None
         if not using_grid:
             bbox, latlngbbox, bgjson = _get_geojson(
                 using_kml, table_name)
-            # logger.debug(bbox)
+            logger.debug('spatialingestor::do_ingesting():: bbox = ',bbox)
 
         datastore = workspace
         if using_grid:
@@ -1368,7 +1404,13 @@ def do_ingesting(dataset_id, force):
 
         _perform_workspace_requests(datastore, workspace, table_name if using_grid else None)
 
+        logger.debug('spatialingestor::do_ingesting():: after _perform_workplace_requests().')
+
         geo_addr, geo_user, geo_pass, geo_public_addr = _get_geoserver_data()
+
+        logger.debug('spatialingestor::do_ingesting():: after _get_geoserver_data().')
+        logger.debug('geo_addr = ', geo_addr)
+        logger.debug('geo_public_addr = ',geo_public_addr)
 
         # name layer munged from resource id
         layer_name = table_name
@@ -1400,8 +1442,14 @@ def do_ingesting(dataset_id, force):
             }
             _layer_base_url = geo_addr + 'rest/workspaces/' + workspace + '/datastores/' + datastore + "/featuretypes"
 
+
+        logger.debug('spatialingestor::do_ingesting():: layer_data = ', layer_data)
+        logger.debug('spatialingestor::do_ingesting():: _layer_base_url = ', _layer_base_url)
+
         bbox_obj = _update_package_with_bbox(bbox, latlngbbox, layer_data, dataset, native_crs,
                                              bgjson) if bbox and not using_grid else None
+
+        logger.debug('spatialingestor::do_ingesting():: bbox_obj = ', bbox_obj)
 
         r = _make_request(
             requests.post,

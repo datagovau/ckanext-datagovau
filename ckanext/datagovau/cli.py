@@ -14,6 +14,10 @@ from ckan import model
 
 from ckantoolkit import config
 
+from ckanext.datagovau.spatialingestor import (do_ingesting,
+                                               check_if_may_skip,
+                                               clean_assets,
+                                               _get_geoserver_data_dir)
 
 log = logging.getLogger('ckanext_datagovau')
 
@@ -45,7 +49,6 @@ def perform_ingest(scope):
 
         where scope is one of: 'all', 'updated', 'updated-orgs', or <dataset-id>.
     """
-    from ckanext.datagovau.spatialingestor import do_ingesting
     if scope in ('all', 'updated', 'updated-orgs'):
         force = True if scope == 'all' else False
         if scope == 'updated-orgs':
@@ -83,7 +86,6 @@ def perform_purge(scope):
 
         where scope is one of: 'all' or 'erroneous'.
     """
-    from ckanext.datagovau.spatialingestor import check_if_may_skip, clean_assets
     if scope in ['all', 'erroneous']:
         pkg_ids = [
             r[0]

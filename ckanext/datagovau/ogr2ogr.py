@@ -634,7 +634,13 @@ def main(args = None, progress_func = TermProgress, progress_data = None):
         if poOutputSRS.SetFromUserInput( pszOutputSRSDef ) != 0:
             print( "Failed to process SRS definition: %s" % pszOutputSRSDef )
             return False
+        else: # Processed successfully...
+            # Set Axis Order to East-North (i.e., Longitude, Latitude)
+            print('ogr2ogr::main:: Forcing E-N Axis Mapping on ingested SpatialReference.')
+            poOutputSRS.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
 
+    print('ogr2ogr::main:: poOutputSRS = ', poOutputSRS)
+    
 # --------------------------------------------------------------------
 #      Parse the source SRS definition if possible.
 # --------------------------------------------------------------------
@@ -1234,6 +1240,8 @@ def SetupTargetLayer( poSrcDS, poSrcLayer, poDstDS, papszLCO, pszNewLayerName, \
 
     if poOutputSRS is None and not bNullifyOutputSRS:
         poOutputSRS = poSrcLayer.GetSpatialRef()
+        # Set Axis Order to East-North (i.e., Longitude, Latitude)
+        poOutputSRS.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
 
 # --------------------------------------------------------------------
 #      Find the layer.
@@ -1508,6 +1516,8 @@ def TranslateLayer( psInfo, poSrcDS, poSrcLayer, poDstDS,  \
 
     if poOutputSRS is None and not bNullifyOutputSRS:
         poOutputSRS = poSrcLayer.GetSpatialRef()
+        # Set Axis Order to East-North (i.e., Longitude, Latitude)
+        poOutputSRS.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
 
     if wkbFlatten(eGType) == ogr.wkbPolygon:
         bForceToPolygon = True
