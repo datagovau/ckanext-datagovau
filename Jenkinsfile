@@ -47,9 +47,15 @@ pipeline {
                         git config --global user.email "pipeline@data.gov.au"
                         git config --global user.name "Jenkins"
                    
-                        env
                         export WORKSPACE=${WORKSPACE}/dga-ckan_web
                         cd ${WORKSPACE}
+                        tmpCKANEXT=$(mktemp /tmp/ckanext_XXXXXX.json)
+
+                        POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
+
+                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
+                        mv ${tmpCKANEXT} ckanext.json
+
                         ./build.sh --clean
 
                         /home/tools/push.sh
@@ -107,7 +113,7 @@ pipeline {
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: 'test/selenium/.logs/*', fingerprint: true
+                            archiveArtifacts artifacts: 'dga-ckan_web/test/selenium/.logs/*', fingerprint: true
                             junit 'dga-ckan_web/test/selenium/.output/**/*.xml'
 
                             sh '''
@@ -188,13 +194,26 @@ pipeline {
                    
                         cd ${WORKSPACE}
 
-                        #./build.sh --clean
+                        rm -rf dga-ckan_web
+                        git clone git@github.com:datagovau/dga-ckan_web.git
 
-                        #/home/tools/push.sh
+                        cd dga-ckan_web
+                        tmpCKANEXT=$(mktemp /tmp/ckanext_XXXXXX.json)
+
+                        POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
+
+                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
+                        mv ${tmpCKANEXT} ckanext.json
+
+                        git add . 
+                        git commit -m "Commit ID for ckanext-datagovau"
+                        git push 
+
+                        cd ..
+                        rm -rf dga-ckan_web
                     '''.stripIndent()
                 }
             }
-        }
-       
+        }       
     }
 }
