@@ -12,6 +12,8 @@ import ckan.authz as authz
 from . import validators, cli
 
 _original_permission_check = authz.has_user_permission_for_group_or_org
+
+
 def _dga_permission_check(group_id, user_name, permission):
     stack = inspect.stack()
     # Bypass authorization to enable datasets to be removed from/added to AGIFT
@@ -19,6 +21,8 @@ def _dga_permission_check(group_id, user_name, permission):
     if stack[1].function == "package_membership_list_save":
         return True
     return _original_permission_check(group_id, user_name, permission)
+
+
 authz.has_user_permission_for_group_or_org = _dga_permission_check
 
 
@@ -37,10 +41,9 @@ class DataGovAuPlugin(p.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config):
-        tk.add_template_directory(config, 'templates')
+        tk.add_template_directory(config, "templates")
         tk.add_resource("assets", "datagovau")
         tk.add_public_directory(config, "assets")
-
 
     # ITemplateHelpers
 
