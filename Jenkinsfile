@@ -53,7 +53,7 @@ pipeline {
                         env
                         POS=$(jq '.resources|map(.repository == "ckanext-datagovau") | index(true)' ckanext.json )
 
-                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
+                        jq ".resources[${POS}].commitId =\\"${GIT_COMMIT}\\"" ckanext.json > ${tmpCKANEXT}
                         mv ${tmpCKANEXT} ckanext.json
 
                         ./build.sh --clean
@@ -206,7 +206,7 @@ pipeline {
                         mv ${tmpCKANEXT} ckanext.json
 
                         git add . 
-                        git commit -m "Commit ID for ckanext-datagovau"
+                        git commit -m "Commit ID from ${JOB_NAME}"
                         git push 
 
                         cd ..
