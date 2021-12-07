@@ -7,6 +7,7 @@
 	    {# DGA stat filters: start #}
 	    {% set dga_stat_group = h.dga_stat_group_to_facet_label(request.args.ext_dga_stat_group) %}
 	    {% if dga_stat_group %}
+		<input name="ext_dga_stat_group" type="hidden" value="{{ request.args.ext_dga_stat_group }}"/>
 		<span class="filtered pill">
 		    {{ dga_stat_group }}
 		    <a href="{{ facets.remove_field("ext_dga_stat_group") }}" class="remove" title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
