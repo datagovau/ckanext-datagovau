@@ -37,7 +37,7 @@ pipeline {
 
                     sh '''
                         #!/bin/bash
-                        set -e
+                        set -ex
                         mkdir -p ~/.ssh
                         ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
                         echo "Host github.com" > ~/.ssh/config
@@ -53,7 +53,7 @@ pipeline {
 
                         POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
 
-                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
+                        jq ".resources[${POS}].commitId =\\"${GIT_COMMIT}\\"" ckanext.json > ${tmpCKANEXT}
                         mv ${tmpCKANEXT} ckanext.json
 
                         ./build.sh --clean
@@ -202,7 +202,7 @@ pipeline {
 
                         POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
 
-                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
+                        jq ".resources[${POS}].commitId =\\"${GIT_COMMIT}\\"" ckanext.json > ${tmpCKANEXT}
                         mv ${tmpCKANEXT} ckanext.json
 
                         git add . 
