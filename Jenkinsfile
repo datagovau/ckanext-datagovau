@@ -51,9 +51,9 @@ pipeline {
                         cd ${WORKSPACE}
                         tmpCKANEXT=$(mktemp /tmp/ckanext_XXXXXX.json)
 
-                        POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
+                        POS=$(jq '.resources|map(.repository == "ckanext-datagovau") | index(true)')
 
-                        jq ".resources[${POS}].commitId =\\"${GIT_COMMIT}\\"" ckanext.json > ${tmpCKANEXT}
+                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
                         mv ${tmpCKANEXT} ckanext.json
 
                         ./build.sh --clean
@@ -200,9 +200,9 @@ pipeline {
                         cd dga-ckan_web
                         tmpCKANEXT=$(mktemp /tmp/ckanext_XXXXXX.json)
 
-                        POS=$(jq .resources|map(.repository == "ckanext-datagovau") | index(true))
+                        POS=$(jq '.resources|map(.repository == "ckanext-datagovau") | index(true)')
 
-                        jq ".resources[${POS}].commitId =\\"${GIT_COMMIT}\\"" ckanext.json > ${tmpCKANEXT}
+                        jq ".resources[${POS}].commitId =\"${GIT_COMMIT}\"" ckanext.json > ${tmpCKANEXT}
                         mv ${tmpCKANEXT} ckanext.json
 
                         git add . 
