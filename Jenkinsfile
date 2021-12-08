@@ -175,11 +175,10 @@ pipeline {
                             #!/bin/bash
                             set -ex
 
-                            /home/tools/pull.sh
-                            
                             export WORKSPACE=${WORKSPACE}/dga-ckan_web
                             cd ${WORKSPACE}
-
+                            /home/tools/pull.sh
+                            
                             test/spatial/pull.sh
 
                             #test/spatial/test_spatial-ingestor.sh test-19-11-2021-11-50-point-marking-dta-canberra-kml
