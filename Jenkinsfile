@@ -171,6 +171,9 @@ pipeline {
                     }
 
                     steps {
+                        dir('dga-ckan_web') {
+                            git branch: 'Develop', credentialsId: 'PAT', url: 'https://github.com/datagovau/dga-ckan_web.git'
+                        }
                         sh '''\
                             #!/bin/bash
                             set -ex
