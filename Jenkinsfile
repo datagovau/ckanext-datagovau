@@ -161,7 +161,44 @@ pipeline {
                         }
                     }
                 }
-                
+
+                stage('spatial-ingestor') {
+                    agent {
+                        docker {
+                            image TOOLS_IMAGE
+                            args TOOLS_ARGS
+                        }
+                    }
+
+                    steps {
+                        dir('dga-ckan_web') {
+                            git branch: 'Develop', credentialsId: 'PAT', url: 'https://github.com/datagovau/dga-ckan_web.git'
+                        }
+                        sh '''\
+                            #!/bin/bash
+                            set -ex
+
+                            export WORKSPACE=${WORKSPACE}/dga-ckan_web
+                            cd ${WORKSPACE}
+                            /home/tools/pull.sh
+                            
+                            test/spatial/pull.sh
+
+                            #test/spatial/test_spatial-ingestor.sh test-19-11-2021-11-50-point-marking-dta-canberra-kml
+                            test/spatial/test_spatial-ingestor.sh test-19-11-2021-17-02-point-marking-dta-canberra-kmz
+                            test/spatial/test_spatial-ingestor.sh test-16-11-202112-55-city-of-greater-bendigo-capital-works
+
+                        '''.stripIndent()
+                    }
+                    post {
+                        always {
+                            junit 'dga-ckan_web/test/spatial/.output/**/*.xml'
+                            sh '''
+                                rm -rf dga-ckan_web/test/selenium/.logs dga-ckan_web/test/selenium/.output
+                            '''.stripIndent()
+                        }
+                    }
+                }
             }
         }
 
