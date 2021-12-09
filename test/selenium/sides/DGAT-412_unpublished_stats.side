@@ -1,0 +1,46 @@
+{
+  "id": "fe333519-1a6e-42c5-b14e-64560bfd2a4a",
+  "version": "2.0",
+  "name": "DGAT-412",
+  "url": "https://data.gov.au/",
+  "tests": [{
+    "id": "dcac9003-0051-4086-87a7-fb6a69dcde74",
+    "name": "Unpublished non-zero",
+    "commands": [{
+      "id": "ed09e9e0-20b1-4d41-b646-affe271f49c3",
+      "comment": "",
+      "command": "open",
+      "target": "/data/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c9e3d247-16a9-48fc-93c3-4ca57d9a3366",
+      "comment": "",
+      "command": "waitForElementPresent",
+      "target": "css=.inner li:nth-child(4) > a",
+      "targets": [
+        ["css=.inner li:nth-child(4) > a", "css:finder"],
+        ["xpath=//a[contains(@href, '/data/dataset/?ext_dga_stat_group=unpublished')]", "xpath:href"],
+        ["xpath=//div[2]/div/div/ul/li[4]/a", "xpath:position"]
+      ],
+      "value": "30000"
+    }, {
+      "id": "152abb34-2b69-4d2d-bf57-0c9f59895415",
+      "comment": "",
+      "command": "executeScript",
+      "target": "$('a:contains(\\\"unpublished datasets\\\")').text().match( / *[1-9][0-9\\.]+.*/).length > 0",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "f834ef49-24e0-4e23-ae6a-0efdc1dec140",
+    "name": "DGAT-412",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["dcac9003-0051-4086-87a7-fb6a69dcde74"]
+  }],
+  "urls": ["http://localhost/", "https://develop.data.gov.au/", "https://staging.data.gov.au/", "https://data.gov.au/"],
+  "plugins": []
+}

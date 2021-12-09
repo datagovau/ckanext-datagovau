@@ -14,27 +14,30 @@ from . import types
 
 helper, get_helpers = Collector("dga").split()
 cache = Cache(duration=600)
-
+ 
+import ckan.logic as logic
+import logging
+log = logging.getLogger('ckanext_datagovau')
 
 @helper
-def get_ddg_site_statistics() -> types.DdgStatistics:
-    package_search = tk.get_action("package_search")
-    total = package_search({}, {"include_private": True, "rows": 0})["count"]
-    unpublished = package_search(
-        {}, {"fq": "unpublished:true", "include_private": True, "rows": 0}
-    )["count"]
-    open_count = package_search(
-        {}, {"fq": "isopen:true", "include_private": True, "rows": 0}
-    )["count"]
-    api_count = _api_count()
+@cache
+def get_ddg_site_statistics():
 
-    return types.DdgStatistics(
-        dataset_count=total,
-        unpub_data_count=unpublished,
-        open_count=open_count,
-        api_count=api_count,
-    )
+    stats = {'dataset_count': logic.get_action('package_search')({}, {"rows": 0})['count']}
 
+    tmpRS=logic.get_action('package_search')({}, {"facet.field": ["unpublished"], "rows": 0})
+
+    stats['unpub_data_count']=tmpRS['facets']['unpublished']['True']
+
+    stats['open_count'] = logic.get_action('package_search')({}, {"fq": "isopen:true", "rows": 1})['count']
+
+    stats['api_count'] = logic.get_action('resource_search')({}, {"query": ["format:wms"]})['count'] + len(
+        datastore_backend.get_all_resources_ids_in_datastore())
+
+    if 'unpub_data_count' not in stats:
+        stats['unpub_data_count'] = 0
+
+    return stats
 
 @cache
 def _api_count():
