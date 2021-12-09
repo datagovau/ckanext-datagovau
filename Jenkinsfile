@@ -99,7 +99,8 @@ pipeline {
                             #!/bin/bash
                             set -ex
                             
-                            cp -r dga-selenium-tests/sides/* dga-ckan_web/test/selenium/sides/
+                            cp -r dga-selenium-tests/sides/*.side dga-ckan_web/test/selenium/sides/
+                            cp -r test/selenium/sides/*.side dga-ckan_web/test/selenium/sides/
 
                             export WORKSPACE=${WORKSPACE}/dga-ckan_web
                             cd ${WORKSPACE}
@@ -108,6 +109,8 @@ pipeline {
                             
                             test/selenium/pull.sh
                             test/selenium/run.sh --browser chrome
+
+                            rm -rf dga-ckan_web/test/selenium/sides/
 
                         '''.stripIndent()
                     }
@@ -141,7 +144,8 @@ pipeline {
                             #!/bin/bash
                             set -ex
 
-                            cp -r dga-selenium-tests/sides/* dga-ckan_web/test/selenium/sides/
+                            cp -r dga-selenium-tests/sides/*.side dga-ckan_web/test/selenium/sides/
+                            cp -r test/selenium/sides/*.side dga-ckan_web/test/selenium/sides/
 
                             export WORKSPACE=${WORKSPACE}/dga-ckan_web
                             cd ${WORKSPACE}
@@ -150,6 +154,8 @@ pipeline {
 
                             ./test/selenium/pull.sh
                             ./test/selenium/run.sh --browser firefox
+
+                            rm -rf dga-ckan_web/test/selenium/sides/
 
                         '''.stripIndent()
                     }
