@@ -1,15 +1,7 @@
-*.egg-info
-*.pyc
-*.swp
-*.swo
+# Ignore invisible
+.*
 *~
-#*
-.#*
-build/
-dist/
-distribute-*
-.idea/
-!/admin/config/nginx/ckan_prod.conf
-deps.mk
-
-node_modules/
+!.gitignore
+#
+# WARNING: Automatically copied from dga-tools
+#
