@@ -2,7 +2,7 @@
   "id": "fe333519-1a6e-42c5-b14e-64560bfd2a4a",
   "version": "2.0",
   "name": "DGAT-412",
-  "url": "https://data.gov.au/",
+  "url": "https://develop.data.gov.au/",
   "tests": [{
     "id": "dcac9003-0051-4086-87a7-fb6a69dcde74",
     "name": "Unpublished non-zero",
@@ -28,7 +28,8 @@
       "id": "152abb34-2b69-4d2d-bf57-0c9f59895415",
       "comment": "",
       "command": "executeScript",
-      "target": "$('a:contains(\\\"unpublished datasets\\\")').text().match( / *[1-9][0-9\\.]+.*/).length > 0",
+      "old": "let regex=/ *[1-9][0-9\\.]+.*/;let txt=$('a:contains(\\\"unpublished datasets\\\")').text();return txt.match(regex).length > 0;",
+      "target": "const search='unpublished datasets'; let regex=/ *[1-9][0-9\\.]+.*/;let txt=$('a:contains(\" + search + \")').text();return txt.match(regex).length > 0;",
       "targets": [],
       "value": ""
     }]
