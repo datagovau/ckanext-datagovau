@@ -1,5 +1,5 @@
-# gdal
-# gdal-utils
+gdal
+gdal-utils
 
 boto3
 requests
