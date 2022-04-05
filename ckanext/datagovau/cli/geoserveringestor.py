@@ -23,7 +23,9 @@ def geoserver_ingestor():
     default=False,
 )
 def geo_ingest(dataset, organization):
-    query = model.Session.query(model.Package).filter_by(state="active")
+    query = model.Session.query(model.Package).filter_by(
+        state="active", private=False
+    )
     if organization:
         query = query.filter(model.Package.owner_org == organization)
 
