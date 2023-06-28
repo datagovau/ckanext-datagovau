@@ -1,7 +1,7 @@
 ###############################################################################
 #                             requirements: start                             #
 ###############################################################################
-ckan_tag = ckan-2.9.9
+ckan_tag = ckan-2.9.7
 ext_list = dcat officedocs pdfview zippreview spatial cesiumpreview harvest agls xloader flakes googleanalytics charts
 
 
@@ -11,9 +11,9 @@ remote-dcat = https://github.com/ckan/ckanext-dcat.git branch master
 remote-officedocs = https://github.com/DataShades/ckanext-officedocs.git branch py3
 remote-pdfview = https://github.com/ckan/ckanext-pdfview.git branch master
 remote-zippreview = https://github.com/datagovau/ckanext-zippreview branch Develop
-remote-spatial = https://github.com/ckan/ckanext-spatial.git branch master
+remote-spatial = https://github.com/ckan/ckanext-spatial.git tag v1.1.0
 remote-cesiumpreview = https://github.com/DataShades/ckanext-cesiumpreview.git branch py3
-remote-agls = https://github.com/DataShades/ckanext-agls.git branch master
+remote-agls = https://github.com/DataShades/ckanext-agls.git branch py3
 remote-flakes = https://github.com/DataShades/ckanext-flakes.git branch master
 remote-googleanalytics = https://github.com/ckan/ckanext-googleanalytics.git master
 remote-charts = https://github.com/DataShades/ckanext-charts.git master
