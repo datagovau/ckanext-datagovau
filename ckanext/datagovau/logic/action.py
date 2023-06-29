@@ -6,24 +6,18 @@ from typing import Any
 import ckan.plugins.toolkit as tk
 from ckan.logic import validate
 
-from ckanext.toolbelt.decorators import Collector
-
 from ..utils import temp_dir
 from . import schema
 
 log = logging.getLogger(__name__)
-action, get_actions = Collector("dga").split()
 
 
-@action
 @validate(schema.get_package_stats)
 @tk.side_effect_free
-def get_package_stats(context, data_dict):
+def dga_get_package_stats(context, data_dict):
     tk.check_access("dga_get_package_stats", context, data_dict)
 
-    user: dict[str, Any] = tk.get_action("get_site_user")(
-        {"ignore_auth": True}, {}
-    )
+    user: dict[str, Any] = tk.get_action("get_site_user")({"ignore_auth": True}, {})
     context["user"] = user["name"]
 
     try:
@@ -49,9 +43,8 @@ def get_package_stats(context, data_dict):
     return pkg_stats
 
 
-@action
 @validate(schema.extract_resource)
-def extract_resource(context, data_dict):
+def dga_extract_resource(context, data_dict):
     """Extract ZIP-resource into additional resoruces.
 
     Args:
@@ -61,9 +54,7 @@ def extract_resource(context, data_dict):
     from ckanext.datagovau.utils.zip import extract_resource, update_resource
 
     resource = tk.get_action("resource_show")(context, {"id": data_dict["id"]})
-    dataset = tk.get_action("package_show")(
-        context, {"id": resource["package_id"]}
-    )
+    dataset = tk.get_action("package_show")(context, {"id": resource["package_id"]})
 
     if "zip" not in resource["format"].lower():
         raise tk.ValidationError({"id": ["Not a ZIP resource"]})

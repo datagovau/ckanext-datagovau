@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-import ckan.plugins.toolkit as tk
 import click
+
+import ckan.plugins.toolkit as tk
 from ckan import model
+
+import ckanext.activity.model as activity_model
 
 
 @click.group("spatial-ingestor", short_help="Ingest spatial data")
@@ -38,7 +41,8 @@ def perform_ingest(
     skip_errors: bool,
 ):
     """
-    Performs ingest of spatial data for scope of data, where scope is one of: 'all', 'updated', 'updated-orgs', or <dataset-id>.
+    Performs ingest of spatial data for scope of data, where scope is one of:
+    'all', 'updated', 'updated-orgs', or <dataset-id>.
     """
     from ._spatialingestor import do_ingesting
 
@@ -76,8 +80,8 @@ def perform_ingest(
 @click.pass_context
 def perform_purge(ctx: click.Context, scope: str, skip_grids: bool):
     """
-    Performs purge of nominated scope, where scope is one of: 'all', 'erroneous', or <dataset-id>.
-
+    Performs purge of nominated scope, where scope is one of:
+    'all', 'erroneous', or <dataset-id>.
     """
     from ._spatialingestor import clean_assets, may_skip
 
@@ -115,9 +119,7 @@ def perform_drop_user(username: str):
         )
         raise click.Abort()
 
-    pkgs = model.Session.query(model.Package).filter_by(
-        creator_user_id=user.id
-    )
+    pkgs = model.Session.query(model.Package).filter_by(creator_user_id=user.id)
     if pkgs.count():
         tk.error_shout(
             "There are some(%d) datasets created by this user: %s"
@@ -126,9 +128,9 @@ def perform_drop_user(username: str):
         raise click.Abort()
 
     activities = (
-        model.Session.query(model.Activity)
+        model.Session.query(activity_model.Activity)
         .filter_by(user_id=user.id)
-        .filter(model.Activity.activity_type.contains("package"))
+        .filter(activity_model.Activity.activity_type.contains("package"))
     )
     if activities.count():
         tk.error_shout(

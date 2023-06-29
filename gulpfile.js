@@ -1,28 +1,24 @@
-const gulp = require("gulp");
-const { resolve } = require("path");
-const touch = require("gulp-touch-fd");
+const { src, dest, watch } = require("gulp");
 const if_ = require("gulp-if");
 const sourcemaps = require("gulp-sourcemaps");
-const less = require("gulp-less");
-const cleanCss = require("gulp-cleancss");
+const sass = require("gulp-sass")(require("sass"));
+const touch = require("gulp-touch-fd");
 
-const themeDir = resolve(__dirname, "ckanext/datagovau/theme");
-const assetsDir = resolve(__dirname, "ckanext/datagovau/assets");
-
-const isDev = () => !!process.env.DEBUG;
+const isDev = !!process.env.DEBUG;
 
 const build = () =>
-  gulp
-    .src(resolve(themeDir, "dga.less"))
+  src("ckanext/datagovau/theme/dga.scss")
     .pipe(if_(isDev, sourcemaps.init()))
-    .pipe(less())
-    .pipe(if_(() => !isDev(), cleanCss()))
+    .pipe(sass())
     .pipe(if_(isDev, sourcemaps.write()))
-    .pipe(gulp.dest(assetsDir))
-    .pipe(touch());
+      .pipe(dest("ckanext/datagovau/assets/css"))
+      .pipe(touch());
 
-const watch = () =>
-  gulp.watch(resolve(themeDir, "*.less"), { ignoreInitial: false }, build);
-
-exports.watch = watch;
+const watchSource = () =>
+  watch(
+    "ckanext/datagovau/theme/**/*.scss",
+    { ignoreInitial: false },
+    build
+  );
+exports.watch = watchSource;
 exports.build = build;

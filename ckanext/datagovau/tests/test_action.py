@@ -1,8 +1,9 @@
 import unittest.mock as mock
 
+import pytest
+
 import ckan.logic as logic
 import ckan.plugins.toolkit as tk
-import pytest
 from ckan.tests.helpers import call_action
 
 
@@ -31,9 +32,7 @@ class TestGetPackageStats:
     def test_dataset_found(self, dataset):
         flakes_flake_lookup = mock.Mock(
             return_value={
-                "data": {
-                    dataset["id"]: {"2022-06": {"views": 18, "downloads": 9}}
-                }
+                "data": {dataset["id"]: {"2022-06": {"views": 18, "downloads": 9}}}
             }
         )
 

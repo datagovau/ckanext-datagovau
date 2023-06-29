@@ -1,0 +1,41 @@
+.homepage {
+    background-color: #e8e8e8;
+
+    .module-stats .card {
+        ul li {
+            width: 23%;
+            margin: 0 1%;
+
+            a b {
+                font-size: 36px;
+                font-weight: 700;
+            }
+        }
+
+        @media (max-width: $screen-xs-min) {
+            ul li {
+                display: flex;
+                width: 46%;
+                margin: 0 2%;
+            }
+
+        }
+    }
+
+    .module-latest-news {
+        margin-top: 1rem * 1;
+
+        .card {
+            padding: (1rem * 1.5) (1rem * 1.75);
+
+            p {
+                margin: 0;
+
+                i {
+                    color: darkorange;
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+}

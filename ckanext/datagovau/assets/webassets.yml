@@ -1,16 +1,16 @@
 dga-css:
   filters: cssrewrite
-  output: DGA/%(version)s-dga.css
+  output: ckanext-datagovau/%(version)s-dga.css
   contents:
-    - dga.css
+    - css/dga.css
 
 dga-js:
   filters: rjsmin
-  output: DGA/%(version)s-dga.js
+  output: ckanext-datagovau/%(version)s-dga.js
+  contents:
+    - js/dga-setup.js
+    - js/dga-breadcrumbs.js
+    - js/dga-jurisdiction-autofill.js
   extras:
     preload:
       - base/main
-  contents:
-    - dga-setup.js
-    - dga-breadcrumbs.js
-    - dga-jurisdiction-autofill.js

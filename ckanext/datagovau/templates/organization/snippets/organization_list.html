@@ -9,7 +9,7 @@ Example:
 
 #}
 <ul class="media-grid organisation">
-    {% for organization in organizations %}
-	{% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
-    {% endfor %}
+  {% for organization in organizations %}
+    {% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
+  {% endfor %}
 </ul>

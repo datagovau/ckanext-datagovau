@@ -6,25 +6,19 @@ import zipfile
 from datetime import datetime
 from typing import Any, Iterable
 
-import ckan.plugins.toolkit as tk
 import ckanapi
 import requests
 from werkzeug.datastructures import FileStorage
 
-CONFIG_INTERESTING_EXTENSIONS = (
-    "ckanext.datagovau.zip-extractor.interesting_extensions"
-)
-DEFAULT_INTERESTING_EXTENSIONS = "csv"
+import ckan.plugins.toolkit as tk
+
+CONFIG_INTERESTING_EXTENSIONS = "ckanext.datagovau.zip-extractor.interesting_extensions"
 
 log = logging.getLogger(__name__)
 
 
 def _interesting_extensions() -> list[str]:
-    return tk.aslist(
-        tk.config.get(
-            CONFIG_INTERESTING_EXTENSIONS, DEFAULT_INTERESTING_EXTENSIONS
-        ).lower()
-    )
+    return tk.config[CONFIG_INTERESTING_EXTENSIONS]
 
 
 def get_dataset_ids(ckan: ckanapi.LocalCKAN, days: int) -> Iterable[str]:
@@ -39,16 +33,15 @@ def get_dataset_ids(ckan: ckanapi.LocalCKAN, days: int) -> Iterable[str]:
     total = ckan.action.package_search(fq=fq, rows=0)["count"]
     chunk_size = 20
     for start in range(0, total, chunk_size):
-        packages = ckan.action.package_search(
-            fq=fq, rows=chunk_size, start=start
-        )["results"]
+        packages = ckan.action.package_search(fq=fq, rows=chunk_size, start=start)[
+            "results"
+        ]
         yield from (p["id"] for p in packages)
 
 
 def select_extractable_resources(
     ckan: ckanapi.LocalCKAN, dataset_ids: Iterable[str]
 ) -> Iterable[dict[str, Any]]:
-
     current_user = ckan.action.user_show(id=ckan.username)
     for id_ in dataset_ids:
         log.info("-" * 80)
@@ -62,7 +55,8 @@ def select_extractable_resources(
         activity_list = ckan.action.package_activity_list(id=dataset["id"])
         # checking that bot was not last editor ensures no infinite loop
         # todo scan for last date of non-bot edit
-        # Or last modified date could be compared with zip_extracted resources scan dates set.
+        # Or last modified date could be compared with zip_extracted resources
+        # scan dates set.
         if activity_list and activity_list[0]["user_id"] == current_user["id"]:
             log.info("No changes since last extraction.")
             continue
@@ -73,10 +67,7 @@ def select_extractable_resources(
         )
 
 
-def extract_resource(
-    resource: dict[str, Any], path: str
-) -> Iterable[tuple[str, str]]:
-
+def extract_resource(resource: dict[str, Any], path: str) -> Iterable[tuple[str, str]]:
     log.info(
         "Downloading resource %s from URL %s into %s",
         resource["id"],
@@ -124,7 +115,6 @@ def update_resource(
                 tk.get_action("resource_update")(context, res)
                 break
         else:
-
             log.info("Creating new resource for file")
             res = tk.get_action("resource_create")(
                 context,
@@ -152,8 +142,7 @@ def has_interesting_files(path: str) -> bool:
 def recurse_directory(path: str) -> Iterable[tuple[str, str]]:
     if (
         len([fn for fn in os.listdir(path)]) < 3
-        and len([ndir for ndir in os.listdir(path) if os.path.isdir(ndir)])
-        == 1
+        and len([ndir for ndir in os.listdir(path) if os.path.isdir(ndir)]) == 1
     ):
         for f in os.listdir(path):
             if os.path.isdir(os.path.join(path, f)):

@@ -5,9 +5,10 @@ import time
 from typing import Any, Optional
 from urllib.parse import quote
 
-import ckan.plugins.toolkit as tk
 import psycopg2
 import requests
+
+import ckan.plugins.toolkit as tk
 
 from ckanext.datagovau import utils
 
@@ -18,12 +19,9 @@ CONFIG_TIMEOUT = "ckanext.datagovau.spatialingestor.request_timeout"
 CONFIG_IGNORE = "ckanext.datagovau.spatialingestor.pkg_blacklist"
 CONFIG_URL = "ckanext.datagovau.spatialingestor.geoserver.url"
 
-DEFAULT_IGNORE = []
-DEFAULT_TIMEOUT = 10
-
 
 def _timeout():
-    return tk.asint(tk.config.get(CONFIG_TIMEOUT, DEFAULT_TIMEOUT))
+    return tk.config[CONFIG_TIMEOUT]
 
 
 class Geoserverobj:
@@ -36,8 +34,8 @@ class Geoserverobj:
             "shp": ["shp", "shapefile"],
             "kml": ["kml", "kmz"],
         }
-        self.geoserver_url = tk.config.get(CONFIG_URL)
-        self.geoserver_public_url = tk.config.get(CONFIG_PUBLIC_URL)
+        self.geoserver_url = tk.config[CONFIG_URL]
+        self.geoserver_public_url = tk.config[CONFIG_PUBLIC_URL]
         self.geoserver_workspace = "WORKSPACE"
 
         self.datastore = ""
@@ -55,21 +53,13 @@ class Geoserverobj:
             for resource in resources:
                 fmt = resource["format"].lower()
 
-                is_source = (
-                    True
-                    if fmt in self.res_group_formats[format_group]
-                    else False
-                )
+                is_source = utils.contains(fmt, self.res_group_formats[format_group])
                 if "/geoserver" in resource["url"]:
-                    self.geo_res_frmts[resource["format"].lower()] = resource[
-                        "id"
-                    ]
+                    self.geo_res_frmts[resource["format"].lower()] = resource["id"]
                     continue
 
                 if is_source:
-                    if utils.contains(
-                        fmt, self.res_group_formats[format_group]
-                    ):
+                    if utils.contains(fmt, self.res_group_formats[format_group], True):
                         self.filtered_resources[format_group].append(resource)
                         is_there_res = True
         return is_there_res
@@ -79,7 +69,7 @@ class Geoserverobj:
         if tasks and tasks.get("imports"):
             for task in tasks["imports"]:
                 if task["state"].lower() in ["pending", "ready"]:
-                    log.info("Execute task {0}".format(task["id"]))
+                    log.info(f"Execute task {task['id']}")
                     split_url = task["href"].split("/geoserver")
                     split_url[0] = self.geoserver_url
                     api_point = "".join(split_url)
@@ -101,7 +91,7 @@ class Geoserverobj:
             return False
         res = groups[0][0]
 
-        log.info("Adding {0} to import.".format(res["id"]))
+        log.info(f"Adding {res['id']} to import.")
         url = res.get("url")
         self.main_res = res
         import_data = {
@@ -136,20 +126,18 @@ class Geoserverobj:
                         return True
                     else:
                         log.error(
-                            "Layer wasn't updated due to"
-                            " some unexpected issues."
+                            "Layer wasn't updated due to" " some unexpected issues."
                         )
-                        log.error(
-                            "Status code is {0}".format(upd_l.status_code)
-                        )
+                        log.error(f"Status code is {upd_l.status_code}")
                 else:
                     log.error("An error appeard during task, skip.")
+            else:
+                log.error("No import tasks detected after a request to GeoServer")
+                log.error("GeoServer response: %s", import_data)
         else:
             log.error(
                 "Something went wrong while sending"
-                " resource to import. Status code is {0}".format(
-                    res_import.status_code
-                )
+                f" resource to import. Status code is {res_import.status_code}"
             )
             log.error(f"{res_import.content}")
         return False
@@ -242,9 +230,7 @@ class Geoserverobj:
     def drop_workspace(self, workspace: str):
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.delete(
-                url + "?recurse=true&quietOnNotFound", timeout=_timeout()
-            )
+            return s.delete(url + "?recurse=true&quietOnNotFound", timeout=_timeout())
 
     def create_workspace(self, workspace: str):
         url = self._workspace_url()
@@ -272,18 +258,14 @@ class Geoserverobj:
 
     def _clear_old_table(self, dataset, table_name):
         self.table_name = table_name
-        log.info(
-            "Delete existing rows in DB for dataset {0}".format(dataset["id"])
-        )
+        log.info(f"Delete existing rows in DB for dataset {dataset['id']}")
         cur, conn = _get_cursor()
         table_name = "ckan_" + dataset["id"].replace("-", "_")
         cur.execute('DROP TABLE IF EXISTS "' + table_name + '"')
         cur.close()
         conn.close()
 
-    def create_store(
-        self, datastore: str, workspace: str, table_name: Optional[str]
-    ):
+    def create_store(self, datastore: str, workspace: str, table_name: Optional[str]):
         if not table_name:
             dsdata = {
                 "dataStore": {
@@ -387,9 +369,7 @@ class Geoserverobj:
             if "geojson" in self.geo_res_frmts.keys():
                 self.geo_res_frmts["json"] = self.geo_res_frmts["geojson"]
             for _format in tk.aslist(
-                tk.config.get(
-                    "ckanext.datagovau.spatialingestor.target_formats", []
-                )
+                tk.config["ckanext.datagovau.spatialingestor.target_formats"]
             ):
                 time.sleep(5)
                 action_word = "Creating"
@@ -403,9 +383,7 @@ class Geoserverobj:
                     action_word = "Patching"
                     data["id"] = self.geo_res_frmts[_format]
 
-                log.debug(
-                    f"'{action}' action is applied to '{_format}' resource"
-                )
+                log.debug(f"'{action}' action is applied to '{_format}' resource")
 
                 if _format == "kml" and (
                     "kml" not in existing_formats or action == "resource_patch"
@@ -435,8 +413,7 @@ class Geoserverobj:
                         data,
                     )
                 elif _format in ["wms", "wfs"] and (
-                    _format not in existing_formats
-                    or action == "resource_patch"
+                    _format not in existing_formats or action == "resource_patch"
                 ):
                     if _format == "wms":
                         log.debug(f"{action_word} WMS API Endpoint Resource")
@@ -444,8 +421,7 @@ class Geoserverobj:
                             dataset["title"] + " - Preview this Dataset (WMS)"
                         )
                         data["description"] = (
-                            "View the data in this "
-                            "dataset online via an online map"
+                            "View the data in this " "dataset online via an online map"
                         )
                         data["format"] = "wms"
                         data["url"] = ws_addr + "wms?request=GetCapabilities"
@@ -471,8 +447,7 @@ class Geoserverobj:
                             data,
                         )
                 elif _format in ["json", "geojson"] and (
-                    _format not in existing_formats
-                    or action == "resource_patch"
+                    _format not in existing_formats or action == "resource_patch"
                 ):
                     url = (
                         ws_addr
@@ -481,29 +456,24 @@ class Geoserverobj:
                         + "&outputFormat="
                         + quote("json")
                     )
-                    if not any(
-                        [x in existing_formats for x in ["json", "geojson"]]
-                    ):
-                        log.debug(f"{action_word} GeoJSON Resource")
-                        data["name"] = dataset["title"] + " GeoJSON"
-                        data["description"] = (
-                            "For use in web-based data "
-                            "visualisation of this collection"
-                        )
-                        data["format"] = "geojson"
-                        data["url"] = url
-                        call_action(
-                            action,
-                            data,
-                        )
+                    log.debug(f"{action_word} GeoJSON Resource")
+                    data["name"] = dataset["title"] + " GeoJSON"
+                    data["description"] = (
+                        "For use in web-based data "
+                        "visualisation of this collection"
+                    )
+                    data["format"] = "geojson"
+                    data["url"] = url
+                    call_action(
+                        action,
+                        data,
+                    )
 
 
 def call_action(action: str, data, ignore_auth=False) -> Any:
     return tk.get_action(action)(
         {
-            "user": tk.config.get(
-                "ckanext.datagovau.spatialingestor.username", ""
-            ),
+            "user": tk.config["ckanext.datagovau.spatialingestor.username"],
             "ignore_auth": ignore_auth,
         },
         data,
@@ -521,14 +491,13 @@ def _get_cursor():
         raise
     # Open a cursor to perform database operations
     cur = conn.cursor()
-    conn.set_isolation_level(0)
     # Execute a command: this creates a new table
     # cur.execute("create extension postgis")
     return cur, conn
 
 
 def run_ingestor(pkg_id: str):
-    ignored = tk.aslist(tk.config.get(CONFIG_IGNORE, DEFAULT_IGNORE))
+    ignored = tk.config[CONFIG_IGNORE]
     if pkg_id in ignored:
         log.debug("%s is ignored")
         return
@@ -539,6 +508,7 @@ def run_ingestor(pkg_id: str):
     geo_obj = Geoserverobj()
 
     log.debug("Prepare filtered resources")
+
     res_group_exist = geo_obj.get_geo_res_list(dataset_dict)
     if not res_group_exist:
         log.info("No ingest resource for this Dataset")
@@ -566,7 +536,7 @@ def run_ingestor(pkg_id: str):
         geo_obj.create_store(
             datastore, workspace, table_name if using_grid else None
         )
-    except Exception as e:
+    except Exception:
         log.exception("Cannot create store for %s", pkg_id)
         return
 
@@ -589,9 +559,15 @@ def run_ingestor(pkg_id: str):
         existing_formats.append(resource["format"].lower())
 
     log.debug("Creating new resources for Dataset")
+    layer_info = geo_obj._get_layer()
+    if layer_info.ok:
+        layer_name = layer_info.json()['layer']['nativeName']
+    else:
+        layer_name = table_name
+
     geo_obj._create_resources_from_formats(
         workspace,
-        table_name,
+        layer_name,
         existing_formats,
         pkg_id,
         using_grid,

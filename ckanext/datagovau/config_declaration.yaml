@@ -1,0 +1,53 @@
+version: 1
+groups:
+  - annotation: ckanext-datagovau
+    options:
+      - key: ckanext.datagovau.spatialingestor.geoserver.public_url
+
+      - key: ckanext.datagovau.spatialingestor.request_timeout
+        type: int
+        default: 10
+
+      - key: ckanext.datagovau.spatialingestor.geoserver.url
+
+      - key: ckanext.datagovau.spatialingestor.username
+        default: ""
+
+      - key: ckanext.datagovau.spatialingestor.datastore.url
+        default: ""
+
+      - key: ckanext.datagovau.spatialingestor.org_blacklist
+        type: list
+
+      - key: ckanext.datagovau.spatialingestor.pkg_blacklist
+        type: list
+
+      - key: ckanext.datagovau.spatialingestor.target_formats
+        type: list
+
+      - key: ckanext.datagovau.spatialingestor.source_formats
+        type: list
+
+      - key: ckanext.datagovau.spatialingestor.ogr2ogr.executable
+
+      - key: ckanext.datagovau.spatialingestor.ignore_workflow
+        type: bool
+
+      - key: ckanext.datagovau.spatialingestor.large_file_threshold
+        type: int
+        default: 52_428_800_000
+
+      - key: ckanext.datagovau.spatialingestor.geoserver.base_dir
+        default: ""
+
+      - key: ckanext.datagovau.spatialingestor.geoserver.os_user
+        default: ""
+
+      - key: ckanext.datagovau.spatialingestor.geoserver.os_group
+        default: ""
+
+      - key: ckanext.datagovau.zip-extractor.interesting_extensions
+        type: list
+        default: [csv]
+        description: |
+          Space-separated list of extensions(in lowercase) that trigger auto-extraction from ZIP-archive.

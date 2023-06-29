@@ -3,37 +3,37 @@
 {% set api_url = 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
 
 {% macro section(title, links=[]) %}
-    <nav class="au-footer__navigation col-md-3 col-xs-6">
-	<h3 class="au-display-lg">{{ title }}</h3>
-	<ul class="au-link-list list-unstyled">
-	    {% for link in links %}
-		<li><a href="{{ link.href }}">{{ link.label }}</a></li>
-	    {% endfor %}
-	</ul>
-    </nav>
+  <nav class="au-footer__navigation col-md-3 col-xs-6">
+    <h3 class="au-display-lg">{{ title }}</h3>
+    <ul class="au-link-list list-unstyled">
+      {% for link in links %}
+        <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
 {% endmacro %}
 
 {% block footer_content %}
-    <div class="row">
-	{{ section("Data.gov.au", [
+  <div class="row">
+    {{ section("Data.gov.au", [
 	    {"href":"https://search.data.gov.au/page/about", "label": _("About")},
 	    {"href":"https://search.data.gov.au/suggest", "label": _("Suggest a dataset")},
 	    {"href":"https://search.data.gov.au/page/privacy-policy", "label": _("Privacy Policy")},
 	    {"href":"https://search.data.gov.au/suggest#feedback", "label": _("Give feedback")},
 	]) }}
 
-	{{ section(_("Publishers"), [
+    {{ section(_("Publishers"), [
 	    {"href": "/user/login", "label": _("Login")},
 	    {"href": "/stats", "label": _("Site statistics")},
 	    {"href": "https://toolkit.data.gov.au", "label": _("Open data toolkit")},
 	]) }}
 
-	{{ section(_("Developers"), [
+    {{ section(_("Developers"), [
 	    {"href": "https://search.data.gov.au/api/v0/apidocs/index.html", "label": _("Metadata API")},
 	    {"href": api_url, "label": _("Data API")},
 	    {"href": "https://ckan.org", "label": _("Powered by CKAN")},
 	    {"href": "http://www.okfn.org/", "label": _("Open Knowledge Foundation")},
 	    {"href": "http://www.opendefinition.org/okd/", "label": '<img src="//assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="Open Data">'|safe},
 	]) }}
-    </div>
+  </div>
 {% endblock %}

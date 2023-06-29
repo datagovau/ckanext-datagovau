@@ -1,7 +1,19 @@
 {% ckan_extends %}
 
 {% block breadcrumb %}
-    <div data-module="dga-breadcrumbs">
-	{{ super() }}
-    </div>
+  <div data-module="dga-breadcrumbs">
+    {{ super() }}
+  </div>
 {% endblock breadcrumb %}
+
+{# FIXME Should be deleted after ckan-2.10.1 (https://github.com/ckan/ckan/pull/7467) #}
+{% block secondary %}
+  <aside class="secondary col-md-3">
+    {% block secondary_content %}{{ super() }}{% endblock %}
+  </aside>
+{% endblock secondary %}
+{% block primary %}
+  <div class="primary col-md-9 col-xs-12" role="main">
+    {% block primary_content %}{{ super() }}{% endblock %}
+  </div>
+{% endblock primary %}

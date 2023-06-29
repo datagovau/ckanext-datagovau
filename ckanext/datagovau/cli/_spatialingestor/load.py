@@ -35,6 +35,7 @@ CRS_MAPPING = {
     ],
 }
 
+
 def tab(resource: dict[str, Any], table_name: str) -> str:
     log.debug("using TAB file %s", resource["url"])
     utils.download(resource["url"], "input.zip")
@@ -257,9 +258,7 @@ def grid(resource: dict[str, Any], table_name: str, tempdir: str) -> str:
 
     subprocess.call(pargs)
 
-    large_file = (
-        os.stat(table_name + "_temp1.tiff").st_size > config.large_size()
-    )
+    large_file = os.stat(table_name + "_temp1.tiff").st_size > config.large_size()
 
     if large_file:
         pargs = [

@@ -12,22 +12,22 @@
     {% set stats = h.dga_get_package_stats(pkg.id) %}
 
     {% if stats %}
-        <section class="module module-narrow dataset-map">
-            <h2 class="module-heading">
-                <i class="fa fa-bar-chart"></i>
-                {{ _('GA stats') }}
-            </h2>
-            <div class="stats">
-                <div class="stats-category">
-                    {% for category_data in stats %}
-                        {% snippet "charts/chartjs.html", type="line", data=category_data %}
-                        <h4 class="text-center">
-                            {{ _('Total {}'.format(category_data.category)) }}: {{ category_data.total }}
-                        </h4>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
+      <section class="module module-narrow dataset-map">
+        <h2 class="module-heading">
+          <i class="fa fa-bar-chart"></i>
+          {{ _('GA stats') }}
+        </h2>
+        <div class="stats">
+          <div class="stats-category">
+            {% for category_data in stats %}
+              {% snippet "charts/chartjs.html", type="line", data=category_data %}
+              <h4 class="text-center">
+                {{ _('Total {}'.format(category_data.category)) }}: {{ category_data.total }}
+              </h4>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
     {% endif %}
   {% endblock %}
 
