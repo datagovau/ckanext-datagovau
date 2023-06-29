@@ -1,7 +1,8 @@
 import logging
 
-import ckan.plugins.toolkit as tk
 import click
+
+import ckan.plugins.toolkit as tk
 from ckan import model
 
 from ckanext.datagovau.geoserver_utils import CONFIG_PUBLIC_URL, run_ingestor
@@ -16,7 +17,7 @@ def geoserver_ingestor():
 
 
 @geoserver_ingestor.command("ingest")
-@click.option("-d", "--dataset", help="Get specific dataset", default=False)
+@click.option("-d", "--dataset", help="Get specific dataset", default=None)
 @click.option(
     "-o",
     "--organization",
@@ -24,11 +25,14 @@ def geoserver_ingestor():
     default=False,
 )
 def geo_ingest(dataset, organization):
-    query = model.Session.query(model.Package).filter_by(
-        state="active", private=False
-    )
+    query = model.Session.query(model.Package).filter_by(state="active", private=False)
     if organization:
-        query = query.filter(model.Package.owner_org == organization)
+        org = model.Group.get(organization)
+        if not org:
+            tk.error_shout(f"Organization {organization} not found")
+            raise click.Abort()
+
+        query = query.filter(model.Package.owner_org == org.id)
 
     if dataset:
         query = query.filter(

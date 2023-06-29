@@ -1,0 +1,41 @@
+.account-masthead {
+    background: $dga-account-bg;
+
+    .account {
+        li {
+            a {
+                &:not(.image):after {
+                    content: attr(title);
+                }
+            }
+
+            &.notifications .badge {
+                display: none;
+            }
+        }
+    }
+}
+
+.masthead {
+    .navbar .logo img {
+        max-height: 100%;
+    }
+
+    background-color: $dga-header-bg;
+
+    .main-navbar ul li {
+        a {
+            color: black;
+        }
+
+        &:hover, &:focus, &.active {
+            a {
+                color: #fff;
+            }
+        }
+    }
+}
+
+#field-sitewide-search {
+    border: 1px solid $dga-sitewide-search-border;
+}

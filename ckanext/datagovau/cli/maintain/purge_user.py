@@ -7,6 +7,8 @@ import click
 import ckan.model as model
 from ckan.model import core
 
+import ckanext.activity.model as activity_model
+
 
 @click.command()
 @click.argument("user_ids", nargs=-1)
@@ -37,9 +39,7 @@ def _purge_all_deleted_users() -> None:
     if not deleted_users:
         return click.secho("There are no deleted users", fg="green")
     else:
-        click.secho(
-            f"Found {len(deleted_users)} deleted users. Trying to purge"
-        )
+        click.secho(f"Found {len(deleted_users)} deleted users. Trying to purge")
 
     for user in deleted_users:
         _purge_user(user)
@@ -50,11 +50,7 @@ def _get_user_obj(user_id: str) -> Optional[model.User]:
 
 
 def _get_deleted_user_list() -> list[model.User]:
-    return (
-        model.Session.query(model.User)
-        .filter_by(state=core.State.DELETED)
-        .all()
-    )
+    return model.Session.query(model.User).filter_by(state=core.State.DELETED).all()
 
 
 def _purge_user(user: model.User) -> None:
@@ -64,9 +60,7 @@ def _purge_user(user: model.User) -> None:
         )
 
     if not _is_safe_to_purge(user):
-        return click.secho(
-            f"The user <{user.name}> cannot be purged", fg="red"
-        )
+        return click.secho(f"The user <{user.name}> cannot be purged", fg="red")
 
     model.Session.delete(user)
     model.Session.commit()
@@ -121,9 +115,9 @@ def _is_user_has_packages(user: model.User) -> bool:
 def _if_user_mentioned_in_package_activities(user: model.User) -> bool:
     """Check if user is mentioned in package activities"""
     activities_query = (
-        model.Session.query(model.Activity)
+        model.Session.query(activity_model.Activity)
         .filter_by(user_id=user.id)
-        .filter(model.Activity.activity_type.contains("package"))
+        .filter(activity_model.Activity.activity_type.contains("package"))
     )
 
     activity_count: int = activities_query.count()

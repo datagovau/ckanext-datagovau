@@ -12,11 +12,8 @@ from werkzeug.datastructures import FileStorage
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 
+from ckanext.datagovau.cli.maintain.bioregional_ingest import bioregional_ingest
 from ckanext.datagovau.cli.maintain.purge_user import purge_deleted_users
-from ckanext.datagovau.cli.maintain.bioregional_ingest import (
-    bioregional_ingest,
-)
-
 
 log = logging.getLogger(__name__)
 
@@ -31,12 +28,11 @@ def maintain():
 maintain.add_command(bioregional_ingest)
 maintain.add_command(purge_deleted_users)
 
+
 @maintain.command()
 @click.argument("ids", nargs=-1)
 @click.option("-u", "--username", help="CKAN user who performs extraction.")
-@click.option(
-    "--tmp-dir", default="/tmp", help="Root folder for temporal files"
-)
+@click.option("--tmp-dir", default="/tmp", help="Root folder for temporal files")
 @click.option(
     "--days-to-buffer",
     "days",
@@ -68,9 +64,7 @@ def zip_extract(
     with ctx.meta["flask_app"].test_request_context():
         for resource in select_extractable_resources(ckan, ids):
             try:
-                ckan.action.dga_extract_resource(
-                    id=resource["id"], tmp_dir=tmp_dir
-                )
+                ckan.action.dga_extract_resource(id=resource["id"], tmp_dir=tmp_dir)
             except ckanapi.ValidationError:
                 log.error(
                     "Cannot update resource %s from dataset %s",
@@ -85,8 +79,8 @@ def zip_extract(
 @maintain.command()
 @click.help_option("-h", "--help")
 def force_purge_orgs():
-    """Force purge of trashed organizations. If the organization has child packages, they become unowned
-    """
+    """Force purge of trashed organizations. If the organization has child packages,
+    they become unowned"""
     sql_commands = [
         "delete from group_extra_revision where group_id in (select id from"
         " \"group\" where \"state\"='deleted' AND is_organization='t');",
@@ -94,8 +88,7 @@ def force_purge_orgs():
         " where \"state\"='deleted' AND is_organization='t');",
         'delete from member where group_id in (select id from "group" where'
         " \"state\"='deleted' AND is_organization='t');",
-        'delete from "group" where "state"=\'deleted\' AND'
-        " is_organization='t';",
+        'delete from "group" where "state"=\'deleted\' AND' " is_organization='t';",
     ]
 
     _execute_sql_delete_commands(sql_commands)
@@ -132,9 +125,7 @@ def _execute_sql_delete_commands(commands):
             model.Session.execute(command)
             model.Session.commit()
         except ProgrammingError:
-            log.warning(
-                f'Could not execute command "{command}". Table does not exist.'
-            )
+            log.warning(f'Could not execute command "{command}". Table does not exist.')
             model.Session.rollback()
 
 

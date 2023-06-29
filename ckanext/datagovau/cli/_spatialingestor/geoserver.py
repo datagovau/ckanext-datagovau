@@ -3,14 +3,11 @@ from __future__ import annotations
 import re
 from typing import Any, NamedTuple
 
-import ckan.plugins.toolkit as tk
 import requests
 
-from ckanext.datagovau.geoserver_utils import (
-    CONFIG_PUBLIC_URL,
-    CONFIG_URL,
-    _timeout,
-)
+import ckan.plugins.toolkit as tk
+
+from ckanext.datagovau.geoserver_utils import CONFIG_PUBLIC_URL, CONFIG_URL, _timeout
 
 from .exc import BadConfig
 
@@ -45,9 +42,7 @@ class GeoServer(NamedTuple):
     def drop_workspace(self, workspace: str):
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.delete(
-                url + "?recurse=true&quietOnNotFound", timeout=_timeout()
-            )
+            return s.delete(url + "?recurse=true&quietOnNotFound", timeout=_timeout())
 
     def create_workspace(self, workspace: str):
         url = self._workspace_url()
@@ -106,9 +101,7 @@ class GeoServer(NamedTuple):
                 timeout=_timeout(),
             )
 
-    def add_style(
-        self, workspace: str, layer: str, style: str, data: dict[str, Any]
-    ):
+    def add_style(self, workspace: str, layer: str, style: str, data: dict[str, Any]):
         url = f"{self.host}rest/layers/{layer}"
         with self._session() as s:
             return s.put(url, json=data, timeout=_timeout())

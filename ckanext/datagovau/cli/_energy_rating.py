@@ -48,13 +48,11 @@ def fetch(category, filename):
         url,
         filename,
         params={"export_format": "csv"},
-        headers={
-            "User-Agent": "Mozilla/4.0 (compatible; data.gov.au webspider)"
-        },
+        headers={"User-Agent": "Mozilla/4.0 (compatible; data.gov.au webspider)"},
     )
-    name = resp.headers.get("Content-Disposition", "").split("filename=")[
-        -1
-    ].strip("\"'") or os.path.basename(urlsplit(url)[2])
+    name = resp.headers.get("Content-Disposition", "").split("filename=")[-1].strip(
+        "\"'"
+    ) or os.path.basename(urlsplit(url)[2])
 
     return name
 
@@ -64,9 +62,7 @@ def energy_resources():
 
     for name, categories in _energy_pkgs.items():
         try:
-            pkg = tk.get_action("package_show")(
-                {"user": user["name"]}, {"id": name}
-            )
+            pkg = tk.get_action("package_show")({"user": user["name"]}, {"id": name})
         except tk.ObjectNotFound:
             log.error("Energy package %s not found", name)
             continue
@@ -74,9 +70,7 @@ def energy_resources():
         for resource in pkg["resources"]:
             resource_category = resource["name"].split("-")[0].strip().lower()
             if resource_category not in categories:
-                log.info(
-                    "Resource %s is not an energy resource", resource["id"]
-                )
+                log.info("Resource %s is not an energy resource", resource["id"])
                 continue
 
             yield resource, categories[resource_category]

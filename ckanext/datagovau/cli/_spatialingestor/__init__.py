@@ -9,8 +9,9 @@ from datetime import datetime
 from typing import Any, Dict, List, NamedTuple, Optional
 from urllib.parse import quote
 
-import ckan.plugins.toolkit as tk
 import psycopg2
+
+import ckan.plugins.toolkit as tk
 
 from ckanext.datagovau import utils
 
@@ -40,19 +41,19 @@ class GroupedResources(NamedTuple):
 
         for resource in dataset["resources"]:
             fmt = resource["format"].lower()
-            is_source = utils.contains(fmt, source_formats)
+            is_source = utils.contains(fmt, source_formats, True)
 
             if "/geoserver" in resource["url"]:
                 continue
 
-            if utils.contains(fmt, {"sld"}):
+            if utils.contains(fmt, {"sld"}, True):
                 sld.append(resource)
             elif is_source:
-                if utils.contains(fmt, {"tab", "mapinfo"}):
+                if utils.contains(fmt, {"tab", "mapinfo"}, True):
                     tab.append(resource)
-                elif utils.contains(fmt, {"grid"}):
+                elif utils.contains(fmt, {"grid"}, True):
                     grid.append(resource)
-                elif utils.contains(fmt, {"geotif"}):
+                elif utils.contains(fmt, {"geotif"}, True):
                     tiff.append(resource)
 
         return cls(tab, tiff, grid, sld)
@@ -67,7 +68,7 @@ def _get_cursor():
 
     try:
         conn = psycopg2.connect(config.datastore())
-    except:
+    except Exception:
         fail("I am unable to connect to the database.")
     # Open a cursor to perform database operations
     cur = conn.cursor()
@@ -86,9 +87,7 @@ def _clear_old_table(dataset: dict[str, Any]) -> str:
     return table_name
 
 
-def _apply_sld(
-    name: str, workspace: str, layer_name: str, url=None, filepath=None
-):
+def _apply_sld(name: str, workspace: str, layer_name: str, url=None, filepath=None):
     server = get_geoserver()
 
     if url:
@@ -112,9 +111,7 @@ def _apply_sld(
         log.info("Delete out old style in workspace")
         server.delete_style(workspace, name)
 
-    server.create_style(
-        workspace, {"style": {"name": name, "filename": name + ".sld"}}
-    )
+    server.create_style(workspace, {"style": {"name": name, "filename": name + ".sld"}})
 
     sld_text = open(filepath, "r").read()
     mapping = {
@@ -147,9 +144,7 @@ def _apply_sld(
     )
 
 
-def _apply_sld_resources(
-    sld_res: dict[str, Any], workspace: str, layer_name: str
-):
+def _apply_sld_resources(sld_res: dict[str, Any], workspace: str, layer_name: str):
     # Procedure for updating layer to use default style comes from
     # http://docs.geoserver.org/stable/en/user/rest/examples/curl.html that
     # explains the below steps in the 'Changing a layer style' section
@@ -160,9 +155,7 @@ def _apply_sld_resources(
     with server._session() as sess:
         r = sess.get(sld_res["url"])
         if r.ok:
-            _apply_sld(
-                name, workspace, layer_name, url=sld_res["url"], filepath=None
-            )
+            _apply_sld(name, workspace, layer_name, url=sld_res["url"], filepath=None)
         else:
             log.error("could not download SLD resource")
 
@@ -191,8 +184,8 @@ def _get_geojson(table_name: str) -> tuple[str, str, str]:
         "SELECT ST_Extent(geom) as box,"
         "ST_Extent(ST_Transform(geom,4326)) as latlngbox, "
         "ST_AsGeoJSON(ST_Extent(ST_Transform(geom,4326))) as geojson "
-        'from "{}"'
-    ).format(table_name)
+        f'from "{table_name}"'
+    )
     cur.execute(select_query)
     # logger.debug(select_query)
 
@@ -243,9 +236,7 @@ def _perform_workspace_requests(
         fail(f"Failed to create Geoserver store {r.url}: {r.content}")
 
 
-def _update_package_with_bbox(
-    bbox, latlngbbox, ftdata, dataset, native_crs, bgjson
-):
+def _update_package_with_bbox(bbox, latlngbbox, ftdata, dataset, native_crs, bgjson):
     def _clear_box(string):
         return (
             string.replace("BOX", "")
@@ -277,14 +268,10 @@ def _update_package_with_bbox(
     ftdata["featureType"]["latLonBoundingBox"] = llbbox_obj
     if float(llminx) < -180 or float(llmaxx) > 180:
         log.debug("Invalid projection: %s", ftdata)
-        fail(
-            dataset["title"]
-            + " has invalid automatic projection: "
-            + native_crs
-        )
+        fail(dataset["title"] + " has invalid automatic projection: " + native_crs)
 
     ftdata["featureType"]["srs"] = native_crs
-    # logger.debug('bgjson({}), llbox_obj({})'.format(bgjson, llbbox_obj))
+    # logger.debug(f'bgjson({bgjson}), llbox_obj({llbbox_obj})')
     if "spatial" not in dataset or dataset["spatial"] != bgjson:
         dataset["spatial"] = bgjson
         call_action("package_update", dataset)
@@ -336,11 +323,9 @@ def _create_resources_from_formats(
                     "resource_create",
                     {
                         "package_id": dataset["id"],
-                        "name": dataset["title"]
-                        + " - Preview this Dataset (WMS)",
+                        "name": dataset["title"] + " - Preview this Dataset (WMS)",
                         "description": (
-                            "View the data in this "
-                            "dataset online via an online map"
+                            "View the data in this " "dataset online via an online map"
                         ),
                         "format": "wms",
                         "url": ws_addr + "wms?request=GetCapabilities",
@@ -354,11 +339,8 @@ def _create_resources_from_formats(
                     "resource_create",
                     {
                         "package_id": dataset["id"],
-                        "name": dataset["title"]
-                        + " Web Feature Service API Link",
-                        "description": (
-                            "WFS API Link for use in Desktop GIS tools"
-                        ),
+                        "name": dataset["title"] + " Web Feature Service API Link",
+                        "description": ("WFS API Link for use in Desktop GIS tools"),
                         "format": "wfs",
                         "url": ws_addr + "wfs",
                         "wfs_layer": layer_name,
@@ -408,9 +390,7 @@ def _prepare_everything(
     table_name = _clear_old_table(dataset)
     _clean_dir(config.data_dir(table_name))
 
-    using_grid, native_crs = _convert_resources(
-        table_name, tempdir, resources
-    )
+    using_grid, native_crs = _convert_resources(table_name, tempdir, resources)
 
     server = get_geoserver()
     workspace = server.into_workspace(dataset["name"])
@@ -423,9 +403,7 @@ def _prepare_everything(
 
     r = server.create_workspace(workspace)
 
-    log.debug(
-        "_prepare_everything():: Workspace creation request result r = %s", r
-    )
+    log.debug("_prepare_everything():: Workspace creation request result r = %s", r)
     if not r.ok:
         fail(f"Failed to create Geoserver workspace: {r.content}")
 
@@ -440,9 +418,7 @@ def clean_assets(dataset_id: str, skip_grids: bool = False):
         return
 
     # Skip cleaning datasets that may have a manually ingested grid
-    is_grid = {"grid", "geotif"} & {
-        r["format"].lower() for r in dataset["resources"]
-    }
+    is_grid = {"grid", "geotif"} & {r["format"].lower() for r in dataset["resources"]}
     if skip_grids and is_grid:
         return
 
@@ -488,8 +464,7 @@ def do_ingesting(dataset_id: str, force: bool):
 
         datastore = workspace + ("cs" if using_grid else "ds")
         log.debug(
-            "do_ingesting():: before _perform_workplace_requests().  datastore"
-            " = %s",
+            "do_ingesting():: before _perform_workplace_requests().  datastore" " = %s",
             datastore,
         )
 
@@ -498,7 +473,7 @@ def do_ingesting(dataset_id: str, force: bool):
                 datastore, workspace, table_name if using_grid else None
             )
         except IngestionFail as e:
-            log.info("{}: {}".format(type(e), e))
+            log.info(f"{type(e)}: {e}")
             clean_assets(dataset_id)
             return
 
@@ -551,9 +526,7 @@ def do_ingesting(dataset_id: str, force: bool):
                 )
             log.debug("Create layer: %s", layer_data)
 
-            r = server.create_layer(
-                workspace, using_grid, datastore, layer_data
-            )
+            r = server.create_layer(workspace, using_grid, datastore, layer_data)
             if not r.ok:
                 fail(f"Failed to create Geoserver layer {r.url}: {r.content}")
         except IngestionFail as e:
@@ -562,9 +535,7 @@ def do_ingesting(dataset_id: str, force: bool):
             return
 
         sldfiles = glob.glob("*.[sS][lL][dD]")
-        log.debug(
-            "SLD Files %s. Grouped resources: %s", sldfiles, resources.sld
-        )
+        log.debug("SLD Files %s. Grouped resources: %s", sldfiles, resources.sld)
         if len(sldfiles):
             _apply_sld(
                 os.path.splitext(os.path.basename(sldfiles[0]))[0],
@@ -585,7 +556,8 @@ def do_ingesting(dataset_id: str, force: bool):
         else:
             log.info("no sld resources or sld url invalid")
 
-        # Delete out all geoserver resources before rebuilding (this simplifies update logic)
+        # Delete out all geoserver resources before rebuilding
+        # (this simplifies update logic)
         _delete_resources(dataset)
         dataset = _get_dataset(dataset["id"])
         assert dataset
@@ -594,12 +566,7 @@ def do_ingesting(dataset_id: str, force: bool):
         for resource in dataset["resources"]:
             existing_formats.append(resource["format"].lower())
 
-        ws_addr = (
-            server.public_url
-            + "/"
-            + server.into_workspace(dataset["name"])
-            + "/"
-        )
+        ws_addr = server.public_url + "/" + server.into_workspace(dataset["name"]) + "/"
         _create_resources_from_formats(
             ws_addr,
             layer_name,
@@ -621,24 +588,20 @@ def may_skip(dataset_id: str) -> bool:
         log.debug("No package found to ingest")
         return True
 
-    org = dataset.get("organization", {}).get("name")
+    org = dataset.get("organization")
     if not org:
-        log.debug(
-            "Package must be associate with valid organization to be ingested"
-        )
+        log.debug("Package must be associate with valid organization to be ingested")
         return True
 
-    if org in config.blacklisted("org"):
-        log.debug("%s in omitted_orgs blacklist", org)
+    if org["name"] in config.blacklisted("org"):
+        log.debug("%s in omitted_orgs blacklist", org["name"])
         return True
 
     if dataset["name"] in config.blacklisted("pkg"):
         log.debug("%s in omitted_pkgs blacklist", dataset["name"])
         return True
 
-    if dataset.get("harvest_source_id") or tk.asbool(
-        dataset.get("spatial_harvester")
-    ):
+    if dataset.get("harvest_source_id") or tk.asbool(dataset.get("spatial_harvester")):
         log.debug("Harvested datasets are not eligible for ingestion")
         return True
 
@@ -661,7 +624,9 @@ def may_skip(dataset_id: str) -> bool:
         log.debug("Can not determine unique spatial file to ingest")
         return True
 
-    activity_list = call_action("package_activity_list", {"id": dataset["id"], "include_hidden_activity": True})
+    activity_list = call_action(
+        "package_activity_list", {"id": dataset["id"], "include_hidden_activity": True}
+    )
 
     user = call_action("user_show", {"id": config.username()}, True)
 

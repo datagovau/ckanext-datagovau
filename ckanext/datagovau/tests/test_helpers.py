@@ -1,16 +1,17 @@
 import unittest.mock as mock
 
-import ckan.logic as logic
-import ckan.plugins.toolkit as tk
-import flask
 import pytest
+
+import ckan.logic as logic
+import ckan.model as model
+import ckan.plugins.toolkit as tk
 
 
 @pytest.mark.usefixtures("with_request_context", "with_plugins", "clean_db")
 class TestGetPackageStatsHelper:
     def test_get_package_stats(self, app, sysadmin, dataset):
         with app.flask_app.test_request_context():
-            flask.g.user = sysadmin["name"]
+            tk.current_user = model.User.get(sysadmin["name"])
 
             # no dataset statistics
             result = tk.h.dga_get_package_stats(dataset["id"])

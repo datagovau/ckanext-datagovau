@@ -5,15 +5,14 @@ import re
 from datetime import datetime as dt
 from typing import Any
 
-import ckan.model as model
-import ckan.plugins.toolkit as tk
 import click
 from typing_extensions import TypedDict
 
+import ckan.model as model
+import ckan.plugins.toolkit as tk
+
 RE_PKG = re.compile(r"/dataset/(?P<id>[^/?#]+)")
-RE_RES = re.compile(
-    r"/dataset/(?P<pkg_id>[^/?#]+)/resource/(?P<res_id>[^/?#]+)"
-)
+RE_RES = re.compile(r"/dataset/(?P<pkg_id>[^/?#]+)/resource/(?P<res_id>[^/?#]+)")
 
 GA_TYPE_RES = "resource"
 GA_TYPE_PKG = "dataset"
@@ -76,9 +75,7 @@ def _get_dates_for_last_n_years(years) -> list[str]:
 
 
 def _fill_empty_values_for_packages():
-    user: dict[str, Any] = tk.get_action("get_site_user")(
-        {"ignore_auth": True}, {}
-    )
+    user: dict[str, Any] = tk.get_action("get_site_user")({"ignore_auth": True}, {})
     context = {"user": user["name"]}
 
     current_year: int = dt.today().year
@@ -120,9 +117,7 @@ def collect():
 
 
 def _collect(date):
-    user: dict[str, Any] = tk.get_action("get_site_user")(
-        {"ignore_auth": True}, {}
-    )
+    user: dict[str, Any] = tk.get_action("get_site_user")({"ignore_auth": True}, {})
     context = {"user": user["name"]}
 
     stats: dict[str, dict[str, int]] = get_stats(date)
@@ -214,9 +209,7 @@ def _get_stats_data(date, data_dict) -> GaData:
     date_month_start: str = str(dt.strptime(date, "%Y-%m").date())
     year, month = date.split("-")
     last_day: int = calendar.monthrange(int(year), int(month))[1]
-    date_last_day: str = str(
-        dt.strptime(f"{date}-{last_day:02}", "%Y-%m-%d").date()
-    )
+    date_last_day: str = str(dt.strptime(f"{date}-{last_day:02}", "%Y-%m-%d").date())
 
     data_dict["start_date"] = date_month_start
     data_dict["end_date"] = date_last_day

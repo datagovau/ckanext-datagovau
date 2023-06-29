@@ -1,9 +1,20 @@
 {
-  "description": "This CKAN Extension customises a CKAN instance for the hosting of data.gov.au.",
-  "main": "index.js",
+  "name": "ckanext-datagovau",
+  "version": "1.0.0",
+  "description": "CKAN: The Open Source Data Portal Software ==========================================",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-if": "^3.0.0",
+    "gulp-sass": "^5.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-touch-fd": "^2.0.0",
+    "sass": "^1.49.8",
+    "pyright": "^1.1.296"
+  },
   "scripts": {
-      "dev": "DEBUG=1 gulp watch",
-      "build": "gulp build",
+    "dev": "DEBUG=1 gulp watch",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,16 +24,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://bitbucket.org/link-digital-development/ckanext-datagovau/issues"
-  },
-  "homepage": "https://bitbucket.org/link-digital-development/ckanext-datagovau#readme",
-  "dependencies": {
-    "gulp": "^4.0.2",
-    "gulp-cleancss": "^0.2.2",
-    "gulp-if": "^3.0.0",
-    "gulp-less": "^5.0.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-touch-fd": "^2.0.0"
+  "devDependencies": {
+    "prettier-stylelint": "^0.4.2",
+    "stylelint": "^13.2.0",
+    "stylelint-config-idiomatic-order": "^8.1.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-standard": "^20.0.0"
   }
 }

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import inspect
 import logging
-from typing import Any
 
 import ckan.authz as authz
 import ckan.lib.helpers as h
@@ -11,23 +10,22 @@ import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+from ckanext.xloader.plugin import xloaderPlugin
+
 import ckanext.datagovau.helpers as helpers
-from ckanext.datagovau import cli, validators
 from ckanext.datagovau.geoserver_utils import (
     CONFIG_PUBLIC_URL,
     delete_ingested,
     run_ingestor,
 )
-from ckanext.datagovau.logic.action import get_actions
-from ckanext.datagovau.logic.auth import get_auth_functions
-from ckanext.xloader.plugin import xloaderPlugin
+
+from . import utils
 
 log = logging.getLogger(__name__)
 
 ingest_rest_list = ["kml", "kmz", "shp", "shapefile"]
 
 CONFIG_IGNORE_WORKFLOW = "ckanext.datagovau.spatialingestor.ignore_workflow"
-DEFAULT_IGNORE_WORKFLOW = False
 
 
 def _dga_xnotify(self, resource):
@@ -57,20 +55,16 @@ def _dga_permission_check(group_id, user_name, permission):
 authz.has_user_permission_for_group_or_org = _dga_permission_check
 
 
+@tk.blanket.actions
+@tk.blanket.auth_functions
+@tk.blanket.cli
+@tk.blanket.config_declarations
+@tk.blanket.helpers
+@tk.blanket.validators
 class DataGovAuPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer, inherit=False)
-    p.implements(p.ITemplateHelpers)
-    p.implements(p.IValidators)
-    p.implements(p.IClick)
     p.implements(p.IPackageController, inherit=True)
     p.implements(p.IDomainObjectModification)
-    p.implements(p.IActions)
-    p.implements(p.IAuthFunctions)
-
-    # IClick
-
-    def get_commands(self):
-        return cli.get_commands()
 
     # IConfigurer
 
@@ -79,23 +73,13 @@ class DataGovAuPlugin(p.SingletonPlugin):
         tk.add_resource("assets", "datagovau")
         tk.add_public_directory(config, "assets")
 
-    # ITemplateHelpers
-
-    def get_helpers(self) -> dict[str, Any]:
-        return helpers.get_helpers()
-
-    # IValidators
-
-    def get_validators(self):
-        return validators.get_validators()
-
     # IPackageController
 
-    def before_index(self, pkg_dict):
+    def before_dataset_index(self, pkg_dict):
         pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
         return pkg_dict
 
-    def before_search(self, search_params):
+    def before_dataset_search(self, search_params):
         stat_facet = search_params["extras"].get("ext_dga_stat_group")
         if stat_facet:
             search_params.setdefault("fq_list", []).append(
@@ -103,11 +87,9 @@ class DataGovAuPlugin(p.SingletonPlugin):
             )
         return search_params
 
-    def after_delete(self, context, pkg_dict):
+    def after_dataset_delete(self, context, pkg_dict):
         if pkg_dict.get("id"):
-            if not tk.asbool(
-                tk.config.get(CONFIG_IGNORE_WORKFLOW, DEFAULT_IGNORE_WORKFLOW)
-            ):
+            if not tk.asbool(tk.config[CONFIG_IGNORE_WORKFLOW]):
                 try:
                     jobs.enqueue(
                         delete_ingested,
@@ -127,32 +109,19 @@ class DataGovAuPlugin(p.SingletonPlugin):
         ):
             return
 
-        if tk.asbool(
-            tk.config.get(CONFIG_IGNORE_WORKFLOW, DEFAULT_IGNORE_WORKFLOW)
-        ):
+        if tk.config[CONFIG_IGNORE_WORKFLOW]:
             return
 
         ingest_resources = [
             res
             for res in entity.resources
-            if res.format.lower() in ingest_rest_list
+            if utils.contains(res.format.lower(), ingest_rest_list)
         ]
 
         if ingest_resources:
             _do_geoserver_ingest(entity, ingest_resources)
         else:
             _do_spatial_ingest(entity.id)
-
-
-    # IAuthFunctions
-
-    def get_auth_functions(self):
-        return get_auth_functions()
-
-    # IActions
-
-    def get_actions(self):
-        return get_actions()
 
 
 _stat_fq = {
@@ -197,9 +166,7 @@ def _do_ingesting_wrapper(dataset_id: str):
 
 def _do_geoserver_ingest(entity, ingest_resources):
     geoserver_resources = [
-        res
-        for res in entity.resources
-        if tk.config[CONFIG_PUBLIC_URL] in res.url
+        res for res in entity.resources if tk.config[CONFIG_PUBLIC_URL] in res.url
     ]
 
     ingest_res = ingest_resources[0]

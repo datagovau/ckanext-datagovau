@@ -3,7 +3,7 @@ from __future__ import annotations
 import grp
 import pwd
 import re
-from typing import Literal, Optional, Union
+from typing import Literal, Optional
 
 import ckan.plugins.toolkit as tk
 
@@ -11,21 +11,15 @@ from .exc import BadConfig
 
 
 def username() -> str:
-    return tk.config.get("ckanext.datagovau.spatialingestor.username", "")
+    return tk.config["ckanext.datagovau.spatialingestor.username"]
 
 
-def blacklisted(entity: Union[Literal["org"], Literal["pkg"]]) -> list[str]:
-    return tk.aslist(
-        tk.config.get(
-            f"ckanext.datagovau.spatialingestor.{entity}_blacklist", []
-        )
-    )
+def blacklisted(entity: Literal["org", "pkg"]) -> list[str]:
+    return tk.config[f"ckanext.datagovau.spatialingestor.{entity}_blacklist"]
 
 
-def formats(type_: Union[Literal["target"], Literal["source"]]) -> list[str]:
-    return tk.aslist(
-        tk.config.get(f"ckanext.datagovau.spatialingestor.{type_}_formats", [])
-    )
+def formats(type_: Literal["target", "source"]) -> list[str]:
+    return tk.config[f"ckanext.datagovau.spatialingestor.{type_}_formats"]
 
 
 def datastore() -> str:
@@ -33,13 +27,10 @@ def datastore() -> str:
 
 
 def ogr2ogr() -> Optional[str]:
-    return tk.config.get(
-        "ckanext.datagovau.spatialingestor.ogr2ogr.executable"
-    )
+    return tk.config["ckanext.datagovau.spatialingestor.ogr2ogr.executable"]
 
 
 def db_settings() -> dict[str, str]:
-
     regex = [
         "^\\s*(?P<db_type>\\w*)",
         "://",
@@ -92,23 +83,19 @@ def db_param():
 
 
 def large_size() -> int:
-    return tk.asint(
-        tk.config.get("ckanext.datagovau.spatialingestor.large_file_threshold")
-    )
+    return tk.config["ckanext.datagovau.spatialingestor.large_file_threshold"]
 
 
 def data_dir(native_name: str) -> str:
-    name = tk.config.get(
-        "ckanext.datagovau.spatialingestor.geoserver.base_dir"
-    ).rstrip("/")
+    name = tk.config["ckanext.datagovau.spatialingestor.geoserver.base_dir"].rstrip("/")
     return name + "/" + native_name
 
 
 def os_owner() -> tuple[int, int]:
     uid = pwd.getpwnam(
-        tk.config.get("ckanext.datagovau.spatialingestor.geoserver.os_user")
+        tk.config["ckanext.datagovau.spatialingestor.geoserver.os_user"]
     ).pw_uid
     gid = grp.getgrnam(
-        tk.config.get("ckanext.datagovau.spatialingestor.geoserver.os_group")
+        tk.config["ckanext.datagovau.spatialingestor.geoserver.os_group"]
     ).gr_gid
     return uid, gid

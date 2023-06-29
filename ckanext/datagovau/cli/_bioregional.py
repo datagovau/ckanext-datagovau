@@ -8,10 +8,10 @@ from email.utils import formatdate
 from typing import Any, BinaryIO, Iterable, Optional, Sequence, TextIO, Union
 
 import boto3
-import ckan.plugins.toolkit as tk
-import click
 import requests
 from botocore.exceptions import ClientError
+
+import ckan.plugins.toolkit as tk
 
 
 class Download:
@@ -27,8 +27,7 @@ class Download:
 
         if (
             self.response.status_code == 400
-            and self.response.content
-            == "The dataset is not ready for downloading"
+            and self.response.content == "The dataset is not ready for downloading"
         ):
             return f"{self.response.url} is not ready for downloading."
 
@@ -85,9 +84,7 @@ class File:
     def prepare_uploader(
         self,
     ):
-        return Upload(
-            os.path.join(self.core_name, self.dataset["id"] + ".zip")
-        )
+        return Upload(os.path.join(self.core_name, self.dataset["id"] + ".zip"))
 
 
 class Fail:
@@ -168,10 +165,10 @@ def send_bioregional_log(log: TextIO, sender: str, receiver: Sequence[str]):
 
 
 def _get_smtp_connection():
-    smtp_server = tk.config.get("smtp.server", "localhost")
-    smtp_starttls = tk.ckan.common.asbool(tk.config.get("smtp.starttls"))
-    smtp_user = tk.config.get("smtp.user")
-    smtp_password = tk.config.get("smtp.password")
+    smtp_server = tk.config["smtp.server"]
+    smtp_starttls = tk.config["smtp.starttls"]
+    smtp_user = tk.config["smtp.user"]
+    smtp_password = tk.config["smtp.password"]
 
     smtp_connection = smtplib.SMTP(smtp_server)
     smtp_connection.ehlo()
@@ -205,9 +202,7 @@ def converted_datasets(
             "folder_name": dataset[
                 "http://data.bioregionalassessments.gov.au/def/ba#ba_folderName"
             ][0]["@value"],
-            "created": dataset["http://purl.org/dc/elements/1.1/created"][0][
-                "@value"
-            ],
+            "created": dataset["http://purl.org/dc/elements/1.1/created"][0]["@value"],
         }
         src = File(data, storage)
         if src and skip_local:
@@ -217,9 +212,7 @@ def converted_datasets(
         yield src
 
 
-def download_record(
-    record: File, no_verify: bool, timeout: Optional[int], url: str
-):
+def download_record(record: File, no_verify: bool, timeout: Optional[int], url: str):
     dataset_url = url.rstrip("/") + "/" + record.dataset["id"]
     return record.download_from(dataset_url, no_verify, timeout)
 

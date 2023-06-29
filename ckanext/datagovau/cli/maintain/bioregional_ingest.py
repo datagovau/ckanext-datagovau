@@ -2,29 +2,22 @@ from __future__ import annotations
 
 import json
 import logging
-from functools import partial
 from email.utils import formatdate
+from functools import partial
 from time import time
 from typing import BinaryIO, Optional, Sequence, TextIO
 
 import click
-
 
 log = logging.getLogger(__name__)
 
 
 @click.command()
 @click.help_option("-h", "--help")
-@click.option(
-    "--storage", required=True, help="Storage path for downloaded assesments"
-)
-@click.option(
-    "--log", type=click.File("w"), help="Log file(STDOUT by default)"
-)
+@click.option("--storage", required=True, help="Storage path for downloaded assesments")
+@click.option("--log", type=click.File("w"), help="Log file(STDOUT by default)")
 @click.option("--sender", help="From-header of an email with ingestion log")
-@click.option(
-    "--receiver", multiple=True, help="Receivers of the ingestion log"
-)
+@click.option("--receiver", multiple=True, help="Receivers of the ingestion log")
 @click.option("--aws-key", "key", help="AWS KeyId")
 @click.option("--aws-secret", "secret", help="AWS SecretKey")
 @click.option(
@@ -111,9 +104,7 @@ def bioregional_ingest(
         raise click.Abort()
     b.Upload.setup(key, secret, region, profile, bucket)
 
-    for record in b.converted_datasets(
-        datasets, storage, skip_local, no_download
-    ):
+    for record in b.converted_datasets(datasets, storage, skip_local, no_download):
         echo("-" * 80)
         echo(f"Ingesting dataset {record.dataset['id']}:")
         if record:
@@ -122,8 +113,7 @@ def bioregional_ingest(
             download = b.download_record(record, no_verify, timeout, url)
             if not download or not isinstance(download, b.Download):
                 echo(
-                    f"\tCannot download {record.dataset['id']}:"
-                    f" {download.reason()}"
+                    f"\tCannot download {record.dataset['id']}:" f" {download.reason()}"
                 )
                 continue
 
@@ -158,7 +148,7 @@ def bioregional_ingest(
             else:
                 echo("\tFilesize is the same. Skip")
         else:
-            echo(f"\tObject does not exist. Upload")
+            echo("\tObject does not exist. Upload")
             upload.start(record)
             echo(f"\t{upload.key.key} uploaded to S3")
 

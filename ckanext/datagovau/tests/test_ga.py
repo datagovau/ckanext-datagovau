@@ -1,5 +1,6 @@
-import ckan.tests.factories as factories
 import pytest
+
+import ckan.tests.factories as factories
 
 from ckanext.datagovau.cli.googleanalytics import get_stats
 

@@ -1,7 +1,7 @@
 {% ckan_extends %}
 
 {% block structured_data %}
-    {#
+  {#
     h.structured_data is defined in the 'structured_data' plugin,
     you have to activate the plugin (or implement the method yourself)
     to make use of this feature.
@@ -9,9 +9,16 @@
     https://developers.google.com/search/docs/guides/intro-structured-data
     #}
 
-    {% if h.helper_available('structured_data') %}
-        <script type="application/ld+json">
+  {% if h.helper_available('structured_data') %}
+    <script type="application/ld+json">
          {{ h.structured_data(pkg.id, ["dga_schemaorg"])|safe }}
-        </script>
-    {% endif %}
+
+    </script>
+  {% endif %}
+{% endblock %}
+
+{% block package_organization %}
+  {% if pkg.organization and h.get_organization(pkg.organization.id) %}
+    {{ super() }}
+  {% endif %}
 {% endblock %}

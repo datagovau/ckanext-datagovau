@@ -4,7 +4,7 @@ about_url: http://github.com/ckan/ckanext-scheming
 fields:
   - field_name: title
     label: Name
-    validators: ignore_missing unicode
+    validators: ignore_missing unicode_safe
     form_snippet: large_text.html
     form_placeholder: My Organization
     form_attrs:
@@ -12,7 +12,7 @@ fields:
 
   - field_name: name
     label: URL
-    validators: not_empty unicode name_validator group_name_validator
+    validators: not_empty unicode_safe name_validator group_name_validator
     form_snippet: slug.html
     form_placeholder: my-organization
 
