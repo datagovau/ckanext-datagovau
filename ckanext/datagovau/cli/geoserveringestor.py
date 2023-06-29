@@ -28,12 +28,7 @@ def geo_ingest(dataset, organization):
         state="active", private=False
     )
     if organization:
-        org = model.Group.get(organization)
-        if not org:
-            tk.error_shout(f"Organization {organization} not found")
-            raise click.Abort()
-
-        query = query.filter(model.Package.owner_org == org.id)
+        query = query.filter(model.Package.owner_org == organization)
 
     if dataset:
         query = query.filter(

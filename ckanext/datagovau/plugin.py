@@ -17,13 +17,10 @@ from ckanext.datagovau.geoserver_utils import (
     CONFIG_PUBLIC_URL,
     delete_ingested,
     run_ingestor,
-
 )
 from ckanext.datagovau.logic.action import get_actions
 from ckanext.datagovau.logic.auth import get_auth_functions
 from ckanext.xloader.plugin import xloaderPlugin
-
-from . import utils
 
 log = logging.getLogger(__name__)
 
@@ -138,7 +135,7 @@ class DataGovAuPlugin(p.SingletonPlugin):
         ingest_resources = [
             res
             for res in entity.resources
-            if utils.contains(res.format.lower(), ingest_rest_list)
+            if res.format.lower() in ingest_rest_list
         ]
 
         if ingest_resources:

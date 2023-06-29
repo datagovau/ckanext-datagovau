@@ -40,19 +40,19 @@ class GroupedResources(NamedTuple):
 
         for resource in dataset["resources"]:
             fmt = resource["format"].lower()
-            is_source = utils.contains(fmt, source_formats, True)
+            is_source = utils.contains(fmt, source_formats)
 
             if "/geoserver" in resource["url"]:
                 continue
 
-            if utils.contains(fmt, {"sld"}, True):
+            if utils.contains(fmt, {"sld"}):
                 sld.append(resource)
             elif is_source:
-                if utils.contains(fmt, {"tab", "mapinfo"}, True):
+                if utils.contains(fmt, {"tab", "mapinfo"}):
                     tab.append(resource)
-                elif utils.contains(fmt, {"grid"}, True):
+                elif utils.contains(fmt, {"grid"}):
                     grid.append(resource)
-                elif utils.contains(fmt, {"geotif"}, True):
+                elif utils.contains(fmt, {"geotif"}):
                     tiff.append(resource)
 
         return cls(tab, tiff, grid, sld)
@@ -621,15 +621,15 @@ def may_skip(dataset_id: str) -> bool:
         log.debug("No package found to ingest")
         return True
 
-    org = dataset.get("organization")
+    org = dataset.get("organization", {}).get("name")
     if not org:
         log.debug(
             "Package must be associate with valid organization to be ingested"
         )
         return True
 
-    if org["name"] in config.blacklisted("org"):
-        log.debug("%s in omitted_orgs blacklist", org["name"])
+    if org in config.blacklisted("org"):
+        log.debug("%s in omitted_orgs blacklist", org)
         return True
 
     if dataset["name"] in config.blacklisted("pkg"):

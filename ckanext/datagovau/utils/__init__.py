@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import contextlib
 import logging
 import shutil
@@ -33,7 +32,5 @@ def download(url: str, name: str, **kwargs) -> requests.Response:
     return req
 
 
-def contains(value: Container[T], parts: Iterable[T], separate: bool = False) -> bool:
-    if separate and isinstance(value, str):
-        return any(re.search(f"\\b{part}\\b", value) for part in parts)
+def contains(value: Container[T], parts: Iterable[T]) -> bool:
     return any(part in value for part in parts)
