@@ -44,11 +44,11 @@ def _api_count():
     ] + len(datastore_backend.get_all_resources_ids_in_datastore())
 
 
-def dga_blogfeed():
-    d = feedparser.parse("https://blog.data.gov.au/blogs/rss.xml")
-    for entry in d.entries:
-        entry.date = time.strftime("%a, %d %b %Y", entry.published_parsed)
-    return d
+# def dga_blogfeed():
+#     d = feedparser.parse("https://blog.data.gov.au/blogs/rss.xml")
+#     for entry in d.entries:
+#         entry.date = time.strftime("%a, %d %b %Y", entry.published_parsed)
+#     return d
 
 
 def dga_geospatial_topics(_field: dict[str, Any]) -> types.SchemingChoices:
