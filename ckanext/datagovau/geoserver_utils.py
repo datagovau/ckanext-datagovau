@@ -116,7 +116,12 @@ class Geoserverobj:
                 task = import_data["import"]["tasks"][0]
                 if task["state"] != "ERROR":
                     self.task_dict = task
-                    data = {"layer": {"name": self.table_name}}
+                    data = {
+                        "layer": {
+                            "name": self.table_name,
+                            "nativeName": self.table_name,
+                        }
+                    }
                     if task.get("state") and task["state"] == "NO_CRS":
                         data["layer"]["srs"] = self.native_crs
 
