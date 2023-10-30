@@ -267,6 +267,7 @@ class Geoserverobj:
         cur, conn = _get_cursor()
         table_name = "ckan_" + dataset["id"].replace("-", "_")
         cur.execute('DROP TABLE IF EXISTS "' + table_name + '"')
+        conn.commit()
         cur.close()
         conn.close()
 
