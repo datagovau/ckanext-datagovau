@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import json
 
 import ckan.authz as authz
 import ckan.lib.helpers as h
@@ -77,6 +78,20 @@ class DataGovAuPlugin(p.SingletonPlugin):
 
     def before_dataset_index(self, pkg_dict):
         pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
+
+        # uploading resources to datastore will cause SOLR error 
+        # for multivalued field
+        # inside set_datastore_active_flag action before
+        # reindexing the dataset, it retrieves the data from package_show
+        # therefore these two fields are not converted.
+        geospatial_topic = pkg_dict["geospatial_topic"]
+        if geospatial_topic and not isinstance(geospatial_topic, str):
+            pkg_dict["geospatial_topic"] = json.dumps(geospatial_topic)
+
+        field_of_research = pkg_dict['field_of_research']
+        if field_of_research and not isinstance(field_of_research, str):
+            pkg_dict['field_of_research'] = json.dumps(field_of_research)
+
         return pkg_dict
 
     def before_dataset_search(self, search_params):
