@@ -1,0 +1,10 @@
+{% ckan_extends %}
+
+{% block scripts %}
+  {{ super() }}
+  
+  <script src="https://data.gov.au/data/dataset/2b491307-2db1-4d1b-a9f9-ba021c3fe2e0/resource/5582a14b-980a-4d66-ae2b-a42d51e135b1/download/dashboard-banner.js"
+          crossorigin="anonymous"></script>
+
+  {% asset 'datagovau/dga-js' %}
+{% endblock %}
