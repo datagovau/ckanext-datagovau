@@ -1,7 +1,7 @@
 ###############################################################################
 #                             requirements: start                             #
 ###############################################################################
-ckan_tag = ckan-2.10.4
+ckan_tag = ckan-2.10.5
 ext_list = dcat officedocs pdfview zippreview spatial cesiumpreview harvest agls xloader flakes googleanalytics charts
 
 
@@ -9,7 +9,7 @@ remote-xloader = https://github.com/ckan/ckanext-xloader.git commit c062f54
 remote-harvest = https://github.com/ckan/ckanext-harvest.git tag v1.5.3
 remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v1.4.0
 remote-officedocs = https://github.com/DataShades/ckanext-officedocs.git commit fac01df
-remote-pdfview = https://github.com/ckan/ckanext-pdfview.git tag 0.0.8
+remote-pdfview = https://github.com/ckan/ckanext-pdfview.git 0.0.8
 remote-zippreview = https://github.com/datagovau/ckanext-zippreview commit e48ae35
 remote-spatial = https://github.com/ckan/ckanext-spatial.git tag v2.0.0
 remote-cesiumpreview = https://github.com/DataShades/ckanext-cesiumpreview.git commit 2e22150
