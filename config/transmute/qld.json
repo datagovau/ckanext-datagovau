@@ -1,0 +1,43 @@
+{
+    "root": "Dataset",
+    "types": {
+        "Dataset": {
+            "fields": {
+                "extras": {"remove": true, "weight": 10},
+                "notes": {"validators": ["dga_tsm_parse_description"]},
+                "jurisdiction": {"remove": "true"},
+                "data_state": {"remove": "true"},
+                "update_frequency": {"remove": "true"},
+
+                "author_email": {"map": "contact_point"},
+                "maintainer_email": {"validators": ["dga_tsm_qa_maintainer_email"]},
+                "metadata_created": {"map": "temporal_coverage_from"},
+
+                "resources": {
+                    "type": "Resource",
+                    "multiple": true
+                }
+            }
+        },
+        "Resource": {
+            "fields": {
+                "id": {"validators": ["dga_tsm_qld_resource_id"]},
+                "size": {"validators": ["dga_tsm_qld_parse_resource_size"]},
+                "_do_not_validate": {"remove": "true"},
+                "align_default_schema": {"remove": "true"},
+                "archiver": {"remove": "true"},
+                "governance_acknowledgement": {"remove": "true"},
+                "nature_of_change": {"remove": "true"},
+                "privacy_assessment_result": {"remove": "true"},
+                "qa": {"remove": "true"},
+                "request_privacy_assessment": {"remove": "true"},
+                "resource_visible": {"remove": "true"},
+                "schema": {"remove": "true"},
+                "set_url_type": {"remove": "true"},
+                "validation_options": {"remove": "true"},
+                "validation_status": {"remove": "true"},
+                "validation_timestamp": {"remove": "true"}
+            }
+        }
+    }
+}

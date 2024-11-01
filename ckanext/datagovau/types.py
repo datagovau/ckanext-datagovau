@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any
 
 from typing_extensions import TypedDict
 
@@ -17,4 +17,4 @@ class SchemingChoice(TypedDict):
     label: Any
 
 
-SchemingChoices = List[SchemingChoice]
+SchemingChoices = list[SchemingChoice]

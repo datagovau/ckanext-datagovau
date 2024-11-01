@@ -5,12 +5,12 @@ from ckan.lib.authenticator import default_authenticate
 password = "Password123"
 
 
-@pytest.fixture
+@pytest.fixture()
 def authenticator():
     return default_authenticate
 
 
-@pytest.mark.usefixtures("with_plugins", "clean_db")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "with_request_context")
 @pytest.mark.parametrize("user__password", [password])
 class TestAuthenicator:
     def test_login_by_name(self, user, authenticator):

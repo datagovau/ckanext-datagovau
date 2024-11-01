@@ -19,6 +19,7 @@ def dga_spatial_from_coverage(key, data, errors, context):
     details = []
     coverage = data[("spatial_coverage",)]
     if not coverage:
+        data[key] = ""
         return
     id_ = coverage.split(":")[0]
     try:
@@ -71,7 +72,8 @@ def user_password_validator(key, data, errors, context):
 
     if isinstance(value, Missing):
         return
-    elif not isinstance(value, string_types):
+
+    if not isinstance(value, string_types):
         errors[("password",)].append(_(base_pass_text))
     elif value == "":
         return
@@ -91,3 +93,17 @@ def user_password_validator(key, data, errors, context):
 
     if used_char_sets < 3:
         errors[("password",)].append(_(base_pass_text))
+
+
+def dga_tag_count_validator(max_tags: str):
+    """
+    Checks if number of tags doesn't exceed maximum limit.
+    """
+    def callable(value: str):
+        tags = [tag.strip() for tag in value.split(",")]
+        if len(tags) > int(max_tags):
+            raise tk.Invalid(
+                f"Too many tags. Maximum {max_tags} tags allowed, got {len(tags)}"
+            )
+        return value
+    return callable

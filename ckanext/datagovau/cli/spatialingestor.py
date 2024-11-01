@@ -40,9 +40,9 @@ def perform_ingest(
     organization: tuple[str],
     skip_errors: bool,
 ):
-    """
-    Performs ingest of spatial data for scope of data, where scope is one of:
-    'all', 'updated', 'updated-orgs', or <dataset-id>.
+    """Performs ingest of spatial data for scope of data.
+
+    Scope is one of: 'all', 'updated', 'updated-orgs', or <dataset-id>.
     """
     from ._spatialingestor import do_ingesting
 
@@ -54,17 +54,16 @@ def perform_ingest(
             (model.Package.name == scope) | (model.Package.id == scope)
         )
 
-    with click.progressbar(query) as bar:
-        with ctx.meta["flask_app"].test_request_context():
-            for pkg in bar:
-                try:
-                    do_ingesting(pkg.id, force)
-                except Exception as e:
-                    # TODO: be more specific about possible errors
-                    if skip_errors:
-                        tk.error_shout(f"Error during {pkg.id} ingestion: {e}")
-                    else:
-                        raise
+    with click.progressbar(query) as bar, ctx.meta["flask_app"].test_request_context():
+        for pkg in bar:
+            try:
+                do_ingesting(pkg.id, force)
+            except Exception as e:
+                # TODO: be more specific about possible errors
+                if skip_errors:
+                    tk.error_shout(f"Error during {pkg.id} ingestion: {e}")
+                else:
+                    raise
 
 
 @spatial_ingestor.command("purge")
@@ -79,9 +78,9 @@ def perform_ingest(
 @click.help_option("-h", "--help")
 @click.pass_context
 def perform_purge(ctx: click.Context, scope: str, skip_grids: bool):
-    """
-    Performs purge of nominated scope, where scope is one of:
-    'all', 'erroneous', or <dataset-id>.
+    """Performs purge of nominated scope.
+
+    Scope is one of: 'all', 'erroneous', or <dataset-id>.
     """
     from ._spatialingestor import clean_assets, may_skip
 
@@ -91,13 +90,12 @@ def perform_purge(ctx: click.Context, scope: str, skip_grids: bool):
             (model.Package.name == scope) | (model.Package.id == scope)
         )
 
-    with click.progressbar(query) as bar:
-        with ctx.meta["flask_app"].test_request_context():
-            for pkg in bar:
-                if scope == "erroneous" and not may_skip(pkg.id):
-                    clean_assets(pkg.id, skip_grids=False)
-                else:
-                    clean_assets(pkg.id, skip_grids=skip_grids)
+    with ctx.meta["flask_app"].test_request_context(), click.progressbar(query) as bar:
+        for pkg in bar:
+            if scope == "erroneous" and not may_skip(pkg.id):
+                clean_assets(pkg.id, skip_grids=False)
+            else:
+                clean_assets(pkg.id, skip_grids=skip_grids)
 
 
 # datagovau spatial-ingestor dropuser subcommand.
@@ -106,18 +104,19 @@ def perform_purge(ctx: click.Context, scope: str, skip_grids: bool):
 @click.help_option("-h", "--help")
 def perform_drop_user(username: str):
     """Deletes nominated user."""
-    user: model.User = model.User.get(username)
-    if user is None:
+    user = model.User.get(username)
+    if not user:
         tk.error_shout(f"User <{username}> not found")
-        raise click.Abort()
+        raise click.Abort
 
     groups = user.get_groups()
     if groups:
         tk.error_shout(
-            "User is a member of groups/organizations: %s"
-            % ", ".join(g.display_name for g in groups)
+            "User is a member of groups/organizations: {}".format(
+                ", ".join(g.display_name for g in groups)
+            )
         )
-        raise click.Abort()
+        raise click.Abort
 
     pkgs = model.Session.query(model.Package).filter_by(creator_user_id=user.id)
     if pkgs.count():
@@ -125,7 +124,7 @@ def perform_drop_user(username: str):
             "There are some(%d) datasets created by this user: %s"
             % (pkgs.count(), [pkg.name for pkg in pkgs])
         )
-        raise click.Abort()
+        raise click.Abort
 
     activities = (
         model.Session.query(activity_model.Activity)
@@ -137,7 +136,7 @@ def perform_drop_user(username: str):
             "There are some(%d) activity records that mentions user"
             % activities.count()
         )
-        raise click.Abort()
+        raise click.Abort
 
     model.Session.delete(user)
     model.Session.commit()

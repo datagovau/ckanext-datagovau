@@ -1,0 +1,22 @@
+{
+    "root": "Dataset",
+    "types": {
+        "Dataset": {
+            "fields": {
+                "jurisdiction": {"remove": "true"},
+                "data_state": {"remove": "true"},
+                "update_freq": {"remove": "true"},
+                "notes": {"validators": ["dga_tsm_parse_description"]},
+                "metadata_created": {},
+                "license_id": {"default": "notspecified"},
+                "contact_point": {"default": "unknown"},
+
+                "date_created_data_asset": {"default_from": "metadata_created", "map": "temporal_coverage_from"}
+            }
+        },
+        "Resource": {
+            "fields": {
+            }
+        }
+    }
+}

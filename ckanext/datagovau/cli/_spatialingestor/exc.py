@@ -6,18 +6,18 @@ from typing import NoReturn
 log = logging.getLogger(__name__)
 
 
-class IngestionException(Exception):
+class IngestionError(Exception):
     pass
 
 
-class BadConfig(IngestionException):
+class BadConfigError(IngestionError):
     pass
 
 
-class IngestionFail(IngestionException):
+class IngestionFailError(IngestionError):
     pass
 
 
 def fail(reason: str) -> NoReturn:
     log.error(reason)
-    raise IngestionFail(reason)
+    raise IngestionFailError(reason)

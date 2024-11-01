@@ -1,0 +1,72 @@
+{
+  "root": "Dataset",
+  "types": {
+    "Dataset": {
+      "fields": {
+        "extras": {
+          "remove": true,
+          "weight": 10
+        },
+        "license_id": {
+          "default": "notspecified"
+        },
+        "notes": {"validators": ["dga_tsm_parse_description"]},
+        "language": {
+          "validate_missing": true,
+          "validators": [
+            [
+              "dga_tsm_from_extras",
+              "metadata-language"
+            ]
+          ]
+        },
+        "spatial_coverage": {
+          "validate_missing": true,
+          "validators": [
+            [
+              "dga_tsm_from_extras",
+              "spatial"
+            ]
+          ]
+        },
+        "temporal_coverage_from": {
+          "validate_missing": true,
+          "validators": [
+            [
+              "dga_tsm_from_extras",
+              "metadata-date"
+            ],
+            [
+              "dga_tsm_from_extras",
+              "temporal-extent-begin"
+            ],
+            "dga_tsm_parse_date"
+          ]
+        },
+        "temporal_coverage_to": {
+          "validate_missing": true,
+          "validators": [
+            [
+              "dga_tsm_from_extras",
+              "temporal-extent-end"
+            ],
+            "dga_tsm_parse_date"
+          ]
+        },
+        "update_freq": {"remove": "true"},
+        "contact_point": {
+          "validate_missing": true,
+          "validators": [
+            [
+              "dga_tsm_from_extras",
+              "contact-email"
+            ]
+          ]
+        }
+      }
+    },
+    "Resource": {
+      "fields": {}
+    }
+  }
+}

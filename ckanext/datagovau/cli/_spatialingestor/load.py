@@ -91,7 +91,7 @@ def tab(resource: dict[str, Any], table_name: str) -> str:
 def tiff(resource: dict[str, Any], table_name: str) -> str:
     log.debug("using GeoTIFF file %s", resource["url"])
 
-    if not any([resource["url"].lower().endswith(x) for x in ["tif", "tiff"]]):
+    if not any(resource["url"].lower().endswith(x) for x in ["tif", "tiff"]):
         utils.download(resource["url"], "input.zip")
         log.debug("GeoTIFF archive downloaded")
 

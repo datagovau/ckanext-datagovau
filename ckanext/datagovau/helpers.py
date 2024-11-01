@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import time
 from datetime import datetime as dt
-from typing import Any, Optional
+from typing import Any
 
 import feedparser
 
-import ckan.model as model
 import ckan.plugins.toolkit as tk
+from ckan import model
 
 import ckanext.agls.utils as agls_utils
 import ckanext.datastore.backend as datastore_backend
@@ -44,11 +44,11 @@ def _api_count():
     ] + len(datastore_backend.get_all_resources_ids_in_datastore())
 
 
-# def dga_blogfeed():
-#     d = feedparser.parse("https://blog.data.gov.au/blogs/rss.xml")
-#     for entry in d.entries:
-#         entry.date = time.strftime("%a, %d %b %Y", entry.published_parsed)
-#     return d
+def dga_blogfeed():
+    d = feedparser.parse("https://blog.data.gov.au/blogs/rss.xml")
+    for entry in d.entries:
+        entry.date = time.strftime("%a, %d %b %Y", entry.published_parsed)
+    return d
 
 
 def dga_geospatial_topics(_field: dict[str, Any]) -> types.SchemingChoices:
@@ -72,7 +72,7 @@ _stat_labels = {
 }
 
 
-def dga_stat_group_to_facet_label(group: str) -> Optional[str]:
+def dga_stat_group_to_facet_label(group: str) -> str | None:
     return _stat_labels.get(group)
 
 
@@ -90,9 +90,7 @@ def dga_get_package_stats(package_id: str):
 
     return [
         {
-            "labels": [
-                dt.strptime(date, "%Y-%m").strftime("%Y %b") for date in stats.keys()
-            ],
+            "labels": [dt.strptime(date, "%Y-%m").strftime("%Y %b") for date in stats],
             "datasets": [
                 {
                     "label": tk._(category.title()),

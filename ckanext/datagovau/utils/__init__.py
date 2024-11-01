@@ -5,7 +5,8 @@ import logging
 import re
 import shutil
 import tempfile
-from typing import Container, Iterable, TypeVar
+from collections.abc import Container, Iterable
+from typing import TypeVar
 
 import requests
 

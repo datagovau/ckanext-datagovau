@@ -3,7 +3,6 @@ from unittest import mock
 import pytest
 
 
-@pytest.mark.ckan_config("ckan.plugins", "datagovau dga_resource flakes")
 @pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestScheduler:
     @mock.patch("ckanext.datagovau.subplugins.resource._schedule_unzip")
@@ -11,6 +10,7 @@ class TestScheduler:
         create_with_upload(
             "hello",
             "file.txt",
+            {"user": "default"},
             description="created!",
             package_id=dataset["id"],
         )
@@ -23,6 +23,7 @@ class TestScheduler:
         create_with_upload(
             "hello",
             "file.zip",
+            {"user": "default"},
             description="created!",
             package_id=dataset["id"],
         )
@@ -33,6 +34,7 @@ class TestScheduler:
         create_with_upload(
             "hello",
             "file.zip",
+            {"user": "default"},
             description="created!",
             package_id=dataset["id"],
             zip_extract=True,
@@ -43,6 +45,7 @@ class TestScheduler:
         create_with_upload(
             "hello",
             "file.zip",
+            {"user": "default"},
             description="created!",
             package_id=dataset["id"],
             zip_extract=True,

@@ -9,7 +9,7 @@ import ckan.plugins.toolkit as tk
 
 from ckanext.datagovau.geoserver_utils import CONFIG_PUBLIC_URL, CONFIG_URL, _timeout
 
-from .exc import BadConfig
+from .exc import BadConfigError
 
 
 class GeoServer(NamedTuple):
@@ -19,7 +19,7 @@ class GeoServer(NamedTuple):
     public_url: str
 
     def into_workspace(self, raw: str):
-        if any([c.isalpha() for c in raw]):
+        if any(c.isalpha() for c in raw):
             if not raw[0].isalpha():
                 raw += "-"
                 while not raw[0].isalpha():
@@ -152,7 +152,7 @@ def get_geoserver() -> GeoServer:
     match = re.match("".join(regex), admin_url)
 
     if not match:
-        raise BadConfig(f"Invalid GEOSERVER_ADMIN_URL: {admin_url}")
+        raise BadConfigError(f"Invalid GEOSERVER_ADMIN_URL: {admin_url}")
 
     info = match.groupdict()
     host = "https://" + info["db_host"]

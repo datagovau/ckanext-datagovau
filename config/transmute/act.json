@@ -1,0 +1,45 @@
+{
+    "root": "Dataset",
+    "types": {
+        "Dataset": {
+            "fields": {
+                "geospatial_topic": {"value": "Environment"},
+
+                "@type": {"remove": true},
+                "accessLevel": {"remove": true},
+                "publisher": {"remove": true},
+                "identifier": {"remove": true},
+                "modified": {"remove": true},
+                "theme": {"remove": true},
+
+                "title": {},
+                "description": {"map": "notes", "validators": ["dga_tsm_parse_description"]},
+                "issued": {"map": "temporal_coverage_from"},
+                "keyword": {"validators": ["dga_tsm_words_into_tags"], "map": "tags"},
+
+                "license_id": {"default": "notspecified"},
+                "license": {"map": "license_id", "validators": ["dga_tsm_url_into_license"]},
+
+                "landingPage": {"map": "name", "validators": ["dga_tsm_name_from_url"]},
+                "distribution": {
+                    "type": "Resource",
+                    "multiple": true,
+                    "map": "resources"
+                },
+
+                "contactPoint": {},
+                "author": {"replace_from": "contactPoint", "validators": ["dga_tsm_contact_name"]},
+                "contact_point": {"replace_from": "contactPoint", "validators": ["dga_tsm_contact_email"]}
+            }
+        },
+        "Resource": {
+            "fields": {
+                "mediaType": {"map": "format"},
+                "downloadURL": {"map": "url"},
+                "@type": {"remove": true},
+                "describedBy": {"remove": true},
+                "describedByType": {"remove": true}
+            }
+        }
+    }
+}

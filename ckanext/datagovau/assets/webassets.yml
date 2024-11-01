@@ -11,6 +11,7 @@ dga-js:
     - js/dga-setup.js
     - js/dga-breadcrumbs.js
     - js/dga-jurisdiction-autofill.js
+    - js/dga-chartjs.js
   extras:
     preload:
       - base/main

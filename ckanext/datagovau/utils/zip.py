@@ -3,8 +3,9 @@ from __future__ import annotations
 import logging
 import os
 import zipfile
+from collections.abc import Iterable
 from datetime import datetime
-from typing import Any, Iterable
+from typing import Any
 
 import ckanapi
 import requests
@@ -45,11 +46,11 @@ def select_extractable_resources(
     current_user = ckan.action.user_show(id=ckan.username)
     for id_ in dataset_ids:
         log.info("-" * 80)
-        log.info(f"Processing dataset {id_}")
+        log.info("Processing dataset %s", id_)
         try:
             dataset = ckan.action.package_show(id=id_)
         except ckanapi.NotFound:
-            log.error(f"Dataset {id_} not found.")
+            log.exception("Dataset %s not found.", id_)
             continue
 
         activity_list = ckan.action.package_activity_list(id=dataset["id"])
@@ -76,7 +77,7 @@ def extract_resource(resource: dict[str, Any], path: str) -> Iterable[tuple[str,
     )
 
     try:
-        resp = requests.get(resource["url"], stream=True)
+        resp = requests.get(resource["url"], stream=True, timeout=10)
     except requests.RequestException:
         log.exception("Cannot connect to URL")
         return
@@ -141,14 +142,14 @@ def has_interesting_files(path: str) -> bool:
 
 def recurse_directory(path: str) -> Iterable[tuple[str, str]]:
     if (
-        len([fn for fn in os.listdir(path)]) < 3
+        len(list(os.listdir(path))) < 3
         and len([ndir for ndir in os.listdir(path) if os.path.isdir(ndir)]) == 1
     ):
         for f in os.listdir(path):
             if os.path.isdir(os.path.join(path, f)):
                 yield from recurse_directory(os.path.join(path, f))
 
-    numInteresting = len(
+    num_interesting = len(
         [
             f
             for f in os.listdir(path)
@@ -159,20 +160,24 @@ def recurse_directory(path: str) -> Iterable[tuple[str, str]]:
         ]
     )
     for f in os.listdir(path):
-        if os.path.isfile(os.path.join(path, f)) and numInteresting:
-            if f.split(".").pop().lower() in _interesting_extensions():
-                yield (f, os.path.join(path, f))
+        if (
+            os.path.isfile(os.path.join(path, f))
+            and num_interesting
+            and f.split(".").pop().lower() in _interesting_extensions()
+        ):
+            yield (f, os.path.join(path, f))
 
-        if os.path.isdir(os.path.join(path, f)):
-            # only zip up folders if they contain at least one interesting file
-            if has_interesting_files(os.path.join(path, f)):
-                zipf = zipfile.ZipFile(f + ".zip", "w", zipfile.ZIP_DEFLATED)
-                zipdir(os.path.join(path, f), zipf)
-                zipf.close()
-                yield (f + ".zip", os.path.join(path, f + ".zip"))
+        # only zip up folders if they contain at least one interesting file
+        if os.path.isdir(os.path.join(path, f)) and has_interesting_files(
+            os.path.join(path, f)
+        ):
+            zipf = zipfile.ZipFile(f + ".zip", "w", zipfile.ZIP_DEFLATED)
+            zipdir(os.path.join(path, f), zipf)
+            zipf.close()
+            yield (f + ".zip", os.path.join(path, f + ".zip"))
 
 
 def zipdir(path: str, ziph: zipfile.ZipFile):
-    for root, dirs, files in os.walk(path):
+    for root, _dirs, files in os.walk(path):
         for file in files:
             ziph.write(os.path.join(root, file))

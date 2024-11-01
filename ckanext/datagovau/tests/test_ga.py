@@ -1,18 +1,25 @@
-import pytest
+from __future__ import annotations
 
-import ckan.tests.factories as factories
+import uuid
+from typing import Any
+
+import pytest
+from faker import Faker
 
 from ckanext.datagovau.cli.googleanalytics import get_stats
+
+DATASET_ID = str(uuid.uuid4())
+RESOURCE_ID = str(uuid.uuid4())
 
 GA_VIEWS_DATA = {
     "headers": ["ga:pagePath", "ga:pageviews"],
     "rows": [
-        ["/dataset/test-ds-1", "5"],
-        ["/dataset/test-ds-1/resource/test-res-1", "5"],
+        [f"/dataset/{DATASET_ID}", "5"],
+        [f"/dataset/{DATASET_ID}/resource/{RESOURCE_ID}", "5"],
         ["/dataset/", "14"],
-        ["/dataset/activity/test-ds-1", "1"],
-        ["/dataset/test-ds-1/resource/test-res-1/view/view-id", "2"],
-        ["/dataset/groups/test-ds-1", "1"],
+        [f"/dataset/activity/{DATASET_ID}", "1"],
+        [f"/dataset/{DATASET_ID}/resource/{RESOURCE_ID}/view/view-id", "2"],
+        [f"/dataset/groups/{DATASET_ID}", "1"],
         ["/organization/test-org", "1"],
         ["/organization/new", "1"],
         ["/user/test", "1"],
@@ -28,7 +35,7 @@ GA_DOWNLOADS_DATA = {
     ],
     "rows": [
         [
-            "/dataset/test-ds-1/resource/test-res-1",
+            f"/dataset/{DATASET_ID}/resource/{RESOURCE_ID}",
             "Resource",
             "Download",
             "3",
@@ -40,7 +47,7 @@ GA_DOWNLOADS_DATA = {
 @pytest.mark.usefixtures("clean_db")
 @pytest.mark.usefixtures("with_plugins")
 class TestAnalyticCollect:
-    def test_stats_parsing(self, mocker):
+    def test_stats_parsing(self, mocker: Any, dataset_factory: Any, faker: Faker):
         mocker.patch(
             "ckanext.datagovau.cli.googleanalytics.get_dataset_views",
             return_value=GA_VIEWS_DATA,
@@ -50,10 +57,9 @@ class TestAnalyticCollect:
             return_value=GA_DOWNLOADS_DATA,
         )
 
-        dataset = factories.Dataset(
-            id="test-ds-1",
-            name="test-ds-1",
-            resources=[{"id": "test-res-1"}],
+        dataset = dataset_factory(
+            name=DATASET_ID,
+            resources=[{"id": RESOURCE_ID, "url": faker.url()}],
         )
 
         result = get_stats("1999-00")

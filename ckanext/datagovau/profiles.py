@@ -1,4 +1,5 @@
-from ckanext.dcat.profiles import RDF, BNode, Literal, SchemaOrgProfile, namespaces
+from ckanext.dcat.profiles import SchemaOrgProfile
+from ckanext.dcat.profiles.base import RDF, BNode, Literal, namespaces
 
 
 class DgaSchemaOrgProfile(SchemaOrgProfile):

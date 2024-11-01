@@ -1,0 +1,52 @@
+{
+  "root": "Dataset",
+  "types": {
+    "Dataset": {
+      "fields": {
+        "extras": {"remove": true, "weight": 10},
+        "license_id": {
+          "default": "notspecified"
+        },
+        "notes": {"validators": ["dga_tsm_parse_description"]},
+        "spatialParameters": {
+          "validators": [
+            "dga_tsm_dms_to_spatial"
+          ],
+            "map": "spatial_coverage"
+        },
+
+        "dataStartDate": {
+          "map": "temporal_coverage_from",
+          "default": "2000-01-01",
+          "validators": [
+              "tsm_isodate", "tsm_to_string"
+          ]
+        },
+        "dataEndDate": {
+          "map": "temporal_coverage_to",
+          "validators": [
+              "tsm_isodate", "tsm_to_string"
+          ]
+        },
+
+        "language": {
+          "validate_missing": true,
+          "validators": [
+            ["dga_tsm_from_extras", "anzlic"],
+            "tsm_stop_on_empty",
+            ["tsm_get_nested", "metadataLanguage"]
+          ]
+        },
+        "update_freq": {"remove": "true"},
+        "contact_point": {
+          "default": "CSIROEnquiries@csiro.au"
+        }
+      }
+    },
+    "Resource": {
+        "fields": {
+            "lastUpdated": {"validators": ["tsm_isodate"], "map": "last_modified"}
+        }
+    }
+  }
+}

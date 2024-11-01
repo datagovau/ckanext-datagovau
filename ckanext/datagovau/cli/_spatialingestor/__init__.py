@@ -6,7 +6,7 @@ import logging
 import os
 import shutil
 from datetime import datetime
-from typing import Any, Dict, List, NamedTuple, Optional
+from typing import Any, NamedTuple
 from urllib.parse import quote
 
 import psycopg2
@@ -16,12 +16,12 @@ import ckan.plugins.toolkit as tk
 from ckanext.datagovau import utils
 
 from . import config, load
-from .exc import IngestionFail, fail
+from .exc import IngestionFailError, fail
 from .geoserver import get_geoserver
 
 log = logging.getLogger(__name__)
 
-ResourceGroup = List[Dict[str, Any]]
+ResourceGroup = list[dict[str, Any]]
 
 
 class GroupedResources(NamedTuple):
@@ -101,7 +101,6 @@ def _apply_sld(name: str, workspace: str, layer_name: str, url=None, filepath=No
             utils.download(url, filepath)
     elif filepath:
         log.info("sld downloaded")
-        pass
     else:
         log.error("error accessing SLD")
         return
@@ -113,7 +112,9 @@ def _apply_sld(name: str, workspace: str, layer_name: str, url=None, filepath=No
 
     server.create_style(workspace, {"style": {"name": name, "filename": name + ".sld"}})
 
-    sld_text = open(filepath, "r").read()
+    with open(filepath) as src:
+        sld_text = src.read()
+
     mapping = {
         "application/vnd.ogc.sld+xml": "www.opengis.net/sld",
         "application/vnd.ogc.se+xml": "www.opengis.net/se",
@@ -126,15 +127,15 @@ def _apply_sld(name: str, workspace: str, layer_name: str, url=None, filepath=No
         log.error("couldn't pick a sld content type")
         return
 
-    payload = open(filepath, "rb")
-    log.info("sld content type: %s", content_type)
+    with open(filepath, "rb") as payload:
+        log.info("sld content type: %s", content_type)
 
-    r = server.update_style(workspace, name, payload, content_type, raw=True)
+        r = server.update_style(workspace, name, payload, content_type, raw=True)
 
-    if r.status_code == 400:
-        log.info("Delete out old style in workspace")
-        server.delete_style(workspace, name)
-        server.update_style(workspace, name, payload, content_type, raw=False)
+        if r.status_code == 400:
+            log.info("Delete out old style in workspace")
+            server.delete_style(workspace, name)
+            server.update_style(workspace, name, payload, content_type, raw=False)
 
     server.add_style(
         workspace,
@@ -195,9 +196,7 @@ def _get_geojson(table_name: str) -> tuple[str, str, str]:
     return bbox, latlngbbox, bgjson
 
 
-def _perform_workspace_requests(
-    datastore: str, workspace: str, table_name: Optional[str]
-):
+def _perform_workspace_requests(datastore: str, workspace: str, table_name: str | None):
     if not table_name:
         dsdata = {
             "dataStore": {
@@ -355,7 +354,7 @@ def _create_resources_from_formats(
                 + "&outputFormat="
                 + quote("json")
             )
-            if not any([x in existing_formats for x in ["json", "geojson"]]):
+            if not any(x in existing_formats for x in ["json", "geojson"]):
                 log.debug("Creating GeoJSON Resource")
                 call_action(
                     "resource_create",
@@ -457,7 +456,7 @@ def do_ingesting(dataset_id: str, force: bool):
                 workspace,
                 native_crs,
             ) = _prepare_everything(dataset, resources, tempdir)
-        except IngestionFail as e:
+        except IngestionFailError as e:
             log.info("%s: %s", type(e), e)
             clean_assets(dataset_id)
             return
@@ -472,8 +471,8 @@ def do_ingesting(dataset_id: str, force: bool):
             _perform_workspace_requests(
                 datastore, workspace, table_name if using_grid else None
             )
-        except IngestionFail as e:
-            log.info(f"{type(e)}: {e}")
+        except IngestionFailError:
+            log.exception("Ingestion failed")
             clean_assets(dataset_id)
             return
 
@@ -529,7 +528,7 @@ def do_ingesting(dataset_id: str, force: bool):
             r = server.create_layer(workspace, using_grid, datastore, layer_data)
             if not r.ok:
                 fail(f"Failed to create Geoserver layer {r.url}: {r.content}")
-        except IngestionFail as e:
+        except IngestionFailError as e:
             log.info("%s: %s", type(e), e)
             clean_assets(dataset_id)
             return
@@ -562,9 +561,9 @@ def do_ingesting(dataset_id: str, force: bool):
         dataset = _get_dataset(dataset["id"])
         assert dataset
 
-        existing_formats = []
-        for resource in dataset["resources"]:
-            existing_formats.append(resource["format"].lower())
+        existing_formats = [
+            resource["format"].lower() for resource in dataset["resources"]
+        ]
 
         ws_addr = server.public_url + "/" + server.into_workspace(dataset["name"]) + "/"
         _create_resources_from_formats(
@@ -637,7 +636,7 @@ def may_skip(dataset_id: str) -> bool:
     return False
 
 
-def _get_dataset(dataset_id: str) -> Optional[dict[str, Any]]:
+def _get_dataset(dataset_id: str) -> dict[str, Any] | None:
     with contextlib.suppress(tk.ObjectNotFound):
         return call_action("package_show", {"id": dataset_id}, True)
 

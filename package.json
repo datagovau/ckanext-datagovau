@@ -1,34 +1,17 @@
 {
-  "name": "ckanext-datagovau",
-  "version": "1.0.0",
-  "description": "CKAN: The Open Source Data Portal Software ==========================================",
-  "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
+    "gulp-clean-css": "^4.3.0",
     "gulp-if": "^3.0.0",
-    "gulp-sass": "^5.0.0",
-    "gulp-sourcemaps": "^2.6.5",
+    "gulp-postcss": "^10.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-touch-fd": "^2.0.0",
-    "sass": "^1.49.8",
-    "pyright": "^1.1.296"
+    "postcss-sort-media-queries": "^5.2.0",
+    "sass": "^1.78.0"
   },
   "scripts": {
     "dev": "DEBUG=1 gulp watch",
-    "build": "gulp build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/link-digital-development/ckanext-datagovau.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "prettier-stylelint": "^0.4.2",
-    "stylelint": "^13.2.0",
-    "stylelint-config-idiomatic-order": "^8.1.0",
-    "stylelint-config-prettier": "^8.0.1",
-    "stylelint-config-standard": "^20.0.0"
+    "build": "gulp build"
   }
 }

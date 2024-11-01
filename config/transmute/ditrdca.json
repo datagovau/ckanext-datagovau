@@ -1,0 +1,39 @@
+{
+  "root": "Dataset",
+  "types": {
+    "Dataset": {
+      "fields": {
+        "license_id": {
+          "default": "notspecified"
+        },
+        "notes": {"validators": ["dga_tsm_parse_description"]},
+        "maintainer_email": {},
+        "author_email": {},
+        "contact_point": {
+            "inherit_mode": "first_filled",
+            "default_from": ["maintainer_email", "author_email"],
+            "default": "unknown"
+        },
+        "metadata_created": {},
+        "temporal_coverage_from": {
+          "default_from": "metadata_created",
+          "validators": [
+              "dga_tsm_parse_date", "tsm_to_string"
+          ]
+        },
+        "temporal_coverage_to": {
+          "default_from": "metadata_created",
+          "validators": [
+              "dga_tsm_parse_date", "tsm_to_string"
+          ]
+        },
+        "data_state": {"remove": "true"},
+        "jurisdiction": {"remove": "true"},
+        "update_freq": {"remove": "true"}
+      }
+    },
+    "Resource": {
+      "fields": {}
+    }
+  }
+}
