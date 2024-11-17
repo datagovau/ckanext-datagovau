@@ -103,3 +103,27 @@ def dga_get_package_stats(package_id: str):
         }
         for category in ("downloads", "views")
     ]
+
+@tk.chained_helper
+
+def flash_notice(next_helper: Any, message: Any, allow_html: bool = False) -> None:
+
+    """DGA uses redis sessions, which does not support Markup flashes."""
+
+    tk.h.flash(message, category="alert-info")
+
+@tk.chained_helper
+
+def flash_error(next_helper: Any, message: Any, allow_html: bool = False) -> None:
+
+    """DGA uses redis sessions, which does not support Markup flashes."""
+
+    tk.h.flash(message, category="alert-danger")
+
+@tk.chained_helper
+
+def flash_success(next_helper: Any, message: Any, allow_html: bool = False) -> None:
+
+    """DGA uses redis sessions, which does not support Markup flashes."""
+
+    tk.h.flash(message, category="alert-success")
