@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Sequence
 from email.utils import formatdate
 from functools import partial
 from time import time
-from typing import BinaryIO, Optional, Sequence, TextIO
+from typing import BinaryIO, TextIO
 
 import click
 
@@ -67,24 +68,24 @@ log = logging.getLogger(__name__)
 )
 def bioregional_ingest(
     storage: str,
-    log: Optional[TextIO],
-    sender: Optional[str],
+    log: TextIO | None,
+    sender: str | None,
     receiver: Sequence[str],
-    key: Optional[str],
-    secret: Optional[str],
-    region: Optional[str],
-    profile: Optional[str],
+    key: str | None,
+    secret: str | None,
+    region: str | None,
+    profile: str | None,
     bucket: str,
-    source: Optional[BinaryIO],
+    source: BinaryIO | None,
     url: str,
     no_verify: bool,
-    timeout: Optional[int],
+    timeout: int | None,
     skip_local: bool,
     no_download: bool,
     no_upload: bool,
 ):
-    """Upload Bioregional Assesments to S3 bucket,"""
-    from .. import _bioregional as b
+    """Upload Bioregional Assesments to S3 bucket,."""
+    from ckanext.datagovau.cli import _bioregional as b
 
     echo = partial(click.echo, file=log)
 
@@ -93,7 +94,7 @@ def bioregional_ingest(
         source = b.prepare_source(source, url, no_verify, timeout)
     except ValueError as e:
         echo(f"Cannot prepare source: {e}")
-        raise click.Abort()
+        raise click.Abort from e
 
     echo(f"Reading data from {source.name}")
 
@@ -101,7 +102,7 @@ def bioregional_ingest(
         datasets = json.load(source)
     except ValueError as e:
         echo(f"Cannot parse source as JSON: {e}")
-        raise click.Abort()
+        raise click.Abort from e
     b.Upload.setup(key, secret, region, profile, bucket)
 
     for record in b.converted_datasets(datasets, storage, skip_local, no_download):

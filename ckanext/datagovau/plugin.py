@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import inspect
-import logging
 import json
+import logging
 
-import ckan.authz as authz
 import ckan.lib.helpers as h
-import ckan.lib.jobs as jobs
-import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+from ckan import authz, model
+from ckan.lib import jobs
 
+from ckanext.transmute.interfaces import ITransmute
 from ckanext.xloader.plugin import xloaderPlugin
 
-import ckanext.datagovau.helpers as helpers
 from ckanext.datagovau.geoserver_utils import (
     CONFIG_PUBLIC_URL,
     delete_ingested,
@@ -21,6 +20,7 @@ from ckanext.datagovau.geoserver_utils import (
 )
 
 from . import utils
+from .logic import transmutators
 
 log = logging.getLogger(__name__)
 
@@ -29,9 +29,9 @@ ingest_rest_list = ["kml", "kmz", "shp", "shapefile"]
 CONFIG_IGNORE_WORKFLOW = "ckanext.datagovau.spatialingestor.ignore_workflow"
 
 
-def _dga_xnotify(self, resource):
+def _dga_xnotify(self, resource, operation):
     try:
-        return _original_xnotify(self, resource)
+        return _original_xnotify(self, resource, operation)
     except tk.ObjectNotFound:
         # resource has `deleted` state
         pass
@@ -66,6 +66,11 @@ class DataGovAuPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer, inherit=False)
     p.implements(p.IPackageController, inherit=True)
     p.implements(p.IDomainObjectModification)
+    p.implements(ITransmute, inherit=True)
+
+    # ITransmute
+    def get_transmutators(self):
+        return transmutators.get_transmutators()
 
     # IConfigurer
 
@@ -77,9 +82,11 @@ class DataGovAuPlugin(p.SingletonPlugin):
     # IPackageController
 
     def before_dataset_index(self, pkg_dict):
-        pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
+        if pkg_dict["type"] == "harvest":
+            return pkg_dict
 
-        # uploading resources to datastore will cause SOLR error 
+        pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
+        # uploading resources to datastore will cause SOLR error
         # for multivalued field
         # inside set_datastore_active_flag action before
         # reindexing the dataset, it retrieves the data from package_show
@@ -87,10 +94,6 @@ class DataGovAuPlugin(p.SingletonPlugin):
         geospatial_topic = pkg_dict["geospatial_topic"]
         if geospatial_topic and not isinstance(geospatial_topic, str):
             pkg_dict["geospatial_topic"] = json.dumps(geospatial_topic)
-
-        field_of_research = pkg_dict['field_of_research']
-        if field_of_research and not isinstance(field_of_research, str):
-            pkg_dict['field_of_research'] = json.dumps(field_of_research)
 
         return pkg_dict
 
@@ -103,16 +106,15 @@ class DataGovAuPlugin(p.SingletonPlugin):
         return search_params
 
     def after_dataset_delete(self, context, pkg_dict):
-        if pkg_dict.get("id"):
-            if not tk.asbool(tk.config[CONFIG_IGNORE_WORKFLOW]):
-                try:
-                    jobs.enqueue(
-                        delete_ingested,
-                        kwargs={"pkg_id": pkg_dict["id"]},
-                        rq_kwargs={"timeout": 1000},
-                    )
-                except Exception as e:
-                    h.flash_error(f"{e}")
+        if pkg_dict.get("id") and not tk.asbool(tk.config[CONFIG_IGNORE_WORKFLOW]):
+            try:
+                jobs.enqueue(
+                    delete_ingested,
+                    kwargs={"pkg_id": pkg_dict["id"]},
+                    rq_kwargs={"timeout": 1000},
+                )
+            except Exception as e:
+                h.flash_error(f"{e}")
 
     # IDomainObjectModification
 

@@ -12,16 +12,26 @@
             &.notifications .badge {
                 display: none;
             }
+
+            .btn-link {
+                color: #bfd7de;
+
+                &:hover, &:focus, &:active {
+                    text-decoration: none;
+                    background: #00232e;
+
+                }
+            }
         }
     }
 }
 
 .masthead {
+    background-color: $dga-header-bg;
+
     .navbar .logo img {
         max-height: 100%;
     }
-
-    background-color: $dga-header-bg;
 
     .main-navbar ul li {
         a {

@@ -3,11 +3,11 @@ from __future__ import annotations
 import grp
 import pwd
 import re
-from typing import Literal, Optional
+from typing import Literal
 
 import ckan.plugins.toolkit as tk
 
-from .exc import BadConfig
+from .exc import BadConfigError
 
 
 def username() -> str:
@@ -26,7 +26,7 @@ def datastore() -> str:
     return tk.config["ckanext.datagovau.spatialingestor.datastore.url"]
 
 
-def ogr2ogr() -> Optional[str]:
+def ogr2ogr() -> str | None:
     return tk.config["ckanext.datagovau.spatialingestor.ogr2ogr.executable"]
 
 
@@ -48,18 +48,18 @@ def db_settings() -> dict[str, str]:
     url = datastore()
     match = re.match("".join(regex), url)
     if not match:
-        raise BadConfig(f"Invalid datastore.url: {url}")
+        raise BadConfigError(f"Invalid datastore.url: {url}")
     postgis_info = match.groupdict()
 
     db_port = postgis_info.get("db_port", "")
 
-    return dict(
-        dbname=postgis_info.get("db_name"),
-        user=postgis_info.get("db_user"),
-        password=postgis_info.get("db_pass"),
-        host=postgis_info.get("db_host"),
-        port=db_port,
-    )
+    return {
+        "dbname": postgis_info.get("db_name"),
+        "user": postgis_info.get("db_user"),
+        "password": postgis_info.get("db_pass"),
+        "host": postgis_info.get("db_host"),
+        "port": db_port,
+    }
 
 
 def db_param():

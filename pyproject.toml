@@ -1,54 +1,142 @@
-[tool.black]
-line-length = 88
-# preview = true
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ckanext-datagovau"
+authors = [
+    {name = "LinkDigital", email = "support@linkdigital.com.au"},
+]
+description = "Extension for customising CKAN for data.gov.au"
+readme = "README.rst"
+requires-python = ">=3.9"
+keywords = ["CKAN"]
+license = { text = "AGPL" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+             "boto3",
+             "ckanext-toolbelt",
+             "feedparser",
+             "python-dateutil",
+             "requests",
+             "shapely",
+             "typing_extensions",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-ckan",
+    "pytest-playwright",
+    "pytest-factoryboy",
+    "pytest-mock",
+]
+
+[project.entry-points."ckan.plugins"]
+datagovau = "ckanext.datagovau.plugin:DataGovAuPlugin"
+dga_resource = "ckanext.datagovau.subplugins.resource:ResourcePlugin"
+
+[project.entry-points."ckan.rdf.profiles"]
+dga_schemaorg = "ckanext.datagovau.profiles:DgaSchemaOrgProfile"
+
+[project.entry-points."babel.extractors"]
+ckan = "ckan.lib.extract:extract_ckan"
+
+[project.urls]
+Homepage = "https://bitbucket.org/link-digital-development/ckanext-datagovau"
+
+[tool.setuptools.dynamic]
+version = {attr = "ckanext.datagovau.__version__"}
+
+[tool.setuptools.packages]
+find = {}
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
+
+[tool.ruff.lint]
 select = [
-       # "B",  # likely bugs and design problems
+       # "ANN0", # type annotations for function arguments
+       "B",  # likely bugs and design problems
        # "BLE",  # do not catch blind exception
-       # "C40",  # better list/set/dict comprehensions
-       # "C90",  # check McCabe complexity
-       # "COM",  # trailing commas
+       "C4",  # better list/set/dict comprehensions
+       # # "C90",  # check McCabe complexity
+       # # "DTZ", # enforce timezone in date objects
        "E",  # pycodestyle error
-       # "W",  # pycodestyle warning
+       "W",  # pycodestyle warning
        "F",  # pyflakes
-       # "G",  # format strings for logging statements
-       # "N",  # naming conventions
+       "FA", # verify annotations from future
+       "G",  # format strings for logging statements
+       "N",  # naming conventions
+       "I",  # isort
+       "ICN", # import conventions
+       # # "D1",  # require doc
+       "D2",  # doc formatting
+       "D4",  # doc convention
        # "PL",  # pylint
-       # "PT",  # pytest style
-       # "PIE",  # misc lints
-       # "Q",  # preferred quoting style
-       # "RET",  # improvements for return statements
-       # "RSE",  # improvements for rise statements
+       # "PERF", # performance anti-patterns
+       "PT",  # pytest style
+       "PIE",  # misc lints
+       "RET",  # improvements for return statements
+       "RSE",  # improvements for rise statements
        # "S",  # security testing
-       # "SIM",  # simplify code
-       # "T10",  # debugging statements
-       # "T20",  # print statements
-       # "TID",  # tidier imports
+       "SIM",  # simplify code
+       "T10",  # debugging statements
+       "T20",  # print statements
+       "TID",  # tidier imports
        # "TRY",  # better exceptions
-       # "UP",  # upgrade syntax for newer versions of the language
+       "UP",  # upgrade syntax for newer versions of the language
 ]
 ignore = [
-       # "PT004", # fixture does not return anything, add leading underscore: violated by clean_db
-       # "PLC1901", # simplify comparison to empty string: violated by SQLAlchemy filters
+       "RET503", # don't enforce return-None
+       "E712", # comparison to bool: violated by SQLAlchemy filters
+       "PT004", # fixture does not return anything, add leading underscore: violated by clean_db
+       "PLC1901", # simplify comparison to empty string: violated by SQLAlchemy filters
 ]
 
-[tool.ruff.per-file-ignores]
-"ckanext/datagovau/tests*" = [
-                         "S",  # security testing
-                         "PLR2004" # magic value used in comparison
+[tool.ruff.lint.per-file-ignores]
+"ckanext/datagovau/tests*" = ["S", "PL", "ANN"]
+"ckanext/datagovau/logic/*" = [
+            "D417", # actions don't describe context and data_dict
 ]
 
-[tool.isort]
-known_ckan = "ckan"
-known_ckanext = "ckanext"
-known_self = "ckanext.datagovau"
-sections = "FUTURE,STDLIB,FIRSTPARTY,THIRDPARTY,CKAN,CKANEXT,SELF,LOCALFOLDER"
-profile = "black"
+[tool.ruff.lint.flake8-import-conventions.aliases]
+"ckan.plugins" = "p"
+"ckan.plugins.toolkit" = "tk"
+sqlalchemy = "sa"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+section-order = [
+              "future",
+              "standard-library",
+              "first-party",
+              "third-party",
+              "ckan",
+              "ckanext",
+              "self",
+              "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+ckan = ["ckan"]
+ckanext = ["ckanext"]
+self = ["ckanext.datagovau"]
 
 [tool.pytest.ini_options]
-addopts = "--ckan-ini test.ini"
+addopts = "--ckan-ini test_config/test.ini -m 'not playwright'"
 filterwarnings = [
                "ignore::sqlalchemy.exc.SADeprecationWarning",
                "ignore::sqlalchemy.exc.SAWarning",
@@ -56,7 +144,7 @@ filterwarnings = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 include = ["ckanext"]
 exclude = [
     "**/test*",
@@ -128,10 +216,6 @@ reportUnusedCoroutine = true
 reportUnnecessaryTypeIgnoreComment = true
 reportMatchNotExhaustive = true
 
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "0.0.1"
-tag_format = "v$version"
-version_files = ["setup.cfg:version", "setup.py:version"]
-major_version_zero = true
-changelog_incremental = true
+[tool.coverage.run]
+branch = true
+omit = ["ckanext/datagovau/tests/*"]

@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 
 import ckan.plugins.toolkit as tk
 
-from ..utils import download
+from ckanext.datagovau.utils import download
 
 log = logging.getLogger(__name__)
 
@@ -50,11 +50,9 @@ def fetch(category, filename):
         params={"export_format": "csv"},
         headers={"User-Agent": "Mozilla/4.0 (compatible; data.gov.au webspider)"},
     )
-    name = resp.headers.get("Content-Disposition", "").split("filename=")[-1].strip(
+    return resp.headers.get("Content-Disposition", "").split("filename=")[-1].strip(
         "\"'"
     ) or os.path.basename(urlsplit(url)[2])
-
-    return name
 
 
 def energy_resources():

@@ -1,8 +1,9 @@
-"""Resource operations specific for DGA
+"""Resource operations specific for DGA.
 
 Provides all sort of data extraction(zip, spatial) and submission(geoserver).
 
 """
+
 from __future__ import annotations
 
 import logging

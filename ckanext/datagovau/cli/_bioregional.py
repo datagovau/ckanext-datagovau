@@ -3,9 +3,10 @@ from __future__ import annotations
 import os
 import smtplib
 import tempfile
+from collections.abc import Iterable, Sequence
 from email.message import EmailMessage
 from email.utils import formatdate
-from typing import Any, BinaryIO, Iterable, Optional, Sequence, TextIO, Union
+from typing import Any, BinaryIO, TextIO
 
 import boto3
 import requests
@@ -65,8 +66,8 @@ class File:
         return os.stat(self.filename).st_size
 
     def download_from(
-        self, url: str, ignore_ssl: bool = False, timeout: Optional[int] = None
-    ) -> Union[Download, Fail]:
+        self, url: str, ignore_ssl: bool = False, timeout: int | None = None
+    ) -> Download | Fail:
         session = requests.Session()
         session.verify = not ignore_ssl
 
@@ -99,10 +100,10 @@ class Upload:
     @classmethod
     def setup(
         cls,
-        key: Optional[str],
-        secret: Optional[str],
-        region: Optional[str],
-        profile: Optional[str],
+        key: str | None,
+        secret: str | None,
+        region: str | None,
+        profile: str | None,
         bucket: str,
     ):
         boto3.setup_default_session(
@@ -212,16 +213,16 @@ def converted_datasets(
         yield src
 
 
-def download_record(record: File, no_verify: bool, timeout: Optional[int], url: str):
+def download_record(record: File, no_verify: bool, timeout: int | None, url: str):
     dataset_url = url.rstrip("/") + "/" + record.dataset["id"]
     return record.download_from(dataset_url, no_verify, timeout)
 
 
 def prepare_source(
-    source: Optional[BinaryIO],
+    source: BinaryIO | None,
     url: str,
     ignore_ssl: bool = False,
-    timeout: Optional[int] = None,
+    timeout: int | None = None,
 ) -> BinaryIO:
     if source:
         return source
@@ -245,4 +246,4 @@ def prepare_source(
         for chunk in resp.iter_content(1024):
             dest.write(chunk)
 
-    return open(dest.name, "rb")
+    return open(dest.name, "rb")  # noqa: SIM115

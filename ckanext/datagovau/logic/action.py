@@ -6,7 +6,8 @@ from typing import Any
 import ckan.plugins.toolkit as tk
 from ckan.logic import validate
 
-from ..utils import temp_dir
+from ckanext.datagovau.utils import temp_dir
+
 from . import schema
 
 log = logging.getLogger(__name__)
@@ -25,8 +26,8 @@ def dga_get_package_stats(context, data_dict):
             context,
             {"name": "dga_ga_stats"},
         )["data"]
-    except tk.ObjectNotFound:
-        raise tk.ObjectNotFound(tk._("No dataset statistics"))
+    except tk.ObjectNotFound as err:
+        raise tk.ObjectNotFound(tk._("No dataset statistics")) from err
 
     if "id" not in data_dict:
         return stats

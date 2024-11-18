@@ -8,8 +8,8 @@ from typing import Any
 import click
 from typing_extensions import TypedDict
 
-import ckan.model as model
 import ckan.plugins.toolkit as tk
+from ckan import model
 
 RE_PKG = re.compile(r"/dataset/(?P<id>[^/?#]+)")
 RE_RES = re.compile(r"/dataset/(?P<pkg_id>[^/?#]+)/resource/(?P<res_id>[^/?#]+)")
@@ -29,7 +29,7 @@ class GaData(TypedDict):
     rows: list[list[str]]
 
 
-class PresentDate(Exception):
+class PresentDateError(Exception):
     pass
 
 
@@ -47,7 +47,7 @@ def stats():
     help="Fetch GA data for last N years. Default 1",
 )
 def collect_all(years):
-    """Fetch data for last n years"""
+    """Fetch data for last n years."""
     for date in _get_dates_for_last_n_years(years):
         _collect(date)
 
@@ -55,7 +55,7 @@ def collect_all(years):
 
 
 def _get_dates_for_last_n_years(years) -> list[str]:
-    """Return a list of dates in %Y-%m format"""
+    """Return a list of dates in %Y-%m format."""
     current_year: int = dt.today().year
     current_month: int = dt.today().month
 
@@ -67,8 +67,8 @@ def _get_dates_for_last_n_years(years) -> list[str]:
                 dates.append(f"{year}-{month:02}")
 
                 if (month == current_month) and (year == current_year):
-                    raise PresentDate
-    except PresentDate:
+                    raise PresentDateError
+    except PresentDateError:
         pass
 
     return dates
@@ -99,8 +99,8 @@ def _fill_empty_values_for_packages():
                     )
 
                     if (month == current_month) and (year == current_year):
-                        raise PresentDate
-        except PresentDate:
+                        raise PresentDateError
+        except PresentDateError:
             pass
 
     tk.get_action("flakes_flake_override")(
@@ -111,7 +111,7 @@ def _fill_empty_values_for_packages():
 
 @stats.command("collect")
 def collect():
-    """Fetch fresh stats from Google Analytics"""
+    """Fetch fresh stats from Google Analytics."""
     _collect(dt.today().strftime("%Y-%m"))
     _fill_empty_values_for_packages()
 
@@ -131,7 +131,7 @@ def _collect(date):
 
 
 def get_stats(date: str) -> dict[str, dict[str, int]]:
-    """Return parsed stats data from Google Analytics"""
+    """Return parsed stats data from Google Analytics."""
     stats = {}
 
     parse_views_report(stats, get_dataset_views(date))
@@ -143,7 +143,7 @@ def get_stats(date: str) -> dict[str, dict[str, int]]:
 
 
 def parse_views_report(stats, ga_data):
-    """Parse dataset views GA report"""
+    """Parse dataset views GA report."""
     for row in ga_data["rows"]:
         match = RE_PKG.search(row[PAGE_PATH])
 
@@ -162,7 +162,7 @@ def parse_views_report(stats, ga_data):
 
 
 def parse_downloads_report(stats, ga_data):
-    """Parse resource downloads GA report"""
+    """Parse resource downloads GA report."""
     for row in ga_data["rows"]:
         match = RE_RES.search(row[PAGE_PATH])
 
@@ -184,7 +184,7 @@ def parse_downloads_report(stats, ga_data):
 
 
 def get_dataset_views(date) -> GaData:
-    """Return dataset views GA report"""
+    """Return dataset views GA report."""
     data_dict = {
         "dimensions": "ga:pagePath",
         "metrics": "ga:pageviews",
@@ -194,7 +194,7 @@ def get_dataset_views(date) -> GaData:
 
 
 def get_resource_downloads(date) -> GaData:
-    """Return resource downloads GA report"""
+    """Return resource downloads GA report."""
     data_dict = {
         "dimensions": "ga:pagePath,ga:eventCategory,ga:eventAction",
         "metrics": "ga:totalEvents",
@@ -220,7 +220,7 @@ def _get_stats_data(date, data_dict) -> GaData:
 
 
 def update_overall_stats(context, stats: dict[str, Any], date: str):
-    """Update overall stats from month stats"""
+    """Update overall stats from month stats."""
     overall_stats: dict[str, Any] = _get_or_create_overall_stats(context)
 
     for pkg_id, data in stats["data"].items():
@@ -234,7 +234,7 @@ def update_overall_stats(context, stats: dict[str, Any], date: str):
 
 
 def _get_or_create_overall_stats(context) -> dict[str, Any]:
-    """Return overall GA stats"""
+    """Return overall GA stats."""
     try:
         stats = tk.get_action("flakes_flake_lookup")(
             context,

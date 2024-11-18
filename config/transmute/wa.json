@@ -1,0 +1,25 @@
+{
+    "root": "Dataset",
+    "types": {
+        "Dataset": {
+            "fields": {
+                "extras": {"remove": true, "weight": 10},
+                "notes": {"validators": ["dga_tsm_parse_description"]},
+                "jurisdiction": {"remove": "true"},
+                "data_state": {"remove": "true"},
+                "update_freq": {"remove": "true"},
+                "metadata_created": {},
+                "license_id": {"default": "notspecified"},
+
+                "spatial": {"map": "spatial_coverage"},
+                "data_temporal_extent_begin": {"default_from": "metadata_created", "map": "temporal_coverage_from"},
+                "data_temporal_extent_end": {"map": "temporal_coverage_to"},
+                "author_email": {"map": "contact_point"}
+            }
+        },
+        "Resource": {
+            "fields": {
+            }
+        }
+    }
+}

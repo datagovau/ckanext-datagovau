@@ -20,7 +20,7 @@
         <div class="stats">
           <div class="stats-category">
             {% for category_data in stats %}
-              {% snippet "charts/chartjs.html", type="line", data=category_data %}
+              {% snippet "dga/snippets/chartjs.html", type="line", data=category_data %}
               <h4 class="text-center">
                 {{ _('Total {}'.format(category_data.category)) }}: {{ category_data.total }}
               </h4>
