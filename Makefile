@@ -23,6 +23,7 @@ remote-harvest-basket = https://github.com/mutantsan/ckanext-harvest-basket bran
 remote-transmute = https://github.com/mutantsan/ckanext-transmute branch master
 remote-pygments = https://github.com/DataShades/ckanext-pygments commit e947b34
 remote-check-link = https://github.com/DataShades/ckanext-check-link tag v0.2.2
+
 remote-collection = https://github.com/DataShades/ckanext-collection tag v0.2.1
 remote-search-tweaks = https://github.com/DataShades/ckanext-search-tweaks.git branch master
 remote-composite-search = https://github.com/DataShades/ckanext-composite-search tag v0.3.3
