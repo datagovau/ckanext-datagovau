@@ -1,8 +1,9 @@
 ckanext-googleanalytics[requirements]~=2.2.2
 ckanext-scheming~=3.0.0
-ckanext-toolbelt~=0.3.10
-ckanext-hierarchy~=1.2.0
+ckanext-toolbelt~=0.4.11
 ckanext-core-fix~=0.6.0
+ckanext-resource-indexer[all]~=0.4.1
 
 # Fix for "xmlsec.InternalError: (-1, 'lxml & xmlsec libxml2 library version mismatch')"
 # xmlsec==1.3.13
+msgspec
