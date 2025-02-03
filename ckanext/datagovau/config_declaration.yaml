@@ -51,3 +51,22 @@ groups:
         default: [csv]
         description: |
           Space-separated list of extensions(in lowercase) that trigger auto-extraction from ZIP-archive.
+
+      - key: ckanext.datagovau.archive.broken_percentage
+        type: int
+        default: 100
+        description: |
+          Minimal percentage of resources with broken links inside dataset that must be archived
+
+      - key: ckanext.datagovau.archive.broken_days_without_update
+        type: int
+        default: 350
+        description: |
+          Number of days since last update before dataset with high rate of
+          broken resources is marked as archived.
+
+      - key: ckanext.datagovau.archive.days_without_update
+        type: int
+        default: 700
+        description: |
+          Number of days since last update before dataset is marked as archived.
