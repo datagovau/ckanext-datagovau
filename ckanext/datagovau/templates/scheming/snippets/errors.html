@@ -1,0 +1,6 @@
+{% ckan_extends %}
+
+{% block errors_list %}
+    {% do unprocessed.pop("tags", null) %}
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,124 @@
+{% asset "search_tweaks_advanced_search/advanced_search" %}
+
+{% set form_config = form_config|default(h.advanced_search_form_config())|tojson|forceescape %}
+{% set enable_solr = enable_solr|default(request.args.ext_solr_q | length > 0) %}
+{% set prefix = prefix|default(h.composite_search_get_prefix()) %}
+
+{% set ns = namespace(enable_advanced=false) %}
+{% for arg in request.args if arg.startswith(prefix) %}
+  {% set ns.enable_advanced = true %}
+{% endfor %}
+{% set enable_advanced = enable_advanced|default(ns.enable_advanced) %}
+{% set labels = labels|default({}) %}
+{% set solr_syntax_url = solr_syntax_url|default('https://solr.apache.org/guide/6_6/common-query-parameters.html') %}
+{% set solr_syntax_blank = solr_syntax_blank|default(true) %}
+
+{% set default_search_button %}
+<span class="input-group-btn">
+        <button class="btn btn-default btn-lg mb-0"
+                type="submit"
+                value="search"
+                aria-label="{{ labels.search_button or _('Submit') }}">
+            <i class="fa fa-search"></i>
+        </button>
+    </span>
+{% endset %}
+
+{% set search_button = search_button|default(default_search_button) %}
+
+{% set default_search_input %}
+<div class="input-group search-input-group">
+  <input type="text"
+         class="form-control input-lg"
+         name="q"
+         value="{{ query }}"
+         autocomplete="off"
+         placeholder="{{ placeholder }}"
+         aria-label="Search data">
+  {{ search_button }}
+</div>
+{% endset %}
+
+{% set search_input = search_input|default(default_search_input) %}
+
+{% set default_solr_input %}
+<div class="input-group search-input-group">
+  <input type="text"
+         class="form-control input-lg"
+         value="{{ request.args.ext_solr_q }}"
+         autocomplete="off"
+         name="ext_solr_q"
+         disabled
+         placeholder="{{ labels.solr_placeholder or _('metadata_created:[NOW/YEAR TO *] -tags:Health') }}"
+         aria-label="Search using Solr query">
+  {{ search_button }}
+</div>
+{% endset %}
+
+{% set solr_input = solr_input|default(default_solr_input) %}
+
+<form action="{{ h.url_for('dataset.search') }}" method="GET">
+  <div class="search-tweaks-advanced-search my-0"
+       data-module="search-tweaks-advanced-search"
+    {% if enable_advanced or enable_solr %} data-module-enable-advanced{% endif %}
+    {% if enable_solr %} data-module-enable-solr{% endif %}>
+
+    <div data-module="composite-search"
+         class="advanced-search-widget"
+         data-module-config="{{ form_config }}"
+         data-module-prefix="{{ prefix }}"
+         data-module-url-init
+      {% if enable_advanced %} data-module-enabled{% endif %}>
+    </div>
+
+    <div class="original-search-widget mt-0">
+      {{ search_input }}
+    </div>
+
+    <div class="solr-search-widget mb-0">
+      {{ solr_input }}
+    </div>
+
+    <div class="advanced-search-submit">
+      {{ search_button }}
+    </div>
+
+    {% block search_options %}
+      <div class="advanced-toggles mt-0">
+        {% block advaned_toggle %}
+          <div class="toggle-item enable-advanced">
+            <input id="toggle-enable-advanced" type="checkbox"
+                   autocomplete="off"
+                   {% if enable_advanced or enable_solr %}checked{% endif %}/>
+            <label for="toggle-enable-advanced">
+              {{ labels.advanced_toggle or _('Advanced search') }}
+            </label>
+          </div>
+        {% endblock advaned_toggle %}
+
+        {% block solr_syntax %}
+          <div class="toggle-item enable-solr">
+            <input id="toggle-enable-solr"
+                   type="checkbox"
+                   autocomplete="off"
+                   {% if enable_solr %}checked{% endif %}/>
+            <label for="toggle-enable-solr">
+              {{ labels.solr_toggle or _('Add query syntax to search') }}
+            </label>
+            {% block solr_syntax_url %}
+              <a {% if solr_syntax_blank %}target="_blank"{% endif %}
+                 href="{{ solr_syntax_url }}"
+                 aria-label="Learn more about SOLR query parameters">
+                <i class="fa fa-info-circle"
+                   data-placement="top"
+                   data-toggle="tooltip"
+                   title="{{ labels.solr_explanation or _('This adds SOLR query language, for more information click here') }}">
+                </i>
+              </a>
+            {% endblock solr_syntax_url %}
+          </div>
+        {% endblock solr_syntax %}
+      </div>
+    {% endblock search_options %}
+  </div>
+</form>

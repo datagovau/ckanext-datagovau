@@ -1,0 +1,197 @@
+@use "../variables" as v;
+
+.dga-user-login,
+.dga-user-request_reset,
+.dga-user-logged_out_page,
+.dga-dga_user-register {
+    #content {
+        .dga-login {
+            border-color: v.$dga-outer-border-color;
+            border-width: 1px;
+            border-radius: 4px;
+            box-shadow: none;
+            margin: 40px 0px;
+
+            .primary, .secondary {
+                padding: 0;
+            }
+
+            .secondary > section {
+                height: 100%;
+            }
+
+            &::before {
+                display: none;
+            }
+
+            h1 {
+                font-size: 2.75rem;
+                color: v.$dga-color-midnight-green;
+                font-weight: 600;
+                margin-bottom: 40px;
+                line-height: 58px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+
+                .form-control {
+                    min-height: 48px;
+                }
+            }
+
+            .form-actions {
+                margin-top: 40px;
+                flex-direction: row;
+                justify-content: start;
+                text-align: start;
+
+                .btn {
+                    margin-inline-start: unset;
+                }
+            }
+
+            .module-content {
+                padding: 24px;
+            }
+
+            .module-narrow.module-shallow {
+                padding: 40px 16px;
+
+                h2 {
+                    font-size: 1.25rem;
+                    line-height: 1.2;
+                    color: v.$dga-color-midnight-green;
+                    margin-bottom: 24px;
+                    padding: 0;
+
+                    background-color: unset;
+                    border: none;
+
+                    &::before {
+                        content: url("#{v.$imagePath}/info-skobeloff.svg");
+                        width: 16px;
+                        height: 16px;
+                        margin-right: 16px;
+                    }
+                }
+
+                .module-content {
+                    padding: 0px;
+                    gap: 24px;
+                    border-top: none;
+
+                    p {
+                        font-size: 1rem;
+                        line-height: 1.3125rem;
+                        margin-bottom: 24px;
+                        color: v.$dga-color-graphite-gray;
+                    }
+                }
+            }
+
+            .checkbox:before {
+                border-width: 1px;
+                top: -2px;
+            }
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px v.$dga-autofilled-input-bg inset !important;
+                -webkit-text-fill-color: v.$dga-color-graphite-gray !important;
+            }
+        }
+
+        .alert::before {
+            content: "";
+        }
+
+        @media (min-width: 767px) {
+            .dga-login {
+                border: 1px solid v.$dga-outer-border-color;
+                border-radius: 4px;
+
+                .primary {
+                    border-right-style: solid;
+                    border-right-width: 1px;
+                    border-right-color: v.$dga-outer-border-color;
+                }
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            padding-right: 0px;
+            padding-left: 0px;
+
+            .breadcrumb {
+                background-color: unset;
+            }
+
+            .breadcrumb li:first-child {
+                padding-left: 1.25rem;
+            }
+
+            .dga-login {
+                margin-top: 0px;
+
+                h1 {
+                    font-size: 2rem;
+                    line-height: 42px;
+                    margin-bottom: 24px;
+                }
+
+                &.wrapper {
+                    -webkit-flex-direction: column;
+                    flex-direction: column;
+                }
+
+                .btn {
+                    width: 100%;
+                    align-items: center;
+                    display: inline-block;
+                }
+
+                .module-narrow.module-shallow h2 {
+                    font-size: 1.25rem;
+                    line-height: 26px;
+                    text-align: center;
+                    padding-left: 0px;
+                }
+
+                .primary {
+                    padding-right: 0px;
+                    padding-left: 0px;
+
+                    .module-content {
+                        padding-right: 1.25rem;
+                        padding-left: 1.25rem;
+
+                        .form-actions {
+                            margin-top: 0px;
+                        }
+                    }
+                }
+
+                .secondary {
+                    padding-right: 0.25rem;
+                    padding-left: 0.25rem;
+                }
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dga-login {
+                margin-top: 12px;
+            }
+        }
+    }
+}
+
+
+.dga-user-logged_out_page {
+    .toolbar {
+        display: flex;
+    }
+}

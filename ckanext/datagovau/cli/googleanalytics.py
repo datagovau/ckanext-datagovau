@@ -46,7 +46,7 @@ def stats():
     default=1,
     help="Fetch GA data for last N years. Default 1",
 )
-def collect_all(years):
+def collect_all(years: int):
     """Fetch data for last n years."""
     for date in _get_dates_for_last_n_years(years):
         _collect(date)
@@ -54,7 +54,7 @@ def collect_all(years):
     _fill_empty_values_for_packages()
 
 
-def _get_dates_for_last_n_years(years) -> list[str]:
+def _get_dates_for_last_n_years(years: int) -> list[str]:
     """Return a list of dates in %Y-%m format."""
     current_year: int = dt.today().year
     current_month: int = dt.today().month
@@ -116,7 +116,7 @@ def collect():
     _fill_empty_values_for_packages()
 
 
-def _collect(date):
+def _collect(date: str):
     user: dict[str, Any] = tk.get_action("get_site_user")({"ignore_auth": True}, {})
     context = {"user": user["name"]}
 
@@ -142,7 +142,7 @@ def get_stats(date: str) -> dict[str, dict[str, int]]:
     return stats
 
 
-def parse_views_report(stats, ga_data):
+def parse_views_report(stats: dict[str, Any], ga_data: dict[str, Any]):
     """Parse dataset views GA report."""
     for row in ga_data["rows"]:
         match = RE_PKG.search(row[PAGE_PATH])
@@ -161,7 +161,7 @@ def parse_views_report(stats, ga_data):
         stats[pkg.id]["views"] += int(row[PAGE_VIEWS])
 
 
-def parse_downloads_report(stats, ga_data):
+def parse_downloads_report(stats: dict[str, Any], ga_data: dict[str, Any]):
     """Parse resource downloads GA report."""
     for row in ga_data["rows"]:
         match = RE_RES.search(row[PAGE_PATH])
@@ -183,7 +183,7 @@ def parse_downloads_report(stats, ga_data):
         stats[pkg.id]["downloads"] += int(row[RES_DOWNLOADS])
 
 
-def get_dataset_views(date) -> GaData:
+def get_dataset_views(date: str) -> GaData:
     """Return dataset views GA report."""
     data_dict = {
         "dimensions": "ga:pagePath",
@@ -193,7 +193,7 @@ def get_dataset_views(date) -> GaData:
     return _get_stats_data(date, data_dict)
 
 
-def get_resource_downloads(date) -> GaData:
+def get_resource_downloads(date: str) -> GaData:
     """Return resource downloads GA report."""
     data_dict = {
         "dimensions": "ga:pagePath,ga:eventCategory,ga:eventAction",
@@ -205,7 +205,7 @@ def get_resource_downloads(date) -> GaData:
     return _get_stats_data(date, data_dict)
 
 
-def _get_stats_data(date, data_dict) -> GaData:
+def _get_stats_data(date: str, data_dict: dict[str, Any]) -> GaData:
     date_month_start: str = str(dt.strptime(date, "%Y-%m").date())
     year, month = date.split("-")
     last_day: int = calendar.monthrange(int(year), int(month))[1]
@@ -219,7 +219,7 @@ def _get_stats_data(date, data_dict) -> GaData:
     )
 
 
-def update_overall_stats(context, stats: dict[str, Any], date: str):
+def update_overall_stats(context: dict[str, Any], stats: dict[str, Any], date: str):
     """Update overall stats from month stats."""
     overall_stats: dict[str, Any] = _get_or_create_overall_stats(context)
 
@@ -233,7 +233,7 @@ def update_overall_stats(context, stats: dict[str, Any], date: str):
     )
 
 
-def _get_or_create_overall_stats(context) -> dict[str, Any]:
+def _get_or_create_overall_stats(context: dict[str, Any]) -> dict[str, Any]:
     """Return overall GA stats."""
     try:
         stats = tk.get_action("flakes_flake_lookup")(
@@ -249,7 +249,7 @@ def _get_or_create_overall_stats(context) -> dict[str, Any]:
     return stats["data"]
 
 
-def _fill_stats_with_zeros_if_empty(stats):
+def _fill_stats_with_zeros_if_empty(stats: dict[str, Any]):
     for stat in stats.values():
         stat.setdefault("views", 0)
         stat.setdefault("downloads", 0)

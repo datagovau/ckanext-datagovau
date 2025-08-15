@@ -1,34 +1,98 @@
 {% ckan_extends %}
 
-{% block secondary_content %}
-  {{ super() }}
+{% block primary_content_inner %}
+  {% block package_description %}
+    <div class="d-block d-lg-flex justify-content-between mt-3 ">
+      {% set original_source = h.dga_get_original_harvest_source(pkg) %}
+      {% if original_source and
+            original_source.site_url != h.url_for("dataset.search", _external=True) and
+            original_source["title"] %}
+        <span class="dataset-source-label label label-inverse">
+            <i class="fa fa-link me-2"></i><a href="{{ original_source["href"] }}">From
+          {{ original_source["title"] }}
+          </a>
+          </span>
+      {% endif %}
+      <div class="d-none d-lg-block ms-auto">
+        {% snippet "package/snippets/export_links.html", pkg=pkg, position="start" %}
+      </div>
+    </div>
 
-  {% set dataset_extent = pkg['spatial'] or h.get_pkg_dict_extra(pkg, 'spatial', '') %}
-  {% if dataset_extent and 'spatial_query' in g.plugins %}
-    {% snippet "spatial/snippets/dataset_map_sidebar.html", extent=dataset_extent %}
-  {% endif %}
+    <h1>
+      {% block page_heading %}
+        {{ h.dataset_display_name(pkg) }}
+        {% if pkg.state.startswith('draft') %}
+          {% snippet "package/snippets/dataset_draft_badge.html" %}
+        {% endif %}
+        {% if pkg.state == 'deleted' %}
+          {% snippet "package/snippets/dataset_draft_badge.html", label=_("Deleted") %}
+        {% endif %}
+      {% endblock %}
+    </h1>
 
-  {% block ga_stats %}
-    {% set stats = h.dga_get_package_stats(pkg.id) %}
+    <div class="dates d-flex gap-3 flex-wrap">
+      {% if pkg.private %}
+        {% snippet "package/snippets/dataset_private_badge.html" %}
+      {% endif %}
+      {% if pkg.archived %}
+        {% snippet "package/snippets/dataset_archived_badge.html" %}
+      {% endif %}
+      <p class="created">
+        Created {{ h.render_datetime(pkg.metadata_created, date_format="%d/%m/%Y") }}</p>
+      <p class="updated">
+        Updated {{ h.render_datetime(pkg.metadata_modified, date_format="%d/%m/%Y") }}</p>
+    </div>
 
-    {% if stats %}
-      <section class="module module-narrow dataset-map">
-        <h2 class="module-heading">
-          <i class="fa fa-bar-chart"></i>
-          {{ _('GA stats') }}
-        </h2>
-        <div class="stats">
-          <div class="stats-category">
-            {% for category_data in stats %}
-              {% snippet "dga/snippets/chartjs.html", type="line", data=category_data %}
-              <h4 class="text-center">
-                {{ _('Total {}'.format(category_data.category)) }}: {{ category_data.total }}
-              </h4>
-            {% endfor %}
-          </div>
+    <div class="d-block d-lg-none mb-4 justify-content-end">
+      {% snippet "package/snippets/export_links.html", pkg=pkg, position="end" %}
+    </div>
+
+    <div class="action-button">
+      {% if h.check_access('package_update', {'id':pkg.id }) %}
+        {% link_for _('Manage'), named_route=pkg.type ~ '.edit', id=pkg.name, class_='btn btn-primary-outlined', icon='gear' %}
+      {% endif %}
+
+      {% if h.dga_user_can_ask_question() %}
+        <button type="button" class="btn btn-primary-outlined" data-bs-toggle="modal"
+                data-bs-target="#askQuestionModal">
+          Ask a question about this dataset
+        </button>
+      {% endif %}
+    </div>
+
+    {% block package_notes %}
+      {% if pkg.notes %}
+        <div class="notes embedded-content">
+          {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
         </div>
-      </section>
+      {% endif %}
+    {% endblock %}
+    <span class="insert-comment-thread"></span>
+  {% endblock package_description %}
+
+  {% block package_resources %}
+    {{ super() }}
+  {% endblock %}
+
+  {% block package_tags %}
+    {% if pkg.tags %}
+      <h3>Tags</h3>
+      {% snippet "package/snippets/tags.html", tags=pkg.tags %}
     {% endif %}
   {% endblock %}
 
+  {% block package_additional_info %}
+    {{ super() }}
+  {% endblock %}
+
+  {% block data_source %}
+    {% set duplicate_info = h.dga_detect_duplicates(pkg) %}
+    {% snippet "package/snippets/data_source.html", duplicate_info=duplicate_info, pkg=pkg %}
+  {% endblock %}
+
+  {% block ask_question_modal %}
+    {% if h.dga_user_can_ask_question() %}
+      {% snippet "package/snippets/ask_question_modal.html", package_id=pkg.id %}
+    {% endif %}
+  {% endblock %}
 {% endblock %}

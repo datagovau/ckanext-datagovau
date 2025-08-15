@@ -1,0 +1,145 @@
+# English translations for ckanext-datagovau.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the ckanext-datagovau
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ckanext-datagovau 3.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-03-25 02:20+0200\n"
+"PO-Revision-Date: 2025-03-25 02:58+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+msgid ""
+"Moment.js date format to use for displaying dates (see <a "
+"href=\"https://devhints.io/moment#formatting-1\" "
+"target=\"_blank\">Moment.js cheatsheet</a>). If <b>NONE</b>, the raw "
+"timestamp value will be shown."
+msgstr ""
+"<span>Moment.js date format to use for displaying dates (see <a "
+"href=\"https://devhints.io/moment#formatting-1\" "
+"target=\"_blank\">Moment.js cheatsheet</a>). If <b>NONE</b>, the raw "
+"timestamp value will be shown.</span>"
+
+#, python-brace-format
+msgid "Promoted {} to sysadmin"
+msgstr "User {} was successfully promoted to sysadmin"
+
+#, python-brace-format
+msgid "Revoked sysadmin permission from {}"
+msgstr "{} sysadmin access was deleted"
+
+msgid "Are you sure you want to reset the config?"
+msgstr ""
+"Are you sure you want to reset config settings? If you press ‘Reset’ this"
+" action can’t be undone."
+
+msgid "Are you sure you want to purge everything?"
+msgstr ""
+"Are you sure you want to purge everything? If you press ‘Purge’ this "
+"action can’t be undone."
+
+msgid "Are you sure you want to purge datasets?"
+msgstr ""
+"Are you sure you want to purge deleted datasets? If you press ‘Purge’ "
+"this action can’t be undone."
+
+msgid "Are you sure you want to purge organizations?"
+msgstr ""
+"Are you sure you want to purge deleted organisations? If you press "
+"‘Purge’ this action can’t be undone."
+
+msgid "Are you sure you want to purge groups?"
+msgstr ""
+"Are you sure you want to purge deleted groups? If you press ‘Purge’ this "
+"action can’t be undone."
+
+#: ckanext/datagovau/implementations/search_autocomplete.py:14
+#: ckanext/datagovau/logic/action.py:140
+msgid "Organisations"
+msgstr ""
+
+#: ckanext/datagovau/implementations/search_autocomplete.py:15
+#: ckanext/datagovau/logic/action.py:141
+msgid "Groups"
+msgstr ""
+
+#: ckanext/datagovau/implementations/search_autocomplete.py:16
+#: ckanext/datagovau/logic/action.py:142
+msgid "Tags"
+msgstr ""
+
+#: ckanext/datagovau/implementations/search_autocomplete.py:17
+#: ckanext/datagovau/logic/action.py:143
+msgid "Formats"
+msgstr ""
+
+#: ckanext/datagovau/implementations/search_autocomplete.py:18
+#: ckanext/datagovau/logic/action.py:144
+msgid "Licenses"
+msgstr ""
+
+#: ckanext/datagovau/logic/validators.py:58
+msgid "Entered value cannot be converted into a spatial object"
+msgstr ""
+
+#: ckanext/datagovau/logic/validators.py:173
+msgid "Could not parse as valid JSON"
+msgstr ""
+
+#: ckanext/datagovau/logic/validators.py:249
+msgid "Upload at least one CSV file before uploading PDF."
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:42
+msgid "Organization not found"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:44
+msgid "Group not found"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:70
+msgid "Members not found"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:72
+msgid "Username"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:72
+msgid "Email"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:72
+msgid "Name"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:72
+msgid "Role"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:81
+msgid "N/A"
+msgstr ""
+
+#: ckanext/datagovau/views/group.py:91
+msgid "members"
+msgstr ""
+
+#: ckanext/datagovau/views/user.py:33
+msgid "Not authorized to see this page"
+msgstr ""
+
+#: ckanext/datagovau/views/user.py:39
+msgid "User not found"
+msgstr ""

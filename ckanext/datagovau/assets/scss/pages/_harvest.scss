@@ -1,0 +1,172 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+
+
+[class^="dga-harvest-"],
+[class^="dga-harvester-"] {
+    .primary .module {
+        background-color: v.$color-white;
+    }
+
+    .secondary .module .module-content {
+        border: none;
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
+            font-weight: 400;
+            margin: .25rem 0;
+
+            a {
+                display: block;
+                font-size: 1rem;
+                line-height: 1.5;
+                font-weight: 400;
+                text-decoration: none;
+
+                &:focus, &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    h1 {
+        color: v.$dga-color-midnight-green;
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+
+    .module-content {
+        padding: 1.5rem 1rem;
+
+        @include m.breakpoint(md) {
+            padding: 2.5rem 1.5rem;
+        }
+    }
+
+    .module-content.page-header {
+        padding: 0;
+    }
+
+    .action-info {
+        color: v.$dga-color-silver-gray;
+        font-weight: 400;
+        font-size: 14px;
+    }
+
+    .content_action {
+        float: unset;
+        padding: 1.5rem 1rem 0;
+
+        &.btn-group {
+            flex-direction: column;
+
+            a {
+                border-radius: 0;
+
+                &:first-child {
+                    border-radius: 0.25rem 0.25rem 0 0;
+                }
+
+                &:last-child {
+                    border-radius: 0 0 0.25rem 0.25rem;
+                }
+            }
+        }
+
+        @include m.breakpoint(sm) {
+            padding: 2.5rem 1.5rem 0;
+            margin-bottom: -1rem;
+        }
+
+        @include m.breakpoint(lg) {
+            &.btn-group {
+                flex-direction: row;
+
+                a {
+                    border-radius: 0;
+
+                    &:first-child {
+                        border-radius: 0.25rem 0 0 0.25rem;
+                    }
+
+                    &:last-child {
+                        border-radius: 0 0.25rem 0.25rem 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .search-tweaks-advanced-search {
+        display: block;
+        width: 100%;
+    }
+
+    .advanced-toggles {
+        display: none;
+    }
+
+    .search-form {
+        margin-bottom: 1.5rem;
+    }
+
+    .primary .search-form .control-order-by {
+        margin-left: auto;
+        margin-bottom: 0;
+    }
+
+    .additional-info {
+        padding: 0 1rem 1.5rem 1rem;
+
+        @include m.breakpoint(md) {
+            padding: 0 1.5rem 2.5rem 1.5rem;
+            margin-top: -1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: v.$dga-color-midnight-green;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 575.98px) {
+            .table {
+                @include m.collapsable-table;
+            }
+        }
+    }
+
+    .pagination-container {
+        margin-bottom: 0;
+    }
+
+    .dropdown-menu {
+        a {
+            display: block;
+        }
+
+    }
+}
+
+.dga-harvest-read {
+    .pagination-wrapper {
+        margin-top: 2.5rem;
+    }
+
+    .search-form {
+        margin-bottom: 1.5rem;
+    }
+}

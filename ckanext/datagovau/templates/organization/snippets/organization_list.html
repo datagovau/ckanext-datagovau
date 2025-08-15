@@ -1,15 +1,7 @@
-{#
-Display a grid of organization items.
-
-organizations - A list of organizations.
-
-Example:
-
-{% snippet "organization/snippets/organization_list.html" %}
-
-#}
-<ul class="media-grid organisation">
-  {% for organization in organizations %}
-    {% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
-  {% endfor %}
-</ul>
+<div>
+  <div class="row row-cols-1 row-cols-xl-2 organization-list g-3 g-lg-4">
+    {% for organization in organizations %}
+      {% snippet "organization/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
+    {% endfor %}
+  </div>
+</div>

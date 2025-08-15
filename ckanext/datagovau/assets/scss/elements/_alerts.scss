@@ -1,0 +1,89 @@
+@use "../variables" as v;
+
+
+
+.alert {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    background: #f7f7f7;
+    border: 1px solid #d9d9d9;
+    color: v.$dga-color-graphite-gray;
+
+    &-danger {
+        background: v.$alert-danger-bg;
+        border: 1px solid v.$alert-danger-border;
+        color: v.$alert-danger-text;
+    }
+
+    &-success {
+        background-color: #dbf0e1;
+        border-color: #b8e0c3;
+    }
+
+    &-info {
+        background: v.$dga-outer-border-color;
+        border: 1px solid #b4c1e4;
+        color: v.$dga-color-midnight-green;
+    }
+
+    &-warning {
+        background: #fff8e5;
+        border: 1px solid #ffe299;
+    }
+
+    &-dismissible {
+        &.alert-info {
+            background: #FAE0E3;
+            color: #8E101C;
+            border-radius: 0.25rem;
+            border-color: #F1A7AE;
+
+        }
+        padding-left: 16px;
+        .btn-close {
+            width: 16px;
+            height: 16px;
+            background: center no-repeat url("#{v.$imagePath}/close-small.svg");
+            opacity: 1;
+            border: none;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    &-danger:not(.alert-dismissible) {
+        color: v.$alert-danger-text;
+        background-color: v.$alert-danger-bg;
+        border-color: v.$alert-danger-border;
+
+        a {
+            color: v.$alert-danger-text;
+        }
+
+        &::before {
+            display: inline-block;
+            content: url("#{v.$imagePath}/alert.svg");
+            width: 16px;
+            height: 16px;
+            border: none;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-65%);
+        }
+
+        &::after {
+            display: inline-block;
+            content: url("#{v.$imagePath}/alert.svg");
+            width: 16px;
+            height: 16px;
+            border: none;
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-65%);
+        }
+    }
+}

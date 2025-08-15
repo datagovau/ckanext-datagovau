@@ -1,0 +1,67 @@
+{% ckan_extends %}
+
+{% block stages %}
+    {{ super() }}
+{% endblock stages %}
+
+{% block form_actions %}
+
+    {{ form.required_message() }}
+
+    <div class="form-actions">
+        {% block disclaimer %}
+            <div class="action-info small">
+                {% trans %}
+                    <p>
+                        Custodians are reminded that they have responsibility for the
+                        confidentiality of the data they load to Data.gov.au . Once loaded,
+                        there are no checks undertaken by the platform on datasets to
+                        ensure there is no personal information or confidentiality
+                        rules are maintained.
+                    </p>
+                    <p>
+                        We secure all our information in accordance with the <a
+                        href="https://www.protectivesecurity.gov.au/">Protective
+                        Security Policy Framework</a>. The cyber security controls for
+                        our
+                        IT systems comply with the Australian Signals Directorate's
+                        (ASD) <a
+                        href="https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/ism">Information
+                        Security Manual</a>. Data.gov.au
+                        systems that store and
+                        process data are subjected to independent security assessments
+                        by independent ASD certified security assessors.
+                    </p>
+                    <p>
+                        Identifiable information, such as name and address, is deleted
+                        when no longer needed in accordance with the Administrative
+                        Functions Disposal Authority and our internal records
+                        authorities (<a
+                        href="https://www.naa.gov.au/sites/default/files/2019-12/agency-ra-2001-00000540.pdf">2001/00000540</a>
+                        and <a
+                        href="https://www.naa.gov.au/sites/default/files/2019-12/agency-ra-2007-00105946.pdf">2007/00105946</a>).
+                    </p>
+                    <p>
+                        The data license you select above only applies to the
+                        contents of any resource files that you add to this dataset. By
+                        submitting this form, you agree to release the metadata
+                        values that you enter into the form under the
+                        <a href="http://opendatacommons.org/licenses/odbl/1-0/">Open
+                            Database License</a>.
+                    </p>
+                {% endtrans %}
+            </div>
+        {% endblock %}
+
+        {% block delete_button %}
+        {% if h.check_access('package_delete', {'id': data.id}) and not data.state == 'deleted' %}
+          <a class="btn btn-outline-danger pull-left dga" href="{% url_for dataset_type ~ '.delete', id=data.id %}" data-module="confirm-action" data-module-content="{{ h.humanize_entity_type('package', dataset_type, 'delete confirmation') or _('Are you sure you want to delete this dataset?') }}">{% block delete_button_text %}{{ _('Delete') }}{% endblock %}</a>
+        {% endif %}
+        {% endblock %}
+
+        {% block save_button %}
+            {{ super() }}
+        {% endblock %}
+    </div>
+
+{% endblock %}

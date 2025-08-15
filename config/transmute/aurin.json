@@ -12,8 +12,6 @@
           "default": "unknown",
           "map": "contact_point"
         },
-        "update_freq": {"remove": "true"},
-        "jurisdiction": {"remove": "true"},
         "data_state": {"remove": "true"},
         "spatial_coverage": {
           "validate_missing": true,
@@ -30,7 +28,9 @@
         "metadata_created": {},
         "temporal_coverage_from": {
           "default_from": "metadata_created"
-        }
+        },
+        "remote_last_updated": {"default_from": "metadata_modified"},
+        "original_name": {"default_from": "name"}
       }
     },
     "Resource": {

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-au">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block subject %}{{ subject }}{% endblock subject %}
+        </title>
+        <style>
+            body {font-family: Open Sans, sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; color: #414042;}
+            p {margin: 0;}
+            .pt20 {padding-top: 20px;}
+            .pt32 {padding-top: 32px;}
+            .p24-32 {padding: 24px 32px;}
+            .h1 {font-size: 24px; line-height: 31px; font-weight: 400; padding-top: 16px;}
+            .link {color: #046C82;}
+            .w100 {width: 100%;}
+            .bg-white {background-color: #FFFFFF;}
+            .bg-grey {background-color: #F5F5F5; padding: 16px; padding-bottom: 32px;}
+            .reply-btn {background-color:#046C82; color:#fff !important; padding:12px 40px; border:none; border-radius:4px; cursor:pointer; text-decoration: unset;}
+            .img-box {margin-top: 32px;text-align: center;}
+            .img {width: 100%; max-width: 320px;}
+        </style>
+    </head>
+
+    <body>
+        <div class="bg-grey">
+            {% block content %}
+            {% endblock content %}
+            <div class="img-box">
+                <img class="img" src="{{ h.url_for_static('/email/dga-logo.png', _external=True) }}" alt="DataGovAu logo">
+            </div>
+        </div>
+    </body>
+
+</html>

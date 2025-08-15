@@ -1,0 +1,18 @@
+{% ckan_extends %}
+
+
+{% block search_options %}
+  <div class="advanced-toggles">
+    {% block advaned_toggle %}
+      {{ super() }}
+    {% endblock advaned_toggle %}
+    {% block solr_syntax %}
+      {{ super() }}
+    {% endblock solr_syntax %}
+
+    {% if include_children_option %}
+      {% set group_type = "Organisation" %}
+      {{ form.checkbox('include_children', label="Include Sub-"+group_type+"s", checked=(h.is_include_children_selected()), value=True, error=error, attrs={"data-module": "dga-include-children"}) }}
+    {% endif %}
+  </div>
+{% endblock search_options %}

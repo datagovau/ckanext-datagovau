@@ -1,0 +1,57 @@
+{% extends "page.html" %}
+
+{% set user = user_dict %}
+{% set dataset_type = h.default_package_type() %}
+{% set org_type = h.default_group_type('organization') %}
+{% set group_type = h.default_group_type('group') %}
+
+{% block subtitle %}{{ user.display_name }} {{ g.template_title_delimiter }} {{ _('Users') }}{% endblock %}
+
+{% block breadcrumb_content %}
+    {{ h.build_nav('user.index', _('Users')) }}
+    {{ h.build_nav('user.read', user.display_name|truncate(35), id=user.name) }}
+{% endblock %}
+
+{% block content_primary_nav %}
+    <li>
+        {% set action = h.url_for("user.read", id=user.name, class="user-read") %}
+        <a href="{{ action }}" {%if g.view == "read"%} class="active" {%endif%}>
+            <i class="fa fa-file-alt"></i>
+            {{ _('Datasets') }}
+        </a>
+    </li>
+    <li>
+        {% set action = h.url_for("user.read_organizations", id=user.name) %}
+        <a href="{{ action }}" {%if g.view == "read_organizations"%} class="active" {%endif%}>
+            <i class="fa fa-building"></i>
+            {{ h.humanize_entity_type('organization', org_type, 'content tab') or _('Organisations') }}
+        </a>
+    </li>
+    <li>
+        {% set action = h.url_for("user.read_groups", id=user.name) %}
+        <a href="{{ action }}" {%if g.view == "read_groups"%} class="active" {%endif%}>
+            <i class="fa fa-users"></i>
+            {{ h.humanize_entity_type('group', group_type, 'content tab') or _('Groups') }}
+        </a>
+    </li>
+    {% if h.check_access('api_token_list', {'user': user['name']}) %}
+        <li>
+            {% set action = h.url_for("user.api_tokens", id=user.name) %}
+            <a href="{{ action }}" {%if g.view == "api_tokens"%} class="active" {%endif%}>
+                <i class="fa fa-plug"></i>
+                {{ _('API Tokens') }}
+            </a>
+        </li>
+    {% endif %}
+    <li>
+        {% set action = h.url_for("activity.user_activity", id=user.name) %}
+        <a href="{{ action }}" {%if g.view == "user_activity"%} class="active" {%endif%}>
+            <i class="fa fa-clock"></i>
+            {{ _('Activity stream') }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block secondary_content %}
+    {% snippet "user/snippets/info.html", user=user, is_myself=is_myself, is_sysadmin=is_sysadmin, dataset_type=dataset_type, org_type=org_type, group_type=group_type, am_following=am_following %}
+{% endblock %}

@@ -1,0 +1,21 @@
+@use "../variables" as v;
+
+input[type="checkbox"] {
+    appearance: none;
+    min-width: 20px;
+    min-height: 20px;
+    border: 1px solid v.$dga-color-silver-gray;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: -2px;
+    padding: 0;
+
+    &:checked {
+        border-color: transparent !important;
+
+        &:after {
+            content: url("#{v.$imagePath}/checkbox.svg");
+        }
+    }
+}

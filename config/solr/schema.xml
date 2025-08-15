@@ -96,6 +96,15 @@ attribute with the form `ckan-X.Y` -->
       </analyzer>
     </fieldType>
 
+    <!-- ckanext-spatial -->
+    <fieldType name="location_rpt"   class="solr.SpatialRecursivePrefixTreeFieldType"
+               spatialContextFactory="JTS"
+               autoIndex="true"
+               validationRule="repairBuffer0"
+               distErrPct="0.025"
+               maxDistErr="0.001"
+               distanceUnits="kilometers" />
+
 </types>
 
 
@@ -173,6 +182,19 @@ attribute with the form `ckan-X.Y` -->
     <dynamicField name="res_extras_*" type="text" indexed="true" stored="true" multiValued="true"/>
     <dynamicField name="vocab_*" type="string" indexed="true" stored="true" multiValued="true"/>
     <dynamicField name="*" type="string" indexed="true"  stored="false"/>
+
+
+    <!-- ckanext-search-tweaks -->
+    <!-- this field used for providing suggestions when user makes a typo in query -->
+	<field name="did_you_mean" type="text_general" indexed="true" multiValued="true" />
+    <!-- promote position of the dataset in search results -->
+	<field name="promotion_level" type="int" indexed="true" stored="true"/>
+    <!-- promote position of the dataset if user often visits it from after executing specific search query -->
+    <dynamicField name="query_relevance_*"  type="int" indexed="true" stored="true"/>
+
+    <!-- ckanext-spatial -->
+    <field name="spatial_geom" type="location_rpt" indexed="true" multiValued="true" />
+
 </fields>
 
 <uniqueKey>index_id</uniqueKey>
@@ -199,5 +221,11 @@ attribute with the form `ckan-X.Y` -->
 <copyField source="res_description" dest="text"/>
 <copyField source="maintainer" dest="text"/>
 <copyField source="author" dest="text"/>
+
+<copyField source="title" dest="did_you_mean"/>
+<copyField source="notes" dest="did_you_mean"/>
+<copyField source="res_name" dest="did_you_mean"/>
+<copyField source="res_description" dest="did_you_mean"/>
+<copyField source="extras_*" dest="did_you_mean"/>
 
 </schema>

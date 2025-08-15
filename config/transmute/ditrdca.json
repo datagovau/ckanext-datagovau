@@ -3,6 +3,7 @@
   "types": {
     "Dataset": {
       "fields": {
+        "extras": {"remove": true, "weight": 10},
         "license_id": {
           "default": "notspecified"
         },
@@ -27,9 +28,12 @@
               "dga_tsm_parse_date", "tsm_to_string"
           ]
         },
+        "remote_last_updated": {"default_from": "metadata_modified", "validators": [
+              "dga_tsm_parse_date", "tsm_to_string"
+          ]
+        },
         "data_state": {"remove": "true"},
-        "jurisdiction": {"remove": "true"},
-        "update_freq": {"remove": "true"}
+        "original_name": {"default_from": "name"}
       }
     },
     "Resource": {

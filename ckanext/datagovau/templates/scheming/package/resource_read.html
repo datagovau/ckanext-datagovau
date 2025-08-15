@@ -5,41 +5,25 @@
     <th scope="row">{{ _('Data last updated') }}</th>
     <td>{{ h.render_datetime(res.last_modified) or h.render_datetime(res.Created) or _('unknown') }}</td>
   </tr>
-  <tr>
-    <th scope="row">{{ _('Metadata last updated') }}</th>
-    <td>{{ h.render_datetime(res.metadata_modified) or h.render_datetime(res.Created) or _('unknown') }}</td>
-  </tr>
 {% endblock %}
 
 {% block resource_created %}
-  <tr>
-    <th scope="row">{{ _('Created') }}</th>
-    <td>{{ h.render_datetime(res.Created) or _('unknown') }}</td>
-  </tr>
 {% endblock %}
 
 {% block resource_fields %}
   {% do exclude_fields.append("last_modified") %}
   {{ super() }}
   <tr>
-    <th>{{ _("Media type") }}</th>
-    <td>{{ res.get("mimetype", _("unknown")) }}</td>
-  </tr>
-  <tr>
     <th>Size</th>
-    <td>{{ h.localised_filesize(res.Size) if res.Size else _("unknown") }}</td>
-  </tr>
-  <tr>
-    <th>{{ _("Has views") }}</th>
-    <td>{{ res.has_views or false }}</td>
+    <td>{{ h.localised_filesize(res.size) if res.size and res.url_type == "upload" else _("Unknown") }}</td>
   </tr>
   <tr>
     <th>{{ _("ID") }}</th>
     <td>{{ res.id }}</td>
   </tr>
   <tr>
-    <th>{{ _("On same domain") }}</th>
-    <td>{{ res.on_same_domain or false }}</td>
+    <th>{{ _("Harvested") }}</th>
+    <td>{{ h.get_pkg_dict_extra(pkg, 'harvest_source_id') is not none }}</td>
   </tr>
   <tr>
     <th>{{ _("Package ID") }}</th>
@@ -47,21 +31,152 @@
   </tr>
   <tr>
     <th>{{ _("State") }}</th>
-    <td>{{ res.state }}</td>
-  </tr>
-  <tr>
-    <th>{{ _("URL type") }}</th>
-    <td>{{ res.url_type or _("unknown") }}</td>
+    <td>{{ _("Archived") if pkg.archived else res.state }}</td>
   </tr>
 {% endblock resource_fields %}
 
 
-{% block secondary_content %}
+{% block main_content %}
+  {% block flash %} {{ super() }} {% endblock %}
 
-  {% block resources_list %}
-    {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id, action='read', is_activity_archive=is_activity_archive %}
-  {% endblock %}
+  {% block toolbar %} {{ super() }} {% endblock %}
 
-  {% snippet "snippets/social.html" %}
+  <div
+    class="row wrapper{% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' or c.action=='resource_read' %} no-nav{% endif %} dga-resource">
+    {% block primary %}
+      <div class="primary col-md-8 col-xs-12 pb-4" role="main">
+        {% block pre_primary %}
+          {% block resource_read_title %}
+            <h1 class="page-heading mb-4" title="{{ h.resource_display_name(res) }}">{{h.resource_display_name(res) | truncate(50) }}</h1>
+          {% endblock %}
 
-{% endblock %}
+          <div class="d-flex gap-3 flex-wrap mb-4">
+            <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}" class="dataset-title-link"
+              aria-label="{{ _('Navigate to dataset: {title}').format(title=title|truncate(80)) }}">
+              {{ h.dataset_display_name(package)|truncate(80) }}
+            </a>
+            <p class="resource-date mb-0">Created {{ h.render_datetime(pkg.metadata_created, date_format="%d/%m/%Y") or _('unknown') }}</p>
+            <p class="resource-date mb-0">Updated {{ h.render_datetime(pkg.metadata_modified, date_format="%d/%m/%Y") or _('unknown') }}</p>
+          </div>
+
+          {% block resource_actions %}
+            <ul class="d-flex flex-wrap list-inline gap-3">
+              {% block resource_actions_inner %}
+                {% if res.url and h.is_url(res.url) %}
+                  <li>
+                    <div class="btn-group">
+                      <a class="btn btn-primary btn-download"
+                         href="{{ res.url }}">
+                        <i>{% snippet 'svg/download.svg' %}</i> {{ _('Download') }}
+                      </a>
+                      {% block download_resource_button %}
+                        {{ super() }}
+                      {% endblock download_resource_button %}
+                    </div>
+                  </li>
+                {% endif %}
+
+                {% if res.datastore_active %}
+                  <li class="resource-data-api">{% snippet 'package/snippets/data_api_button.html', resource=res %}</li>
+                {% endif %}
+
+                {% block action_manage %}
+                  {% if h.check_access('package_update', {'id':pkg.id }) %}
+                    <li>{% link_for _('Manage'), named_route=pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id,
+                      class_='btn btn-default' %}</li>
+                    {% block action_manage_inner %}{% endblock %}
+
+                    <li>{% link_for _('Views'), named_route=pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id, class_='btn
+                      btn-default', icon='chart-bar fa-inverse' %}</li>
+                  {% endif %}
+                {% endblock action_manage %}
+              {% endblock resource_actions_inner %}
+            </ul>
+          {% endblock %}
+
+          <div class="prose notes mb-4" property="rdfs:label">
+            {% if res.description %}
+              {{ h.render_markdown(res.description) }}
+            {% endif %}
+          </div>
+
+          {% if res.url and h.is_url(res.url) %}
+            <h2 class="source-header mb-3">{{ _("Source") }}</h2>
+
+            <p class="resource-source-title mb-0">{{ _("This data file or API can be downloaded from:") }}</p>
+            <a class="resource-source" href="{{ res.url }}">{{ res.url }}</a>
+          {% endif %}
+        {% endblock %}
+      </div>
+
+      <div class="secondary col-md-4 pe-0 pb-4">
+        {% block secondary_content %}
+          {% block resources_list %}
+            {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id, action='read',
+            is_activity_archive=is_activity_archive %}
+          {% endblock resources_list %}
+        {% endblock secondary_content %}
+      </div>
+
+      {% block data_preview %}
+        {% block resource_view %}
+          {% block resource_view_nav %}
+            <div class="resource-views-list px-0">
+              {% snippet "package/snippets/resource_views_list.html",
+              views=resource_views,
+              pkg=pkg,
+              is_edit=false,
+              view_id=current_resource_view['id'],
+              resource=resource,
+              extra_class="nav-tabs border-0"
+              %}
+            </div>
+          {% endblock %}
+          {% block resource_view_content %}
+          <div class="resource-view-item px-0 py-4">
+            {% if resource_views %}
+              {% for resource_view in resource_views %}
+                {% if resource_view == current_resource_view %}
+                  {% snippet 'package/snippets/resource_view.html',
+                  resource_view=resource_view,
+                  resource=resource,
+                  package=package
+                  %}
+                {% endif %}
+              {% endfor %}
+            {% else %}
+            {# Views not created #}
+              <div class="data-viewer-info">
+                <p>{{ _("There are no views created for this resource yet.") }}</p>
+                {% if h.check_access('resource_view_create', {'resource_id': resource.id}) %}
+                <p class="text-muted">
+                  <i class="fa fa-info-circle"></i>
+                  {{ _("Not seeing the views you were expecting?")}}
+                  <a href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#data-view-info">
+                    {{ _('Click here for more information.') }}</a>
+                </p>
+                <div id="data-view-info" class="collapse">
+                  <p>{{ _('Here are some reasons you may not be seeing expected views:') }}</p>
+                  <ul>
+                    <li>{{ _("No view has been created that is suitable for this resource")}}</li>
+                    <li>{{ _("The site administrators may not have enabled the relevant view plugins")}}</li>
+                    <li>{{ _("If a view requires the DataStore, the DataStore plugin may not be enabled, or the data may not have
+                      been pushed to the DataStore, or the DataStore hasn't finished processing the data yet")}}</li>
+                  </ul>
+                </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+          {% endblock %}
+        {% endblock %}
+      {% endblock %}
+
+      {% block primary_content %}
+      <div class="resource-additional-information">
+        {% block resource_additional_information_inner %} {{ super() }} {% endblock resource_additional_information_inner %}
+      </div>
+    {% endblock %}
+  {% endblock primary %}
+</div>
+{% endblock main_content %}

@@ -1,0 +1,71 @@
+@use "variables" as v;
+
+.container {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .container-lg, .container-md, .container-sm, .container {
+        max-width: 100%;
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+}
+
+@media (max-width: 48rem) {
+    .container-md, .container-sm, .container {
+        max-width: 100%;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+}
+
+.main, .primary, .secondary {
+    background: v.$dga-main-bg;
+}
+
+.module-content {
+    background: v.$dga-module-background-color;
+    @media (max-width: 767.98px) {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+[role=main] {
+    min-height: auto;
+}

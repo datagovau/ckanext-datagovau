@@ -1,0 +1,305 @@
+@use "variables" as v;
+@use "sass:color";
+
+.select2-container-multi {
+    .select2-search-choice-close {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+@mixin select2-container {
+    box-shadow: none;
+    border: v.$border-default;
+    border-radius: 0.25rem;
+    padding: 0;
+    width: 100% !important;
+
+    .select2-choice {
+        display: flex;
+        align-items: center;
+        height: inherit;
+        width: inherit;
+        padding: 12px 16px;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+
+        .select2-chosen {
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 400;
+            color: v.$dga-color-graphite-gray;
+        }
+
+        .select2-arrow {
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            right: 1rem;
+
+            b {
+                background: none !important;
+                height: auto;
+
+                &:after {
+                    content: "\f078";
+                    font-family: FontAwesome;
+                }
+            }
+        }
+    }
+
+    .select2-default {
+        color: v.$dga-color-silver-gray !important; /* Replace with your desired color */
+    }
+
+    &.select2-container-multi {
+        .select2-choices {
+
+            display: flex;
+            flex-wrap: wrap;
+            padding: 12px 16px;
+            border: unset;
+            border-radius: unset;
+            background: none;
+            gap: 5px;
+
+            .select2-search-field {
+                display: flex;
+                align-items: center;
+
+                input.select2-active {
+                    background: v.$color-white !important;
+                }
+            }
+
+            .select2-search-field:first-child input {
+                padding-left: 0;
+            }
+
+            .select2-search-choice {
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                padding: 5px 10px;
+                gap: 4px;
+                height: 35px;
+                width: auto;
+                border: 1.5px solid #afd9e3;
+                border-radius: 4px;
+                color: v.$dga-color-skobeloff;
+                background-color: v.$color-white;
+                font-size: 14px;
+                font-weight: 500;
+                text-decoration: none;
+                background-image: unset;
+                margin: 0;
+
+                .select2-search-choice-close {
+                    display: inline-block;
+                    width: 16px;
+                    height: 16px;
+                    position: relative;
+                    cursor: pointer;
+                    text-decoration: none;
+                    background: unset;
+                    background-image: unset !important;
+                    top: 35%;
+
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        width: 100%;
+                        height: 1.5px;
+                        background-color: v.$dga-color-skobeloff;
+                        top: 50%;
+                        left: 0;
+                        transform: rotate(-45deg);
+                    }
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        width: 100%;
+                        height: 1.5px;
+                        background-color: v.$dga-color-skobeloff;
+                        top: 50%;
+                        left: 0;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+        }
+    }
+
+    &.select2-dropdown-open {
+        box-shadow: 0 0 0 4px v.$dga-color-outline;
+        border-color: v.$dga-color-soft-sky-blue;
+
+        .select2-choice {
+            .select2-chosen {
+                color: v.$dga-color-graphite-gray;
+            }
+
+            .select2-arrow {
+                b {
+                    &:after {
+                        content: "\f077";
+                    }
+                }
+            }
+        }
+    }
+
+    &.select2-container-active {
+        outline: 3px solid v.$dga-color-outline;
+        outline-offset: 0;
+    }
+}
+
+
+.select2-drop.select2-drop-active {
+    border: 1px solid v.$dga-color-soft-sky-blue;
+    border-radius: 0.5rem;
+    box-shadow: unset;
+    background-color: v.$color-white;
+    margin-top: 0.25rem;
+    padding: 0;
+
+    // Style the results list
+    .select2-results {
+        margin: 0;
+        padding: 0px;
+        gap: 8;
+        list-style: none;
+
+        // Style individual result items
+        li {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5rem;
+
+            color: v.$dga-color-graphite-gray;
+            cursor: pointer;
+
+            .select2-result-label {
+                padding: 0px;
+            }
+
+            // Hover effect for result items
+            &:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+
+            // Style for selected items (if applicable)
+            &.select2-selected {
+                background-color: #e0e0e0;
+            }
+        }
+
+        .select2-highlighted {
+            background-color: v.$dga-outer-border-color;
+        }
+
+        // Style the "no results" message
+        .select2-no-results {
+            color: v.$dga-color-graphite-gray;
+            background-color: v.$dga-color-light-gray;
+            font-style: italic;
+        }
+    }
+}
+
+
+// Style the dropdown container
+.select2-drop.select2-with-searchbox {
+    border: 1px solid v.$dga-color-soft-sky-blue;
+    border-radius: 8px;
+    box-shadow: unset;
+    background-color: v.$color-white;
+    margin-top: 8px;
+
+    // Style the search input container
+    .select2-search {
+        padding: 8px;
+
+        &:after {
+            position: absolute;
+            top: 50%;
+            right: .8125rem;
+            display: block;
+            width: 16px;
+            height: 16px;
+            content: "";
+            background: url("#{v.$imagePath}/search-icon.svg") no-repeat center center;
+            background-size: contain;
+            transform: translateY(-50%);
+            margin-right: 10px;
+        }
+
+        // Style the search input
+        .select2-input {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            color: v.$dga-color-graphite-gray;
+            border: 1px solid v.$dga-color-soft-sky-blue;
+            border-radius: 4px;
+            background-color: v.$color-white;
+            background: none;
+            background-image: none !important;
+
+            &:focus {
+                outline: none;
+                border-color: color.adjust(v.$dga-color-soft-sky-blue, $lightness: -10%)
+            }
+        }
+    }
+
+    // Style the results list
+    .select2-results {
+        margin: 0;
+        padding: 8px;
+        list-style: none;
+
+        // Style individual result items
+        .select2-result {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 24px;
+            color: v.$dga-color-graphite-gray;
+            cursor: pointer;
+
+            // Hover effect for result items
+            &:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+
+            // Style for highlighted (selected) items
+            &.select2-highlighted {
+                background-color: v.$dga-outer-border-color;
+            }
+
+            // Style for selected items (if applicable)
+            &.select2-selected {
+                background-color: #e0e0e0;
+            }
+        }
+
+        // Style the "no results" message
+        .select2-no-results {
+            color: v.$dga-color-graphite-gray;
+            background-color: v.$dga-color-light-gray;
+            font-style: italic;
+        }
+    }
+}

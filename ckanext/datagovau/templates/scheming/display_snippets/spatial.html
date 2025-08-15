@@ -1,0 +1,7 @@
+{% set valid_extent = h.dga_get_valid_extent(data[field.field_name]) %}
+
+{% if valid_extent %}
+  {% snippet "package/snippets/additional_info_map.html", extent=valid_extent %}
+{% else %}
+  {{ data[field.field_name] }}
+{% endif %}

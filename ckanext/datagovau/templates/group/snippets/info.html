@@ -1,3 +1,48 @@
 {% ckan_extends %}
 
-{% block follow %}{% endblock %}
+{% set url = h.url_for(group.type + '.read', id=group.name) %}
+
+{% block image %}
+    <div class="image">
+        <a href="{{ url }}">
+            <img
+                src="{{ group.image_display_url or h.dga_get_organization_image_url(group.id) or h.url_for_static('/base/images/placeholder-organization.png') }}"
+                width="200" alt="{{ group.name }}"/>
+        </a>
+    </div>
+{% endblock %}
+{% block heading %}
+    <h1 class="heading"><a href="{{ url }}"
+                           class="title">{{ group.title or group.name }}</a>
+        {% if group.state == 'deleted' %}
+            [{{ _('Deleted') }}]
+        {% endif %}
+    </h1>
+{% endblock %}
+{% block description %}
+    {% if group.description %}
+        <p class="description">
+            {{ h.markdown_extract(group.description, 180) }}
+        </p>
+        <p class="read-more">
+            {% link_for _('View group details'), named_route=group.type ~ '.about', id=group.name %}
+        </p>
+    {% else %}
+        <p class="empty mb-0">{{ h.humanize_entity_type('group', group.type, 'no description') or _('There is no description for this group') }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block nums %}
+    <section class="stats module module-narrow module-shallow">
+        <div class="stats-wrapper">
+            <div class="stat-box">
+                <h2 class="stat-heading">{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets:') }}</h2>
+                <span
+                    class="stat-number">{{ h.SI_number_span(group.package_count) }}</span>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block follow %}
+{% endblock %}

@@ -1,0 +1,63 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+
+    .pager-summary {
+        color: v.$dga-color-graphite-gray;
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+.pagination-wrapper {
+    padding-top: 0;
+}
+
+.pagination {
+    gap: 4px;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+
+    .page-item {
+        width: 2.5rem;
+        height: 2.5rem;
+
+        &.active > .page-link {
+            background-color: v.$dga-color-soft-sky-blue;
+            color: v.$dga-color-dark-cyan;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: auto;
+            background-color: transparent;
+            border: unset;
+            color: v.$dga-color-skobeloff;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+
+            &:hover {
+                background-color: v.$dga-color-soft-sky-blue;
+                color: v.$dga-color-dark-cyan;
+            }
+        }
+
+        @include m.breakpoint(sm) {
+            width: 3rem;
+            height: 3rem;
+        }
+    }
+}

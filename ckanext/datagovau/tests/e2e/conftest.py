@@ -8,7 +8,7 @@ from playwright.sync_api import expect
 expect.set_options(timeout=1000)
 
 
-@pytest.fixture()
+@pytest.fixture
 def browser_context_args(
     browser_context_args: dict[str, Any], ckan_config: dict[str, Any]
 ):

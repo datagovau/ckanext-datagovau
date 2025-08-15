@@ -372,7 +372,7 @@ def grid(resource: dict[str, Any], table_name: str, tempdir: str) -> str:
     return native_crs
 
 
-def _call_ogr2ogr(pargs):
+def _call_ogr2ogr(pargs: list[Any]) -> Any:
     executable = config.ogr2ogr()
     if executable:
         return subprocess.call([executable] + pargs[1:])
@@ -385,7 +385,7 @@ def _create_geoserver_data_dir(native_name: str) -> str:
     return data_output_dir
 
 
-def _set_geoserver_ownership(data_dir):
+def _set_geoserver_ownership(data_dir: str):
     uid, gid = config.os_owner()
     os.chown(data_dir, uid, gid)
     for root, dirs, files in os.walk(data_dir):

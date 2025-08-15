@@ -41,7 +41,7 @@ _energy_pkgs = {
 }
 
 
-def fetch(category, filename):
+def fetch(category: str, filename: str):
     url = f"http://reg.energyrating.gov.au/comparator/product_types/{category}/search/"
     log.info("Download %s into %s", url, filename)
     resp = download(

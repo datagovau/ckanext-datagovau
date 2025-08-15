@@ -1,0 +1,9 @@
+<form hx-post="{{ h.url_for('dga_dataset.suggest') }}" hx-target="this" hx-swap="outerHTML" class="suggestion-done">
+    <p>{{ _('Thank you for your suggestion!') }}</p>
+
+    <p>{{ _('We will review your suggestion and get back to you if we have any questions.') }}</p>
+
+    <button class="btn btn-primary" type="submit">{{ _("Suggest another dataset") }}</button>
+
+    <input type="hidden" name="refresh" value="true">
+</form>

@@ -1,0 +1,66 @@
+@use "variables" as v;
+
+.site-footer {
+    font-family: 'Inter', sans-serif;
+    background: v.$dga-color-dark-cyan;
+    padding: 2.5rem 0;
+
+    a, p, h5, h6 {
+        color: v.$color-white;
+    }
+
+    a, p, h5 {
+        font-size: 1rem;
+    }
+
+    p, h5, h6 {
+        margin: 0;
+    }
+
+    h6 {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .footer-menu-top {
+        .nav {
+            display: block;
+            margin-left: -15px;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 576px) {
+            & > div {
+                flex: 0 0 100%;
+            }
+        }
+    }
+
+    .footer-menu-bottom {
+        padding-top: 1rem;
+
+        .nav {
+            margin: 0 0 0 -15px;
+        }
+    }
+
+    .nav-link {
+        &:hover,
+        &:focus {
+            color: v.$color-white;
+            text-decoration: underline;
+        }
+    }
+
+    .footer-copyright {
+        margin-top: 1.5rem;
+
+        p {
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 180%;
+        }
+    }
+}

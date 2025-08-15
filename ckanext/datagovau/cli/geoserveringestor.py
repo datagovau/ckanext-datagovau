@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 import click
@@ -17,19 +19,18 @@ def geoserver_ingestor():
 
 
 @geoserver_ingestor.command("ingest")
-@click.option("-d", "--dataset", help="Get specific dataset", default=None)
+@click.option("-d", "--dataset", help="Get specific dataset")
 @click.option(
     "-o",
     "--organization",
     help="Datasets of specific organization",
-    default=False,
 )
-def geo_ingest(dataset, organization):
+def geo_ingest(dataset: str | None, organization: str | None):
     query = model.Session.query(model.Package).filter_by(state="active", private=False)
     if organization:
         org = model.Group.get(organization)
         if not org:
-            tk.error_shout(f"Organization {organization} not found")
+            tk.error_shout(f"Organisation {organization} not found")
             raise click.Abort
 
         query = query.filter(model.Package.owner_org == org.id)

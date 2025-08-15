@@ -1,0 +1,46 @@
+{% set original_source = h.dga_get_original_harvest_source(pkg) %}
+
+{% if original_source.site_url != h.url_for("dataset.search", _external=True) %}
+  <h3>{{ _("Data Source") }}</h3>
+  <section class="data-source">
+    <p class="data-source-description">
+      This dataset was originally found on
+      <a href="{{ original_source.site_url }}">{{ original_source.title }}</a>
+      "{{ pkg.title }}". Please visit the source to access the original metadata of the
+      dataset:<br>
+      {% if original_source.href %}
+        <a href="{{ original_source.href }}">{{ original_source.href }}</a>
+      {% endif %}
+    </p>
+
+    {% if duplicate_info.original.id != pkg.id %}
+      <div class="original-dataset">
+        <a data-bs-toggle="collapse" href="#collapseOriginalDataset"
+           role="button"
+           aria-expanded="true" aria-controls="collapseOriginalDataset">
+          {{ _("Original dataset") }}
+        </a>
+      </div>
+      <div class="collapse show" id="collapseOriginalDataset">
+        <div class="card card-body original-dataset-card">
+          {% snippet "snippets/package_list.html", packages=[duplicate_info.original] %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if duplicate_info.duplicates %}
+      <div class="dataset-copies">
+        <a data-bs-toggle="collapse" href="#collapseDatasetCopies"
+           role="button"
+           aria-expanded="true" aria-controls="collapseDatasetCopies">
+          {{ _("Dataset copies") }}
+        </a>
+      </div>
+      <div class="collapse show" id="collapseDatasetCopies">
+        <div class="card card-body dataset-copies-card">
+          {% snippet "snippets/package_list.html", packages=duplicate_info.duplicates %}
+        </div>
+      </div>
+    {% endif %}
+  </section>
+{% endif %}

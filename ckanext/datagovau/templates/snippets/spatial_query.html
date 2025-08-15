@@ -1,0 +1,99 @@
+{% set map_config = h.get_common_map_config() %}
+
+<section class="facet-card module module-narrow module-shallow mb-3">
+  <h2 class="module-heading mb-0" data-module="dga-class-toggle"
+      data-module-class-name="collapsed">
+    {{ _('Location') }}
+  </h2>
+
+  <section class="module module-narrow module-shallow ">
+    <div class="dataset-map bg-white d-grid" data-module="dga-spatial-query"
+         data-default_extent="{{ default_extent }}"
+         data-module-map_config="{{ h.dump_json(map_config) }}">
+
+      <div class="dataset-map-header justify-content-between align-items-baseline">
+        <h2 class="heading">
+          Location
+          <i class="fa fa-info-circle"
+             data-module="tooltip"
+             data-bs-toggle="tooltip"
+             title="{{ _('When using the map, pan by clicking and dragging the map from any position and use your mouse wheel or the +/- arrows to zoom. To start drawing a bounding box, click the pencil icon.') }}"></i>
+        </h2>
+        <button class="btn btn-simple"
+                onclick="this.closest('.dataset-map').classList.toggle('dga-expanded-map');"
+                aria-label="Close map view">
+          <i class="fa fa-times"></i>
+        </button>
+
+      </div>
+
+      <div class="dataset-map-left-panel">
+        <p class="dga-map-text mb-4">
+          Add a specific geographic region using search by title, adding coordinates or
+          drawing a box on a map.
+        </p>
+
+        <div class="dga-lga-select mb-4">
+          <label for="lga-select" class="sub-heading mb-2">{{ _('Choose LGA') }}</label>
+          <select id="lga-select" name="lga-select" data-module="autocomplete"
+                  placeholder="{{ _('Choose area or search by name') }}">
+            <option value=""></option>
+            {% with items = items or h.dga_lga_names() %}
+              {% for item in items %}
+                <option value="{{ item }}"> {{ item|title }}</option>
+              {% endfor %}
+            {% endwith %}
+          </select>
+        </div>
+
+        <div id="bounding-coords" class="mb-4">
+          <label for="coordinates-block"
+                 class="sub-heading mb-2">{{ _('Or enter coordinates') }}</label>
+          <div id="coordinates-block" class="coordinates-block d-flex flex-wrap justify-content-between">
+            <div class="coord-field d-flex flex-column gap-2 justify-content-between">
+              <label class="fw-normal"
+                     for="west-lng">{{ _('West bounding longitude') }}</label>
+              <input type="number" step="0.1" id="west-lng"
+                     placeholder="{{ _('Enter longitude') }}">
+            </div>
+            <div class="coord-field d-flex flex-column gap-2 justify-content-between">
+              <label class="fw-normal"
+                     for="east-lng">{{ _('East bounding longitude') }}</label>
+              <input type="number" step="0.1" id="east-lng"
+                     placeholder="{{ _('Enter longitude') }}">
+            </div>
+            <div class="coord-field d-flex flex-column gap-2 justify-content-between">
+              <label class="fw-normal"
+                     for="south-lat">{{ _('South bounding latitude') }}</label>
+              <input type="number" step="0.1" id="south-lat"
+                     placeholder="{{ _('Enter longitude') }}">
+            </div>
+            <div class="coord-field d-flex flex-column gap-2 justify-content-between">
+              <label class="fw-normal"
+                     for="north-lat">{{ _('North bounding latitude') }}</label>
+              <input type="number" step="0.1" id="north-lat"
+                     placeholder="{{ _('Enter longitude') }}">
+            </div>
+          </div>
+        </div>
+        <div class="dga-lga-reset">
+          <button
+            class="btn btn-outline-primary border-2">{{ _('Reset selection') }}</button>
+        </div>
+      </div>
+      <div id="dataset-map-container"></div>
+      <div class="dataset-map-footer d-flex gap-3">
+        <div class="dataset-map-attribution">
+          {% snippet "spatial/snippets/map_attribution.html", map_config=map_config %}
+        </div>
+        <div class="dataset-map-controls">
+          <button
+            class="btn btn-outline-primary border-2 map-cancel">{{ _("Clear") }}</button>
+          <button class="btn btn-primary map-apply" disabled
+                  aria-label="Apply spatial search">{{ _("Apply") }}</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</section>

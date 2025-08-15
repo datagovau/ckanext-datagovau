@@ -1,5 +1,4 @@
 dga-css:
-  filters: cssrewrite
   output: ckanext-datagovau/%(version)s-dga.css
   contents:
     - css/dga.css
@@ -9,9 +8,37 @@ dga-js:
   output: ckanext-datagovau/%(version)s-dga.js
   contents:
     - js/dga-setup.js
+    - js/-dga-dashboard.js
     - js/dga-breadcrumbs.js
-    - js/dga-jurisdiction-autofill.js
     - js/dga-chartjs.js
+    - js/dga-facet-filter.js
+    - js/dga-scroll-to-top.js
+    - js/dga-resource-show-mode.js
+    - js/dga-align-activity.js
+    - js/dga-nav-tabs.js
+    - js/dga-include-children.js
+    - js/dga-date-range-selector.js
+    - js/dga-range-slider.js
+    - js/dga-about-preview.js
+    - js/dga-delete-sysadmin.js
+    - js/dga-resource-upload-field.js
+    - js/dga-select2.js
+    - js/dga-class-toggle.js
+    - js/dga-url-helptext.js
+    - js/dga-send-button.js
   extras:
     preload:
       - base/main
+      # we are patching its module in -dga-dashboard.js
+      - ckanext-activity/activity
+
+dga-spatial-js:
+  filters: rjsmin
+  output: ckanext-datagovau/%(version)s-dga-spatial.js
+  contents:
+    - js/dga-spatial-query.js
+  extra:
+    preload:
+      - base/main
+      - ckanext-spatial/spatial_query_js
+      - ckanext-spatial/spatial_query_css

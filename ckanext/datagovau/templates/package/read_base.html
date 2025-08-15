@@ -1,5 +1,14 @@
 {% ckan_extends %}
 
+{% import 'macros/banner.html' as banner_macro %}
+
+{% block header %}
+  {{ super() }}
+  {% call banner_macro.banner(description=_('Search the Dataset Catalogue'), classes=["col-12", "col-lg-8", "mx-auto", "mb-5"]) %}
+    {% snippet 'package/snippets/banner-advanced-search.html' %}
+  {% endcall %}
+{% endblock %}
+
 {% block structured_data %}
   {#
     h.structured_data is defined in the 'structured_data' plugin,
@@ -11,14 +20,71 @@
 
   {% if h.helper_available('structured_data') %}
     <script type="application/ld+json">
-         {{ h.structured_data(pkg.id, ["dga_schemaorg"])|safe }}
+          {{ h.structured_data(pkg.id, ["dga_schemaorg"])|safe }}
 
     </script>
   {% endif %}
 {% endblock %}
 
-{% block package_organization %}
-  {% if pkg.organization and h.get_organization(pkg.organization.id) %}
-    {{ super() }}
+{% block content_action %}
+{% endblock %}
+
+{% block content_primary_nav %}
+  {{ h.build_nav_icon(dataset_type ~ '.read', _('Dataset'),  id=pkg.name, icon='file-text') }}
+  {{ h.build_nav_icon('dga_dataset.groups', h.humanize_entity_type('group', default_group_type, 'content tab') or _('Groups'), id=pkg.name, icon='info-circle') }}
+  {{ h.build_nav_icon('activity.package_activity', _('Activity Stream'), id=pkg.id if is_activity_archive else pkg.name, icon='clock') }}
+  {% if h.check_access("check_link_view_report_page", {"package_id": pkg_dict.id}) %}
+    {{ h.build_nav_icon('check_link.package_report', _('Broken links'), package_id=pkg_dict.name, icon='link') }}
   {% endif %}
+{% endblock %}
+
+{% block main_content %}
+  {% block flash %}
+    {{ super() }}
+  {% endblock %}
+
+  {% block toolbar %}
+    {{ super() }}
+  {% endblock %}
+
+  <div class="row wrapper
+
+    {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' or c.action=='resource_read' %} no-nav{% endif %}">
+    {% block pre_primary %} {{ super() }} {% endblock %}
+
+    {% block primary %}
+      {{ super() }}
+    {% endblock %}
+
+    {% block secondary %}
+      <aside class="secondary col-md-4">
+        <div class="module">
+          <h2 class="module-heading secondary-heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#orgSecondaryContent"
+              aria-expanded="true"
+              aria-controls="orgSecondaryContent"
+              style="cursor: pointer;">
+            {{ _('Organisation') }}
+          </h2>
+        </div>
+        <div id="orgSecondaryContent" class="collapse show">
+          {% block secondary_content %}
+            {% block package_organization %}
+              {% snippet "organization/snippets/info.html", organization=pkg.organization, has_context_title=false %}
+            {% endblock %}
+            {% block package_license %}
+              {% snippet "snippets/license.html", pkg_dict=pkg %}
+            {% endblock %}
+            {% block package_info %}
+              {% if g.view == "read" %}
+              {% else %}
+                {% snippet 'package/snippets/info.html', pkg=pkg, am_following=am_following %}
+              {% endif %}
+            {% endblock %}
+          {% endblock %}
+        </div>
+      </aside>
+    {% endblock %}
+  </div>
 {% endblock %}

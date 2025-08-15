@@ -1,0 +1,170 @@
+@use "../variables" as v;
+
+.dga-user-edit {
+    .secondary {
+        order: 1;
+        background-color: v.$color-white;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        .module-heading {
+            &::before {
+                content: url("#{v.$imagePath}/info-skobeloff.svg");
+                margin-right: 16px;
+            }
+        }
+
+        .module-content {
+            border-top: unset;
+            padding: 0 16px 0 16px;
+            margin-top: 8px;
+            font-weight: 400;
+            line-height: 24px;
+        }
+    }
+
+    .primary {
+        padding-right: 24px !important;
+
+        .module-content {
+            padding: 24px;
+
+            legend {
+                font-size: 24px;
+                font-weight: 500;
+                line-height: 31.2px;
+                color: v.$dga-color-dark-cyan;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+
+                &:last-of-type {
+                    margin-bottom: 40px;
+                }
+
+                .form-control[readonly] {
+                    background-color: v.$dga-color-light-gray;
+                    border-color: #D9D9D9;
+                }
+
+                .controls {
+                    a[href="javascript:;"] {
+                        font-size: 16px;
+                        font-weight: 600;
+                        line-height: 24px;
+                        width: 163.297px;
+                        margin-right: 0;
+
+                        &.btn-default:hover {
+                            background-color: v.$dga-outer-border-color !important;
+                            color: v.$dga-color-skobeloff !important;
+                        }
+
+                        &.hover {
+                            background-color: v.$dga-outer-border-color !important;
+                            color: v.$dga-color-skobeloff !important;
+                        }
+
+                        &:first-of-type {
+                            margin-right: 12px;
+                        }
+
+                        &.btn-remove-url {
+                            margin-right: unset;
+                            width: unset
+                        }
+
+                        .fa-cloud-upload::before {
+                            content: url("#{v.$imagePath}/upload-icon.svg");
+                            justify-content: center;
+                            align-items: center;
+                            display: flex;
+                            width: 16px;
+                            height: 16px;
+                        }
+
+                        .fa-globe::before {
+                            content: url("#{v.$imagePath}/globe-icon.svg");
+                            display: flex;
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+                }
+            }
+
+            .form-actions {
+                justify-content: space-between;
+
+                .control-required-message {
+                    font-size: 16px;
+                    font-weight: 400;
+                    line-height: 24px;
+                    margin-bottom: 0;
+
+                    .control-required {
+                        color: v.$alert-danger-text
+                    }
+                }
+
+                .btn-danger {
+                    padding: 12px 40px;
+                    background-color: v.$color-white;
+                    color: v.$alert-danger-text;
+                    border-color: v.$alert-danger-text;
+                    border-width: 2px;
+                    margin-left: auto;
+
+                    &:hover {
+                        background-color: v.$alert-danger-bg;
+                    }
+                }
+
+                .btn-primary  {
+                    margin-left: 12px;
+                }
+            }
+
+            .image-upload .btn-remove-url {
+                color: v.$dga-color-skobeloff;
+                background-color: v.$color-white;
+                border: 1.5px solid v.$dga-color-skobeloff;
+                border-radius: 4px;
+                padding: 6px 12px;
+                font-size: 16px;
+                line-height: 1.5;
+                height: 36px;
+                top: 7px !important;
+                right: 0 !important;
+                min-height: unset;
+                margin: 0 8px !important;
+
+                &:hover {
+                    background-color: v.$dga-color-skobeloff;
+                    color: v.$color-white;
+                }
+            }
+        }
+    }
+
+    .modal-content {
+        padding: 16px;
+
+        .modal-header {
+            padding: 0;
+            padding-bottom: 16px;
+        }
+
+        .modal-body {
+            padding: 0;
+            margin-bottom: 48px;
+        }
+
+        .modal-footer {
+            margin-top: 0;
+            padding: 0;
+        }
+    }
+}

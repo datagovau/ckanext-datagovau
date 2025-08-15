@@ -1,0 +1,105 @@
+@use "../variables" as v;
+
+.page-header {
+    margin-bottom: -10px;
+
+    &.module-content {
+        margin-top: 0;
+
+        + .module-content {
+            @media (min-width: v.$screen-lg-min) {
+                padding-top: 1.5rem;
+            }
+        }
+    }
+}
+
+.toolbar {
+    padding: 0;
+    margin-bottom: 1.5rem;
+
+    // ensures margin is displayed below the toolbar, even when the toolbar is empty
+    &:before {
+        content: "";
+        display: block;
+        height: 0.1px;
+    }
+
+    @media (min-width: v.$screen-md-min) {
+        margin-bottom: 2.5rem;
+    }
+
+    .home {
+        span {
+            display: initial;
+            color: v.$dga-color-skobeloff;
+            font-weight: 400;
+        }
+    }
+
+    .breadcrumb {
+        gap: 0.5rem;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 1rem 0;
+
+        @media (max-width: 575.98px) {
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 1rem 20px;
+        }
+
+        li a {
+            color: v.$dga-color-skobeloff;
+            font-weight: 400 !important;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        li.active a {
+            color: v.$dga-color-graphite-gray;
+
+            &:hover {
+            }
+
+            text-decoration: none;
+        }
+
+        li {
+            padding-left: 0;
+
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:not(:first-child)::before {
+                content: "";
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+
+                -webkit-mask-image: url("#{v.$imagePath}/arrow-right.svg");
+                mask-image: url("#{v.$imagePath}/arrow-right.svg");
+
+                -webkit-mask-size: contain;
+                mask-size: contain;
+
+                background-color: v.$dga-color-graphite-gray;
+                vertical-align: middle;
+                margin-right: 0.5rem;
+                margin-top: 6px;
+            }
+        }
+    }
+}
+
+
+// Ipad Mini, Ipad Air & Ipad Pro
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .toolbar {
+        padding: 0 1.5rem;
+        right: 1.5rem;
+    }
+}

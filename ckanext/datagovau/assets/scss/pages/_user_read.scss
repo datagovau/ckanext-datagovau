@@ -1,0 +1,99 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+
+.dga-user-read,
+.dga-user-read_organizations,
+.dga-user-read_groups,
+.dga-user-api_tokens,
+.dga-activity-user_activity,
+.dga-dga_user-user_activity
+{
+    .wrapper {
+        // align margin with the padding of parent element
+        --bs-gutter-x: 0;
+        @media (min-width: v.$screen-sm-min) {
+            --bs-gutter-x: 1.5rem;
+        }
+    }
+
+    .secondary {
+        .module-heading {
+            @media (min-width: v.$screen-sm-min) {
+                pointer-events: none;
+
+                & + .collapse {
+                    display: block;
+                }
+            }
+        }
+
+        .about-read-more {
+            color: v.$dga-color-skobeloff;
+            display: inline-flex;
+            align-items: center;
+
+            &:after {
+                font-family: FontAwesome;
+                content: "\f078";
+                margin-left: 4px;
+                font-size: 0.825rem;
+            }
+            &.show-less:after {
+                content: "\f077";
+            }
+
+        }
+
+        .nums {
+            display: grid;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 1rem 1.5rem;
+            grid-template-columns: 1fr 1fr;
+
+            .nums-value {
+                font-size: 2rem;
+                line-height: 130%;
+            }
+        }
+        .info {
+
+            &-title {
+                color: v.$dga-color-silver-gray;
+                margin-right: 0.75rem;
+
+            }
+        }
+
+        @include m.hide-secondary-on-mobile;
+    }
+
+    .primary {
+        .select2-container {
+            flex: 1;
+            @media (min-width: v.$screen-xs-min) {
+                flex: 0;
+                min-width: 216px;
+
+            }
+        }
+        .module-content {
+            .token-delete {
+                padding: 7px 11px !important;
+                min-height: unset;
+
+                border: 1.5px solid #AFD9E3;
+                border-radius: 4px;
+
+                &:hover, &:focus {
+                    background-color: v.$dga-outer-border-color;
+                    color: v.$dga-color-dark-cyan !important;
+                }
+            }
+        }
+
+        .organization-counters {
+            margin-top: auto;
+        }
+    }
+}

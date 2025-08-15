@@ -1,0 +1,50 @@
+:root {
+    --bs-body-font-size: 1rem;
+}
+
+$imagePath: "../../images";
+
+$dga-color-light-gray: #f5f5f5;
+$dga-color-gray: #505050;
+$dga-color-dark-gray: #4c4c4e;
+$dga-color-blue: #004a61;
+$dga-color-midnight-green: #054E63;
+$dga-color-skobeloff: #046C82;
+$dga-color-alert: #bd1526;
+$dga-color-soft-sky-blue: #afd9e3;
+$dga-color-silver-gray: #757575;
+$dga-color-graphite-gray: #414042;
+$dga-color-dark-cyan: #003E54;
+$dga-color-outline: #9F77E6;
+$dga-color-dark-blue: #171E2F;
+$dga-color-cadet-blue: #059FAB;
+$dga-color-geojson-preview: #212529;
+$color-white: #FFF;
+
+$dga-account-bg: $dga-color-dark-gray;
+$dga-header-bg: $dga-color-light-gray;
+$dga-main-bg: $dga-color-light-gray;
+$dga-breadcrumb-color: $dga-color-gray;
+$dga-sitewide-search-border: $dga-color-blue;
+$dga-module-background-color: #ffffff;
+$dga-account-input-border: #92C3CB;
+$dga-color-beta: #4C2A85;
+$dga-autofilled-input-bg: #DAEFF1;
+
+$dga-footer-color: #ffffff;
+$dga-outer-border-color: #cdebf3;
+$dga-tag-hover-border-color: #cdebf3;
+$dga-org-item-hover-color: #cdebf3;
+
+// FIX: these values shifted by 1 position.
+$screen-xs-min: 480px;
+$screen-sm-min: 768px;
+$screen-md-min: 992px;
+$screen-lg-min: 1200px;
+
+$alert-danger-bg: #fae0e3;
+$alert-danger-text: #8e101c;
+$alert-danger-border: #f1a7ae;
+
+// BORDERS
+$border-default: 1px solid $dga-color-soft-sky-blue;

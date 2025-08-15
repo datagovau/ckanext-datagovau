@@ -1,0 +1,15 @@
+<div class="modal fade ask-question-modal" id="askQuestionModal" tabindex="-1" aria-labelledby="askQuestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="askQuestionModalLabel">Ask question about this dataset</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your question will be sent to the publisher of the dataset.</p>
+
+                {% snippet "package/snippets/ask_question_form.html", package_id=package_id %}
+            </div>
+        </div>
+    </div>
+</div>

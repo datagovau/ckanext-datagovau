@@ -1,0 +1,7 @@
+<div>
+    <div class="organization-list d-flex gap-3 flex-column">
+    {% for group in groups %}
+      {% snippet "user/snippets/group_item.html", group=group, position=loop.index, show_capacity=show_capacity %}
+    {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,16 @@
+{#
+    Template variables:
+
+    page - paginated Page object
+
+    #}
+
+
+<div class="pagination-container">
+    {{ page.pager(q=q, id=id) }}
+    {% if page.item_count %}
+        <span class="pager-summary">
+            {{ page.first_item }} - {{ page.last_item }} of {{ page.item_count }} results
+        </span>
+    {% endif %}
+</div>

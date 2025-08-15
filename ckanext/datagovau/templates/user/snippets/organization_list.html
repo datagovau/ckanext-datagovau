@@ -1,0 +1,19 @@
+{#
+This is copy organization/snippets/organization_list.html snippet to list organization on user page
+
+Display a grid of organization items.
+
+organizations - A list of organizations.
+
+Example:
+
+{% snippet "user/snippets/organization_list.html" %}
+
+#}
+<div>
+  <div class="organization-list d-flex gap-3 flex-column">
+    {% for organization in organizations %}
+      {% snippet "user/snippets/organization_item.html", organization=organization, position=loop.index, show_capacity=show_capacity %}
+    {% endfor %}
+  </div>
+</div>

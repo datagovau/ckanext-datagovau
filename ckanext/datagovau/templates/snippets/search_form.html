@@ -1,38 +1,151 @@
 {% ckan_extends %}
 
 {% block search_facets %}
-  {% if facets %}
-    <p class="filter-list">
+  <a class="show-filters btn btn-default">{{ _('Filter Results') }}</a>
 
-      {# DGA stat filters: start #}
-      {% set dga_stat_group = h.dga_stat_group_to_facet_label(request.args.ext_dga_stat_group) %}
-      {% if dga_stat_group %}
-        <input name="ext_dga_stat_group" type="hidden"
-               value="{{ request.args.ext_dga_stat_group }}"/>
-        <span class="filtered pill">
-		    {{ dga_stat_group }}
-		    <a href="{{ facets.remove_field("ext_dga_stat_group") }}" class="remove"
-           title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
-		</span>
-      {% endif %}
-      {# DGA stat filters: end #}
+  {% set bbox = request.args.ext_bbox %}
+  <div class="filter-list w-100 flex-wrap gap-2">
+    {%- if bbox -%}
+      <span class="facet">{{ _("Location extent:") }}</span>
+      <span class="filtered pill">
+                {% for coord in bbox.split(',') %}
+                  {{ loop.cycle(
+                        _('West longitude'),
+                        _('South latitude'),
+                        _('East longitude'),
+                        _('North latitude')) }}
+                  {{ coord|float|round(5) }}&deg;{% if not loop.last %},{% endif %}
+                {% endfor %}
 
+        <a
+          href="{{ h.remove_url_param(['ext_bbox', 'ext_prev_extent', 'ext_bbox_lga']) }}"
+          class="remove" title="{{ _('Remove') }}"><i class="fas fa-remove"></i></a>
+            </span>
+    {%- endif -%}
+
+    {%- if facets -%}
       {% for field in facets.fields %}
         {% set search_facets_items = facets.search.get(field)['items'] if facets.search and field in facets.search else [] %}
-        <span class="facet">{{ facets.titles.get(field) }}:</span>
+        <span class="facet">{{ facets.titles.get(field) }}</span>
         {% for value in facets.fields[field] %}
           <span class="filtered pill">
 			{%- if facets.translated_fields and (field,value) in facets.translated_fields -%}
         {{ facets.translated_fields[(field,value)] }}
       {%- else -%}
-        {{ h.list_dict_filter(search_facets_items, 'name', 'display_name', value) }}
+        {% set title = h.list_dict_filter(search_facets_items, 'name', 'display_name', value) %}
+        {% if field == 'license_id' %}
+          {{ title|replace('notspecified', 'Not Specified') }}
+        {% else %}
+          {{ title }}
+        {% endif %}
       {%- endif %}
             <a href="{{ facets.remove_field(field, value) }}" class="remove"
                title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
 		    </span>
         {% endfor %}
       {% endfor %}
-    </p>
-    <a class="show-filters btn btn-default">{{ _('Filter Results') }}</a>
+    {%- endif -%}
+
+    {%- if request.args.ext_startdate and request.args.ext_enddate -%}
+      <span class="facet">{{ _('Date') }}</span>
+      <span class="filtered pill">
+                {{ request.args.ext_startdate }} - {{ request.args.ext_enddate }}
+                <a href="{{ h.remove_url_param(['ext_startdate', 'ext_enddate']) }}"
+                   class="remove"
+                   title="{{ _('Remove') }}"><i class="fa fa-times"></i></a>
+            </span>
+    {%- endif -%}
+
+  </div>
+{% endblock %}
+
+{% block search_input %}
+{% set search_input_with_autocomplete %}
+<div class="input-group search-input-group">
+  <input id="search" type="text" class="form-control input-lg"
+         name="q" value="{{ query }}" autocomplete="off"
+         placeholder="{{ placeholder }}">
+  <span class="pending-request">
+            <i class="fa fa-spinner" aria-hidden="true"></i>
+        </span>
+  <ul id="search-autocomplete--suggestion-box" class="suggestion-box">
+    {% set suggestion_groups = [
+                ('datasets', 'Relevant datasets'),
+                ('categories','Browse filters')
+                ] %}
+    {% for section, label in suggestion_groups %}
+      <li data-section="{{ section }}" class="suggestion-section">
+        <ul class="suggestions" data-label="{{ _(label) }}"></ul>
+      </li>
+    {% endfor %}
+  </ul>
+  <span class="input-group-btn">
+            <button class="btn btn-default btn-lg" type="submit" value="search"
+                    aria-label="{{ _('Submit') }}">
+              <i class="fa fa-search"></i>
+            </button>
+        </span>
+</div>
+{% endset %}
+
+{% if 'search_tweaks' in g.plugins and h.dga_search_tweaks_needed() %}
+  {% if h.dga_search_autocomplete_needed() %}
+    <div class="search-autocomplete-wrapper w-100"
+         data-module="ckanext-search-autocomplete"
+         data-module-suggestion-box="#search-autocomplete--suggestion-box"
+         data-module-autocomplete-input=".form-control.input-lg"
+         data-module-fq="{{ h.dga_get_fq_for_search_autocomplete(facets) }}"
+         data-module-locale="{{ h.lang() }}">
+      {% with placeholder=placeholder, search_input=search_input_with_autocomplete %}
+        {% include "advanced_search/search_form.html" %}
+      {% endwith %}
+    </div>
+  {% else %}
+    {% include "advanced_search/search_form.html" %}
   {% endif %}
+  {% include "search_tweaks/did_you_mean.html" %}
+{% else %}
+  {{ super() }}
+{% endif %}
+
+{% endblock %}
+
+{% block search_title %}
+{% endblock search_title %}
+
+{% block search_sortby %}
+{% set search_heading %}
+<h1 class="search-result-text">
+  {% if not error %}
+    {% snippet 'snippets/search_result_text.html', query=query, count=count, type=type %}
+  {% else %}
+    Error
+  {% endif %}
+</h1>
+{% endset %}
+
+{{ search_heading | safe }}
+
+{% if sorting and count %}
+  <div class="form-group control-order-by d-flex align-items-center">
+    <label for="field-order-by" class="mb-0">{{ _('Order by') }}</label>
+    <select id="field-order-by" name="sort" class="form-control form-select"
+            data-module="dga-select2">
+      {% for label, value in sorting %}
+        {% if label and value %}
+          <option value="{{ value }}"{% if sorting_selected == value %}
+                  selected="selected"{% endif %}>{{ label }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    {% block search_sortby_button %}
+      <button class="btn btn-default js-hide" type="submit">{{ _('Go') }}</button>
+    {% endblock %}
+  </div>
+{% endif %}
+
+{% if g.blueprint in ("organization", "group") and g.view == "index" %}
+  {{ search_heading | safe }}
+{% endif %}
+
 {% endblock %}

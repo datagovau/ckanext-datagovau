@@ -1,0 +1,29 @@
+@use "../variables" as v;
+
+
+.tooltip {
+    font-size: 12px;
+    line-height: 1rem;
+
+    &.show {
+        opacity: 1;
+    }
+
+    .tooltip-inner {
+        background: v.$dga-color-cadet-blue;
+    }
+
+    &.bs-tooltip-top .tooltip-arrow::before {
+        border-top-color: v.$dga-color-cadet-blue;
+    }
+    &.bs-tooltip-bottom .tooltip-arrow::before {
+        border-bottom-color: v.$dga-color-cadet-blue;
+    }
+    &.bs-tooltip-left .tooltip-arrow::before {
+        border-left-color: v.$dga-color-cadet-blue;
+    }
+    &.bs-tooltip-right .tooltip-arrow::before {
+        border-right-color: v.$dga-color-cadet-blue;
+    }
+
+}

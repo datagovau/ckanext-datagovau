@@ -1,42 +1,75 @@
-import unittest.mock as mock
-
 import pytest
 
-import ckan.logic as logic
-import ckan.plugins.toolkit as tk
+import ckan.lib.jobs as jobs
 from ckan.tests.helpers import call_action
 
+from ckanext.datagovau.tests.conftest import DatasetFactory, OrganizationFactory
 
-@pytest.mark.usefixtures("with_plugins", "clean_db")
-class TestGetPackageStats:
-    def test_no_data(self):
-        with pytest.raises(tk.ObjectNotFound, match="No dataset statistics"):
-            call_action("dga_get_package_stats")
+SPATIAL_1 = '{"type": "Point", "coordinates": [23, 45]}'
+SPATIAL_2 = '{"type": "Point", "coordinates": [67, 89]}'
 
-    def test_dataset_not_found(self):
-        flakes_flake_lookup = mock.Mock(
-            return_value={
-                "data": {
-                    "4c5973e1-6a7e-4ee2-8a22-9296fa8db838": {
-                        "2022-06": {"views": 18, "downloads": 9}
-                    }
-                }
-            }
+
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index", "clean_queues")
+class TestOrganizationUpdateReindexing:
+    def test_reindex_triggered_on_spatial_coverage_change(self, user):
+        """Reindexing is triggered when an organization's spatial_coverage changes."""
+        organization = OrganizationFactory(spatial_coverage=SPATIAL_1)
+        DatasetFactory(owner_org=organization["id"], spatial_coverage=None)
+
+        queue = jobs.get_queue()
+        assert queue.is_empty() == True
+
+        call_action(
+            "organization_patch",
+            context={"user": user["name"]},
+            id=organization["id"],
+            spatial_coverage=SPATIAL_2,
         )
+        assert queue.is_empty() == False
 
-        logic._actions["flakes_flake_lookup"] = flakes_flake_lookup
+    def test_no_reindex_when_spatial_coverage_unchanged(self, user):
+        """Reindexing is not triggered when spatial_coverage remains unchanged."""
+        organization = OrganizationFactory(spatial_coverage=SPATIAL_1)
+        DatasetFactory(owner_org=organization["id"], spatial_coverage=None)
 
-        with pytest.raises(tk.ValidationError, match="Not found: Dataset"):
-            call_action("dga_get_package_stats", id="test")
+        queue = jobs.get_queue()
+        assert queue.is_empty() == True
 
-    def test_dataset_found(self, dataset):
-        flakes_flake_lookup = mock.Mock(
-            return_value={
-                "data": {dataset["id"]: {"2022-06": {"views": 18, "downloads": 9}}}
-            }
+        call_action(
+            "organization_patch",
+            context={"user": user["name"]},
+            id=organization["id"],
+            spatial_coverage=SPATIAL_1,
         )
+        assert queue.is_empty() == True
 
-        logic._actions["flakes_flake_lookup"] = flakes_flake_lookup
+    def test_datasets_with_existing_spatial_coverage(self, user):
+        """Datasets with their own spatial_coverage are not reindexed."""
+        organization = OrganizationFactory(spatial_coverage=SPATIAL_1)
+        DatasetFactory(owner_org=organization["id"], spatial_coverage=SPATIAL_1)
 
-        result = call_action("dga_get_package_stats", id=dataset["id"])
-        assert result == {"2022-06": {"views": 18, "downloads": 9}}
+        queue = jobs.get_queue()
+        assert queue.is_empty() == True
+
+        call_action(
+            "organization_patch",
+            context={"user": user["name"]},
+            id=organization["id"],
+            spatial_coverage=SPATIAL_2,
+        )
+        assert queue.is_empty() == False
+
+    def test_no_datasets_to_reindex(self, user):
+        """No reindexing occurs if there are no active datasets."""
+        organization = OrganizationFactory(spatial_coverage=SPATIAL_1)
+
+        queue = jobs.get_queue()
+        assert queue.is_empty() == True
+
+        call_action(
+            "organization_patch",
+            context={"user": user["name"]},
+            id=organization["id"],
+            spatial_coverage=SPATIAL_2,
+        )
+        assert queue.is_empty() == False

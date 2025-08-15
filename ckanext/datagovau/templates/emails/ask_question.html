@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-au">
+<head>
+    <meta charset="UTF-8">
+    <title>Question about a dataset</title>
+    <style>
+        body {font-family: Open Sans, sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; color: #414042;}
+        p {margin: 0;}
+        .pt20 {padding-top: 20px;}
+        .pt32 {padding-top: 32px;}
+        .p24-32 {padding: 24px 32px;}
+        .h1 {font-size: 24px; line-height: 31px; font-weight: 400; padding-top: 16px;}
+        .link {color: #046C82;}
+        .w100 {width: 100%;}
+        .bg-white {background-color: #FFFFFF;}
+        .bg-grey {background-color: #F5F5F5; padding: 16px; padding-bottom: 32px;}
+        .reply-btn {background-color:#046C82; color:#fff !important; padding:12px 40px; border:none; border-radius:4px; cursor:pointer; text-decoration: unset;}
+        .img-box {margin-top: 32px;text-align: center;}
+        .img {width: 100%; max-width: 320px;}
+    </style>
+</head>
+
+<body>
+    <div class="bg-grey">
+        <table class="bg-white p24-32 w100">
+            <tbody>
+                <tr>
+                    <td class="h1">Hi there,</td>
+                </tr>
+                <tr>
+                    <td class="pt20">
+                        A request has been raised for a dataset. Please respond to this as soon as possible.
+                        A question has been raised in relation to a dataset {{ package.title }}, published by {{package.publisher }}, at <a href="{{ package.url }}">{{ package.url }}</a>. Please respond to this query as soon as possible.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt20">
+                        The query is from  {{ name }}, <a href="mailto:{{email}}">{{ email }}</a>:
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt20">
+                        {{ h.render_markdown(content) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt32">
+                        <a href="mailto:{{email}}?subject=Your dataset suggestion" class="reply-btn">
+                            Reply
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt32">
+                        The Australian Government has mandated that agencies have a responsibility to be transparent to any
+                        public consumer of open data. If you have questions about why you got this email or what to do,
+                        email <a class="link" href="mailto:support@data.gov.au">support@data.gov.au</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt32">
+                        <p>Regards,</p>
+                        <p>Data.gov.au team</p>
+                    </td>
+                </tr>
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="img-box">
+            <img class="img" src="{{ h.url_for_static('/email/dga-logo.png', _external=True) }}" alt="DataGovAu logo">
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,20 +1,30 @@
 {
-    "root": "Dataset",
-    "types": {
-        "Dataset": {
-            "fields": {
-                "contact_point": {"default": "unknown"},
-                "notes": {"validators": ["dga_tsm_parse_description"]},
-                "metadata_created": {},
-                "temporal_coverage_from": {"default_from": "metadata_created"},
-                "jurisdiction": {"remove": "true"},
-                "data_state": {"remove": "true"},
-                "update_freq": {"remove": "true"}
-            }
-        },
-        "Resource": {
-            "fields": {
-            }
-        }
+  "root": "Dataset",
+  "types": {
+    "Dataset": {
+      "fields": {
+        "name": {"validators": [["dga_tsm_add_prefix", "nsw-", 100]]},
+        "extras": {"remove": true, "weight": 10},
+        "contact_point": {"default": "unknown"},
+        "notes": {"validators": ["dga_tsm_parse_description"]},
+        "metadata_created": {},
+        "temporal_coverage_from": {"default_from": "metadata_created", "validators": [
+          "dga_tsm_parse_date", ["dga_tsm_default_from", "metadata_created"], "tsm_to_string"
+        ]},
+        "temporal_coverage_to": {"validators": [
+          "dga_tsm_parse_date", ["dga_tsm_default_from", "metadata_modified"], "tsm_to_string"
+        ]},
+        "data_state": {"remove": "true"},
+        "remote_last_updated": {"default_from": "metadata_modified", "validators": [
+          "dga_tsm_parse_date", "tsm_to_string"
+        ]
+                               },
+        "original_name": {"default_from": "name"}
+      }
+    },
+    "Resource": {
+      "fields": {
+      }
     }
+  }
 }

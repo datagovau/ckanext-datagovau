@@ -1,0 +1,45 @@
+{% ckan_extends %}
+
+{% import 'macros/banner.html' as banner_macro %}
+
+{% block header %}
+  {{ super() }}
+  {% call banner_macro.banner(title=_('Groups'), description=_('CKAN Groups are
+    used to create and manage collections of datasets. They can be used to catalogue
+    datasets by project, team, or theme, and provide a simple way to help users find
+    and search related published datasets.')) %}
+    {% if h.check_access('group_create') %}
+      {% link_for _('Add group'), named_route='group.new', class_='btn btn-light', icon='plus' %}
+    {% endif %}
+  {% endcall %}
+{% endblock %}
+
+
+{% block secondary %}
+{% endblock %}
+
+{% block primary %}
+  <div class="primary col-12" role="main">
+    {% block primary_content_inner %}
+      <h1 class="hide-heading">{% block page_heading %}
+        {{ h.humanize_entity_type('group', group_type, 'page title') or _('Groups') }}{% endblock %}</h1>
+      {% block groups_search_form %}
+        {{ super() }}
+      {% endblock %}
+      {% block search_title %}{% endblock %}
+      {% block groups_list %}
+        {{ super() }}
+      {% endblock %}
+      {% block page_pagination %}
+        <div class="pagination-container">
+          {{ page.pager(q=q or '', sort=sort_by_selected or '') }}
+          {% if page.item_count %}
+            <span class="pager-summary">
+                        {{ page.first_item }} - {{ page.last_item }} of {{ page.item_count }} results
+                    </span>
+          {% endif %}
+        </div>
+      {% endblock %}
+    {% endblock %}
+  </div>
+{% endblock primary %}

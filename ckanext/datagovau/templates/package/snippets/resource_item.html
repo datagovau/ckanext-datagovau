@@ -1,0 +1,87 @@
+{% ckan_extends %}
+
+{% block resource_item_title %}
+    <div class="container ps-3 pe-0">
+        <div class="row">
+            <div class="col-12 col-lg-2 ps-0">
+                <div class="badge-resource-wrapper justify-content-between justify-content-lg-start">
+                    <div class="badge-resource-dots">
+                    </div>
+                    <div class="badge text-wrap">
+                        {{ h.get_translated(res, 'format') or _('URL') }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-lg-6 ps-0 pt-2 pt-lg-0 pb-lg-0 text-break">
+                <a href="{{ url }}" class="resource-name">
+                    {{ h.resource_display_name(res) | truncate(100) }}
+                </a>
+                <div class="pt-1 resource-license">
+                    {% if not pkg.license_url or pkg.license_url == 'notspecified' %}
+                        {{ _('License Not Specified') }}
+                    {% else %}
+                        {{ pkg.license_title }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 ps-0 d-lg-flex align-items-lg-start justify-content-end">
+                {% if not url_is_edit %}
+                    <div class="dropdown btn-group position-static d-flex d-sm-inline-flex">
+                        <a href="#" class="btn btn-primary dropdown-toggle justify-content-center" type="button"
+                           id="dropdownExplorer"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-share"></i>
+                            {{ _('Explore') }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownExplorer">
+                            {% block resource_item_explore_links %}
+                                {% block explore_view %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url }}">
+                                            {% if res.has_views %}
+                                                <i>{% snippet 'svg/preview.svg' %}</i>
+                                                {{ _('Preview') }}
+                                            {% else %}
+                                                <i>{% snippet 'svg/info.svg' %}</i>
+                                                {{ _('More information') }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endblock explore_view %}
+
+                                {% if res.url and h.is_url(res.url) %}
+                                    <li>
+                                        <a class="dropdown-item resource-url-analytics" href="{{ res.url }}"
+                                           target="_blank" rel="noreferrer">
+                                            {% if res.has_views or res.url_type == 'upload' %}
+                                                <i>{% snippet 'svg/download.svg' %}</i>
+                                                {{ _('Download') }}
+                                            {% else %}
+                                                <i class="fa fa-external-link"></i>
+                                                {{ _('Go to resource') }}
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if can_edit %}
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id) }}">
+                                            <i class="fa fa-pencil-square"></i>
+                                            {{ _('Edit') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endblock %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block resource_item_description %}{% endblock %}
+{% block resource_item_explore %}{% endblock %}

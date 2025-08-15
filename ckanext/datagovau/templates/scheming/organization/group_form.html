@@ -3,15 +3,15 @@
 {% block save_text %}
   {%- if action == "edit" -%}
     {%- if 'humanize_entity_type' in h -%}
-      {{ h.humanize_entity_type('organization', group_type, 'update label') or _('Update Organization') }}
+      {{ h.humanize_entity_type('organization', group_type, 'update label') or _('Update Organisation') }}
     {%- else -%}
-      {{ _('Update Organization') }}
+      {{ _('Update Organisation') }}
     {%- endif -%}
   {%- else -%}
     {%- if 'humanize_entity_type' in h -%}
-      {{ h.humanize_entity_type('organization', group_type, 'create label') or _('Create Organization') }}
+      {{ h.humanize_entity_type('organization', group_type, 'create label') or _('Create Organisation') }}
     {%- else -%}
-      {{ _('Create Organization') }}
+      {{ _('Create Organisation') }}
     {%- endif -%}
   {%- endif -%}
 {% endblock %}

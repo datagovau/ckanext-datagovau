@@ -20,7 +20,7 @@ const isDev = () => !!process.env.DEBUG;
 const assetsDir = resolve(__dirname, "ckanext/datagovau/assets");
 
 // path to base directory of SASS theme
-const srcDir = resolve(assetsDir, "../theme");
+const srcDir = resolve(assetsDir, "scss");
 // path to output directory of compiled theme
 const destDir = resolve(assetsDir, "css");
 
@@ -28,33 +28,52 @@ const destDir = resolve(assetsDir, "css");
  * Compile SASS sources into CSS theme.
  */
 const build = () =>
-  src(resolve(srcDir, "dga.scss"))
-    // keep details about original SASS code
-    .pipe(if_(isDev, sourcemaps.init()))
+    src(resolve(srcDir, "dga.scss"))
+        // keep details about original SASS code
+        .pipe(if_(isDev, sourcemaps.init()))
 
-    // compile SASS into CSS. includePaths directive enables import from
-    // node_modules packages
-    .pipe(sass({ includePaths: ["node_modules"] }).on("error", sass.logError))
+        // compile SASS into CSS. includePaths directive enables import from
+        // node_modules packages
+        .pipe(
+            sass({
+                includePaths: ["node_modules"],
+                silenceDeprecations: ["import", "legacy-js-api"],
+            }).on("error", sass.logError),
+        )
 
-    // group identical @media queries into single block and sort them using
-    // mobile-first order
-    .pipe(postcss([combineQueries]))
+        // group identical @media queries into single block and sort them using
+        // mobile-first order
+        .pipe(postcss([combineQueries]))
 
-    // add source maps if DEBUG enabled. Minify and optimize CSS otherwise
-    .pipe(if_(isDev, sourcemaps.write(), cleanCSS({ level: 2 })))
+        // add source maps if DEBUG enabled. Minify and optimize CSS otherwise
+        .pipe(
+            if_(
+                isDev,
+                sourcemaps.write(),
+                cleanCSS({
+                    level: 2,
+                    format: {
+                        breaks: {
+                            afterProperty: true,
+                            afterRuleBegins: true,
+                        },
+                    },
+                }),
+            ),
+        )
 
-    // write output to destination folder
-    .pipe(dest(destDir))
+        // write output to destination folder
+        .pipe(dest(destDir))
 
-    // update modification date of CSS to force re-building WebAssets by CKAN
-    .pipe(touch());
+        // update modification date of CSS to force re-building WebAssets by CKAN
+        .pipe(touch());
 
 /**
  * Recompile theme immediately and after any change of SCSS files inside source
  * directory.
  */
 const watchStyles = () =>
-  watch(resolve(srcDir, "**/*.scss"), { ignoreInitial: false }, build);
+    watch(resolve(srcDir, "**/*.scss"), { ignoreInitial: false }, build);
 
 exports.watch = watchStyles;
 exports.build = build;

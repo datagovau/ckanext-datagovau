@@ -1,0 +1,52 @@
+{% extends "emails/dga_base_email.html" %}
+
+{% block subject %}
+    Dataset suggestion
+{% endblock subject %}
+
+{% block content %}
+    <table class="bg-white p24-32 w100">
+        <tbody>
+            <tr>
+                <td class="h1">Hi there,</td>
+            </tr>
+            <tr>
+                <td class="pt20">
+                    A request has been raised for a dataset. Please respond to this as soon as possible.
+                </td>
+            </tr>
+            <tr>
+                <td class="pt20">
+                    The request is from {{ name }}, <a href="mailto:{{email}}">{{ email }}</a>:
+                </td>
+            </tr>
+            <tr>
+                <td class="pt20">
+                    {{ h.render_markdown(content) }}
+                </td>
+            </tr>
+            <tr>
+                <td class="pt32">
+                    <a href="mailto:{{email}}?subject=Your dataset suggestion" class="reply-btn">
+                        Reply
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt32">
+                    The Australian Government has mandated that agencies have a responsibility to be transparent to any
+                    public consumer of open data. If you have questions about why you got this email or what to do,
+                    email <a class="link" href="mailto:support@data.gov.au">support@data.gov.au</a>
+                </td>
+            </tr>
+            <tr>
+                <td class="pt32">
+                    <p>Regards,</p>
+                    <p>Data.gov.au team</p>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

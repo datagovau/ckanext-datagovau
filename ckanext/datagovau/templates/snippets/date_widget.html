@@ -1,0 +1,68 @@
+{% block date_content %}
+  <section class="facet-card module module-narrow module-shallow mb-3 date-facet"
+           data-module="dga-date-range-selector">
+    <h2 class="module-heading" data-module="dga-class-toggle"
+        data-module-class-name="collapsed">Date</h2>
+    <div class="date-input-wrapper">
+      <div class="date-input" id="date-trigger">
+        <span id="date-display-start">Start date</span>
+        <span id="date-display-end"> End date</span>
+        {% snippet 'snippets/svg/calendar.svg' %}
+      </div>
+
+      <div class="calendar-dropdown" id="calendar-dropdown">
+        <div class="calendars-container">
+          {# Start Calendar #}
+          <div class="calendar-grid">
+            <div class="year-selector">
+              <button class="year-nav prev-year"
+                      data-calendar="start"
+                      aria-label="Previous year for start date">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+              <span class="current-year" id="start-year"></span>
+              <button class="year-nav next-year"
+                      data-calendar="start"
+                      aria-label="Next year for start date">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </div>
+            {% set months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] %}
+            <div class="month-grid" id="start-calendar">
+              {% for month in months %}
+                <button class="month-btn">{{ month }}</button>
+              {% endfor %}
+            </div>
+          </div>
+
+          {# End Calendar #}
+          <div class="calendar-grid">
+            <div class="year-selector">
+              <button class="year-nav prev-year"
+                      data-calendar="end"
+                      aria-label="Previous year for end date">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+              <span class="current-year" id="end-year"></span>
+              <button class="year-nav next-year"
+                      data-calendar="end"
+                      aria-label="Next year for end date">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </div>
+            <div class="month-grid" id="end-calendar">
+              {% for month in months %}
+                <button class="month-btn">{{ month }}</button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-light" id="clear-btn">Clear</button>
+          <button class="btn btn-primary" id="apply-btn">Apply</button>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

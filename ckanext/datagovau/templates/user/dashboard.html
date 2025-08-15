@@ -1,10 +1,33 @@
 {% ckan_extends %}
 
-{% block scripts %}
-  {{ super() }}
-  
-  <script src="https://data.gov.au/data/dataset/2b491307-2db1-4d1b-a9f9-ba021c3fe2e0/resource/5582a14b-980a-4d66-ae2b-a42d51e135b1/download/dashboard-banner.js"
-          crossorigin="anonymous"></script>
+{% block wrapper_class %} dashboard{% endblock wrapper_class%}
 
-  {% asset 'datagovau/dga-js' %}
+{% block scripts %}
+    {{ super() }}
+
+    <script src="https://data.gov.au/data/dataset/2b491307-2db1-4d1b-a9f9-ba021c3fe2e0/resource/5582a14b-980a-4d66-ae2b-a42d51e135b1/download/dashboard-banner.js"
+        crossorigin="anonymous" defer ></script>
+
+    {% asset 'datagovau/dga-js' %}
+{% endblock %}
+
+{% block dashboard_nav_links %}
+    {{ h.build_nav_icon('activity.dashboard', _('News feed'), icon='list') }}
+    {{ h.build_nav_icon('dashboard.datasets', h.humanize_entity_type('package', dataset_type, 'my label') or _('My Datasets'), icon='sitemap') }}
+    {{ h.build_nav_icon('dashboard.organizations', h.humanize_entity_type('organization', org_type, 'my label') or _('My Organisations'), icon='building') }}
+    {{ h.build_nav_icon('dashboard.groups', h.humanize_entity_type('group', group_type, 'my label') or _('My Groups'), icon='users') }}
+{% endblock dashboard_nav_links %}
+
+{% block primary_content_inner %}
+    <div data-module="dashboard">
+        <h2 class="page-heading mb-4">
+            {% block page_heading %}
+                {{ _('News feed') }}
+            {% endblock %}
+        </h2>
+        {% snippet 'snippets/stream.html', activity_stream=dashboard_activity_stream %}
+    </div>
+
+    {% snippet 'snippets/pagination.html', newer_activities_url=newer_activities_url, older_activities_url=older_activities_url %}
+
 {% endblock %}

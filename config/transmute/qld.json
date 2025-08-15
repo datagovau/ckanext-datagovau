@@ -5,13 +5,16 @@
             "fields": {
                 "extras": {"remove": true, "weight": 10},
                 "notes": {"validators": ["dga_tsm_parse_description"]},
-                "jurisdiction": {"remove": "true"},
                 "data_state": {"remove": "true"},
-                "update_frequency": {"remove": "true"},
 
                 "author_email": {"map": "contact_point"},
                 "maintainer_email": {"validators": ["dga_tsm_qa_maintainer_email"]},
                 "metadata_created": {"map": "temporal_coverage_from"},
+                "remote_last_updated": {"default_from": "metadata_modified", "validators": [
+                    "dga_tsm_parse_date", "tsm_to_string"
+                    ]
+                },
+                "original_name": {"default_from": "name"},
 
                 "resources": {
                     "type": "Resource",

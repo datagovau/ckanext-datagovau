@@ -5,7 +5,7 @@ import json
 import re
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from dateutil.parser import ParserError, parse
 from shapely import geometry
@@ -26,7 +26,8 @@ def get_transmutators():
 
 def dga_tsm_name_from_url(field: Field):
     """Extract last part of landing page to use it as
-    dataset name [100 characters or less]"""
+    dataset name [100 characters or less].
+    """
     delimiter = "::" if "::" in field.value else "/"
     field.value = field.value.rsplit(delimiter, 1)[-1][:100]
     return field
@@ -39,7 +40,7 @@ def dga_tsm_words_into_tags(field: Field):
 
 
 def dga_tsm_url_into_license(field: Field):
-    """Convert licence URL into licence ID"""
+    """Convert licence URL into licence ID."""
     field.value = "other"
     return field
 
@@ -66,17 +67,17 @@ def dga_tsm_parse_issued_date(field: Field):
 
 
 def dga_tsm_parse_description(field: Field):
-    """
-    Parse and convert an HTML description field to plain text.
+    """Parse and convert an HTML description field to plain text.
     Sets default value if the field is empty or invalid.
     """
     # Set of values to be treated as placeholders
     invalid_values = {"null", "{{description}}"}
 
+    default = "No description available."
     if not field.value or field.value in invalid_values:
-        field.value = "No description available."
+        field.value = default
     else:
-        field.value = markdown_extract(field.value, extract_length=0)
+        field.value = markdown_extract(field.value, extract_length=0) or default
     return field
 
 
@@ -92,7 +93,6 @@ def dga_tsm_from_extras(field: Field, key: str):
 
 def dga_tsm_parse_spatial(field: Field):
     """Parse and convert a spatial coverage string to GeoJSON format."""
-
     # Check if the value is empty or contains the compute property placeholder
     spatial_placeholders = {"extent:computeSpatialProperty", "extent"}
     if not field.value or any(
@@ -139,15 +139,18 @@ def dga_tsm_parse_spatial(field: Field):
 def dga_tsm_parse_date(field: Field):
     """Transform non-strict date string into ISO date."""
     if isinstance(field.value, str):
-        with contextlib.suppress(ParserError):
+        try:
             field.value = parse(field.value, default=datetime(2020, 1, 1))
+        except ParserError:
+            field.value = None
+
     return field
 
 
 def dga_tsm_southern_grampians_parse_license(field: Field):
+    """Normalize license strings to a standard format; all values
+    contain 'CC BY'.
     """
-    Normalize license strings to a standard format; all values
-    contain 'CC BY'."""
     license_mapping = {
         "CC BY": "cc-by",
     }
@@ -156,8 +159,7 @@ def dga_tsm_southern_grampians_parse_license(field: Field):
 
 
 def dga_tsm_southern_grampians_contact_name(field: Field):
-    """
-    Set the contact name to 'Southern Grampians Shire' since all values
+    """Set the contact name to 'Southern Grampians Shire' since all values
     contain '<Nobody>'.
     """
     field.value = "Southern Grampians Shire"
@@ -165,8 +167,7 @@ def dga_tsm_southern_grampians_contact_name(field: Field):
 
 
 def dga_tsm_southern_grampians_from_url(field: Field):
-    """
-    Extract the second-to-last segment from the landing page URL and prepend a
+    """Extract the second-to-last segment from the landing page URL and prepend a
     'southern-grampians-' prefix to use it as the dataset name. This ensures
     uniqueness in naming to prevent ValidationError during creation.
     """
@@ -176,8 +177,7 @@ def dga_tsm_southern_grampians_from_url(field: Field):
 
 
 def dga_tsm_southern_grampians_parse_language(field: Field):
-    """
-    Convert the language field value to uppercase.
+    """Convert the language field value to uppercase.
     If the value is a list (containing only one element),
     extract the first element for conversion.
     """
@@ -188,21 +188,19 @@ def dga_tsm_southern_grampians_parse_language(field: Field):
 
 
 def dga_tsm_qld_parse_resource_size(field: Field):
-    """
-    Parses a resource size field and attempts to convert its value to an integer.
+    """Parses a resource size field and attempts to convert its value to an integer.
     If the value contains non-numeric characters (e.g., "MiB", "KiB"), it sets the
     value to an empty string to avoid a ValidationError for invalid integers.
     """
-    try:
+    field.value = ""
+    with contextlib.suppress(Exception):
         field.value = int(field.value)
-    except:
-        field.value = ""
+
     return field
 
 
 def dga_tsm_qld_resource_id(field: Field):
-    """
-    Validates the resource ID. If the value is not a valid UUID v4,
+    """Validates the resource ID. If the value is not a valid UUID v4,
     it sets the value to an empty string.
 
     Many QLD resources have invalid ID formats, which will cause failures
@@ -216,9 +214,8 @@ def dga_tsm_qld_resource_id(field: Field):
 
 
 def dga_tsm_sa_parse_spatial_coverage(field: Field):
-    """
-    Maps location names to their corresponding codes:
-    - "South Australia" -> "SA0062407: South Australia"
+    """Maps location names to their corresponding codes:
+    - "South Australia" -> "SA0062407: South Australia".
 
     # TODO: Add more location mappings as needed.
     """
@@ -227,8 +224,7 @@ def dga_tsm_sa_parse_spatial_coverage(field: Field):
 
 
 def dga_tsm_sa_temporal_coverage(field: Field):
-    """
-    Converts various temporal coverage date formats (both 'from' and 'to')
+    """Converts various temporal coverage date formats (both 'from' and 'to')
     to a standardized YYYY-MM-DD string.
 
     Handles date formats such as:
@@ -261,8 +257,7 @@ def dga_tsm_sa_temporal_coverage(field: Field):
 
 
 def dga_tsm_sa_geospatial_topic(field: Field):
-    """
-    Handles values as 'Environment, Inland waters',
+    """Handles values as 'Environment, Inland waters',
     causing unexpected choice errors. If there are multiple values,
     they are stored as a list. Single values remain as a string.
     """
@@ -274,8 +269,7 @@ def dga_tsm_sa_geospatial_topic(field: Field):
 
 
 def dga_tsm_sa_author_email(field: Field):
-    """
-    Corrects email addresses where there are spaces in the local part
+    """Corrects email addresses where there are spaces in the local part
     by replacing the space with a dot.
     For example, 'alexis tindall@sa.gov.au' will be corrected to
     'alexis.tindall@sa.gov.au'.
@@ -321,10 +315,9 @@ def dga_tsm_dms_to_spatial(field: Field):
 
 
 def dga_tsm_qa_maintainer_email(field: Field):
-    """
-    Handles invalid email values in qld maintainer_email fields.
+    """Handles invalid email values in qld maintainer_email fields.
     If an email is invalid (e.g., "publisher-1122", "N/A"),
-    it is replaced with "unknown@data.qld.gov.au"
+    it is replaced with "unknown@data.qld.gov.au".
     """
     if isinstance(field.value, str):
         field.value = field.value.strip()
@@ -338,8 +331,7 @@ def dga_tsm_qa_maintainer_email(field: Field):
 
 
 def dga_tsm_dcceew_from_url(field: Field):
-    """
-    Adds the "erin-" prefix to the package name to ensure uniqueness.
+    """Adds the "erin-" prefix to the package name to ensure uniqueness.
     Truncates the name to 100 characters if it exceeds the maximum length.
     """
     max_length: int = 100
@@ -348,4 +340,73 @@ def dga_tsm_dcceew_from_url(field: Field):
     field.value = prefix + field.value.rsplit("::", 1)[-1]
     if len(field.value) > max_length:
         field.value = field.value[:max_length]
+    return field
+
+
+def dga_tsm_melbourne_from_url(field: Field):
+    """Adds the "melbourne-" prefix to the package name to ensure uniqueness.
+    Truncates the name to 100 characters if it exceeds the maximum length.
+    """
+    max_length: int = 100
+    prefix = "melbourne-"
+
+    field.value = prefix + field.value.rsplit("/", 2)[-2]
+    if len(field.value) > max_length:
+        field.value = field.value[:max_length]
+    return field
+
+
+def dga_tsm_add_prefix(field: Field, prefix: str, limit: int | None = None):
+    """Adds prefix to the value of filed."""
+    field.value = prefix + field.value
+    if limit and len(field.value) > limit:
+        field.value = field.value[:limit]
+    return field
+
+
+def dga_tsm_gbrmpa_id(field: Field):
+    """Convert the GBRMPA ID to CKAN UUID format."""
+    field.value = str(uuid.UUID(field.value, version=4))
+    return field
+
+
+def dga_tsm_gbrmpa_to_spatial(field: Field) -> Field:
+    if isinstance(field.value, str):
+        try:
+            field.value = json.loads(field.value)
+        except json.JSONDecodeError:
+            field.value = ""
+            return field
+    if isinstance(field.value, list):
+        try:
+            x0, y0 = field.value[0]
+            x1, y1 = field.value[1]
+            field.value = json.dumps(
+                {
+                    "type": "Polygon",
+                    "coordinates": [[[x0, y0], [x0, y1], [x1, y1], [x1, y0], [x0, y0]]],
+                }
+            )
+            return field
+        except (IndexError, ValueError, TypeError):
+            field.value = ""
+            return field
+    field.value = ""
+    return field
+
+
+def dga_tsm_time_from_unix_timestamp(field: Field) -> Field:
+    if isinstance(field.value, int):
+        field.value = datetime.fromtimestamp(field.value / 1000, timezone.utc)
+    else:
+        field.value = ""
+
+    return field
+
+
+def dga_tsm_default_from(field: Field, key: str):
+    """Replace field value with the give extra value."""
+    if not field.value:
+        field.value = field.data.get(key)
+
     return field

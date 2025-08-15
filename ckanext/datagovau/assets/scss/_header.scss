@@ -1,0 +1,246 @@
+@use "variables" as v;
+@use "elements/buttons" as b;
+
+#admin-panel {
+    display: none;
+}
+
+.account-masthead {
+    background: v.$dga-color-light-gray;
+    padding: 0 1rem;
+
+    .account {
+        ul li {
+            border: none;
+
+            a, a.sub {
+                font-size: 0.875rem;
+                line-height: 1.5;
+                color: v.$dga-color-skobeloff;
+                font-weight: 600;
+                padding: 5px 10px !important;
+
+
+                &:not(.image):not([title="Log out"]):after {
+                    content: attr(title);
+                }
+
+                &[href$="/user/login"] {
+                    text-transform: capitalize;
+                }
+
+                &[href$="/user/register"] {
+                    display: block;
+                }
+
+                &:hover {
+                    background-color: unset;
+                    color: v.$dga-color-skobeloff;
+                }
+            }
+
+            &.notifications .badge {
+                display: none;
+            }
+        }
+
+        .btn-link {
+            border: none;
+            background-color: v.$dga-color-light-gray;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: v.$dga-color-skobeloff;
+            font-weight: 600;
+            padding: 5px 10px !important;
+            height: 31px;
+            min-height: unset;
+
+            &:hover {
+                background-color: v.$dga-color-light-gray !important;
+                color: v.$dga-color-skobeloff !important;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+.masthead {
+    padding: 0 !important;
+    background: v.$color-white;
+
+    .navbar {
+        padding: 2rem 0 1.75rem;
+    }
+
+    .navbar-left {
+        display: flex;
+    }
+
+    .header-image, .header-text-logo-tagline {
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+        .logo {
+            .title {
+                width: 120px;
+                vertical-align: top;
+                max-height: 100%;
+            }
+
+            .site-name-delimiter {
+                content: "";
+                display: inline-block;
+                width: 1px;
+                height: 60px;
+                background: v.$dga-color-midnight-green;
+                margin: 0 22px;
+            }
+
+            .site-name {
+                position: relative;
+                display: inline-block;
+                margin: 0.625rem 0 0.8125rem;
+                vertical-align: top;
+                color: v.$dga-color-skobeloff;
+                font-size: 2.125rem;
+                font-weight: 400;
+                line-height: 2.875rem;
+                text-align: left;
+
+                &:after {
+                    content: "beta";
+                    font-size: 0.625rem;
+                    font-weight: 400;
+                    line-height: 0.875rem;
+                    color: v.$dga-color-beta;
+                    border: 1px solid;
+                    border-radius: 12px;
+                    padding: 0.1875rem 0.38rem;
+                    position: absolute;
+                    right: -35px;
+                    bottom: -10px;
+                }
+
+                @media (max-width: 575.98px) {
+                    margin: 0.625rem 0;
+                }
+            }
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .logo {
+                .site-name-delimiter {
+                    display: none;
+                }
+
+                .site-name {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .main-navbar ul {
+        padding-right: 1.25rem;
+
+        li {
+            margin: 0;
+
+            a {
+                padding: 0.5rem 20px;
+                color: v.$dga-color-skobeloff;
+                font-weight: 600;
+                font-size: 1.25rem;
+                line-height: 130%;
+
+            }
+
+            &:hover, &:focus, &.active {
+                a {
+                    background: unset;
+                    text-decoration: underline;
+                    color: v.$dga-color-skobeloff;
+                }
+            }
+
+            @media (max-width: 1199.98px) {
+                a {
+                    padding: 0.5rem 10px;
+                }
+            }
+            @media (max-width: 991.98px) {
+                a {
+                    padding: 20px 10px;
+                }
+            }
+        }
+    }
+
+    .main-navbar .btn {
+        @include b.btn-small;
+    }
+
+    .navbar-toggler {
+        min-width: 30px;
+        min-height: 30px;
+        border: none;
+        margin: 0.25rem 0.8125rem;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &[aria-expanded="true"] {
+            background-image: url(#{v.$imagePath}/mobile-menu-close.svg);
+        }
+
+        &[aria-expanded="false"] {
+            background-image: url(#{v.$imagePath}/mobile-menu.svg);
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        span {
+            display: none;
+        }
+    }
+
+    form {
+        width: 191px;
+        align-items: center;
+
+        input {
+            color: v.$dga-color-graphite-gray;
+            height: 2.5rem;
+            margin-right: 0 !important;
+            border-width: 1px;
+            padding: 0.5rem 1rem;
+
+            &::placeholder {
+                color: v.$dga-color-silver-gray;
+            }
+        }
+
+        button {
+            color: v.$dga-account-input-border;
+
+            i {
+                padding-left: 0.375rem;
+
+                &:before {
+                    font-size: 1rem;
+                }
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: -5px;
+        }
+    }
+}

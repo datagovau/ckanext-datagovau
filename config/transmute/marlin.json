@@ -53,7 +53,6 @@
             "dga_tsm_parse_date"
           ]
         },
-        "update_freq": {"remove": "true"},
         "contact_point": {
           "validate_missing": true,
           "validators": [

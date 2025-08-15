@@ -1,0 +1,13 @@
+{% set total = collection.data | length %}
+{% set pos_first = collection.pager.start + 1 %}
+{% set pos_last = [pos_first + collection.pager.size - 1, total] | min %}
+
+{% block page_navigation %}
+  {% set pager = h.dga_get_check_link_pager(collection) %}
+  <div class="pagination-container">
+    {{ pager.pager() }}
+    {% block position %}
+      <span class="pager-summary">{{ pos_first }} - {{ pos_last }} out of {{ total }}</span>
+    {% endblock position %}
+  </div>
+{% endblock %}
