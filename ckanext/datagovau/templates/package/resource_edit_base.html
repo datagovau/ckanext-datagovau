@@ -1,0 +1,58 @@
+{% extends "package/base.html" %}
+
+{% set logged_in = true if c.userobj else false %}
+{% set res = resource %}
+{% set main_wrapper_class = "new-resource-page flex-md-row" if g.view == "new" else "resource-edit-page flex-md-row-reverse" %}
+
+{% block breadcrumb_content_selected %}{% endblock %}
+
+{% block breadcrumb_content %}
+  {{ super() }}
+  {% if res %}
+    <li>{% link_for h.resource_display_name(res)|truncate(30), named_route=pkg.type ~ '_resource.read', id=pkg.name, resource_id=res.id, title=h.resource_display_name(res) %}</li>
+    <li{% block breadcrumb_edit_selected %} class="active"{% endblock %}><a
+      href="">{{ _('Edit') }}</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block content_action %}
+{% endblock %}
+
+{% block content_primary_nav %}
+  {{ h.build_nav_icon(pkg.type ~ '_resource.edit', _('Edit resource'), id=pkg.name, resource_id=res.id, icon='pencil') }}
+  {% block inner_primary_nav %}{% endblock %}
+  {% if h.is_resource_supported_by_xloader(res) %}
+    {{ h.build_nav_icon('xloader.resource_data', _('DataStore'), id=pkg.name, resource_id=res.id, icon='cloud-upload') }}
+  {% endif %}
+  {{ h.build_nav_icon(pkg.type ~ '_resource.views', _('Views'), id=pkg.name, resource_id=res.id, icon='chart-bar') }}
+{% endblock %}
+{% block primary %}
+  <div class="primary col-md-8 col-xs-12 {{ primary_class }}" role="main">
+    {% block primary_content %}{{ super() }}{% endblock %}
+  </div>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h2
+    class="form-title mb-4 pt-0">{{ _("Add new resource") if g.view == "new" else _("Edit resource") }}</h2>
+  {% block form %}{% endblock %}
+{% endblock %}
+{% block secondary %}
+  <aside class="secondary col-md-4 pt-4 pt-md-0">
+    {% block secondary_content %}
+      {{ super() }}
+      {% snippet 'package/snippets/resource_info.html', res=res %}
+      {% snippet 'package/snippets/resources.html', pkg=pkg, active=res.id %}
+    {% endblock %}
+  </aside>
+{% endblock %}
+
+
+{% block scripts %}
+  {{ super() }}
+  {% asset 'vendor/fileupload' %}
+{% endblock %}
+
+{% block wrapper_class %}
+  {{ main_wrapper_class }} flex-column flex-lg-row
+{% endblock wrapper_class %}

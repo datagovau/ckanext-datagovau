@@ -1,0 +1,20 @@
+<div class="module context-info">
+  <div class="module-content">
+    {% block page_title %}
+      <p class="heading-info-dga mb-3 mb-lg-0">{{ h.resource_display_name(res) or res.id }} data</p>
+    {% endblock %}
+    {% block resource_info %}
+      <div class="nums dga pt-2">
+
+        <dl>
+          <dt>{{ _('Format') }}</dt>
+          <dd>{{ h.get_translated(res, 'format') }}</dd>
+        </dl>
+      <div class="info-view-dataset-wrapper d-flex align-items-start align-self-stretch w-100">
+				{% link_for _('View Resource'), named_route='dataset' ~ '_resource.read', id=res.package_id, resource_id=res.id, class_='btn btn-default py-md-2 px-md-4', icon='eye' %}
+
+      </div>
+      </div>
+    {% endblock %}
+  </div>
+</div>

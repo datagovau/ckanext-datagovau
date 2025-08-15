@@ -1,0 +1,529 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+@use "../select2" as s2;
+
+
+.dga-activity-organization_activity,
+.dga-activity-group_activity,
+[class^="dga-organization-"]:not(.dga-organization-index):not(.dga-organization-bulk_process):not(.dga-organization-new),
+[class^="dga-group-"]:not(.dga-group-index):not(.dga-group-new) {
+    .row {
+        display: block;
+        @media (min-width: v.$screen-sm-min) {
+            display: flex;
+        }
+    }
+}
+
+.dga-activity-organization_activity,
+.dga-activity-group_activity,
+.dga-check_link-organization_report,
+[class^="dga-organization-"]:not(.dga-organization-index):not(.dga-organization-new),
+[class^="dga-group-"]:not(.dga-group-index):not(.dga-group-new) {
+    .toolbar:before {
+        display: none;
+        @include m.breakpoint(lg) {
+            display: block;
+            content: '';
+            background-color: v.$color-white;
+            position: absolute;
+            top: 0;
+            left: calc(50% - 50vw);
+            width: 100vw;
+            height: 100%;
+            border-top: 1px solid #CCCCCC;
+        }
+    }
+
+    .primary {
+        .module > div.module-content {
+            padding-top: 2.5rem;
+        }
+
+        @media (max-width: 767.98px) {
+            padding: 0 1.25rem;
+            .nav-tabs {
+                margin: 0;
+            }
+
+            .module > div.module-content {
+                padding-top: 1.5rem;
+            }
+
+            .dataset-copies-card {
+                .dataset-item:last-of-type {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .secondary {
+        .module-content {
+            .heading {
+                text-decoration: none;
+            }
+
+            .open-in-map {
+                display: none;
+            }
+
+            .read-more {
+                padding-bottom: 0;
+
+                a {
+                    text-decoration: none;
+                }
+            }
+        }
+
+        .filters {
+            margin-top: 1rem;
+        }
+
+        @include m.hide-secondary-on-mobile;
+        @media (max-width: 767.98px) {
+            padding-bottom: 1.25rem !important;
+            #orgSecondaryContent {
+                margin-bottom: 0;
+            }
+            .filters {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
+.dga-organization-read,
+.dga-group-read {
+    overflow-x: hidden;
+
+    .primary {
+        h1 {
+            color: v.$dga-color-midnight-green;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .search-label {
+            color: v.$dga-color-graphite-gray;
+            font-weight: 500;
+            font-size: 1rem;
+            line-height: 1.5;
+
+            &:after {
+                content: "";
+            }
+        }
+
+        .advanced-toggles {
+            flex-direction: column;
+
+            div {
+                margin: 0;
+            }
+
+            @media (min-width: v.$screen-sm-min) {
+                flex-direction: row;
+            }
+        }
+    }
+
+    .pagination {
+        .page-item:not(.active) {
+            a {
+                background-color: v.$color-white;
+            }
+        }
+    }
+}
+
+.dga-organization-bulk_process {
+    .page-heading {
+        display: none;
+    }
+
+    .module-content {
+        .primary {
+            background-color: v.$color-white;
+            margin-bottom: 1rem;
+
+            h1 {
+                color: v.$dga-color-midnight-green;
+                font-size: 1.5rem;
+                font-weight: 500;
+                line-height: 1.3;
+            }
+
+            table {
+                margin-bottom: 0;
+
+                thead {
+                    border-top: none;
+
+                    tr {
+                        th {
+                            vertical-align: top;
+                            padding-top: 0;
+                        }
+                    }
+                }
+
+                h3 {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    line-height: 1.3;
+
+                    a {
+                        color: v.$dga-color-graphite-gray;
+                    }
+                }
+
+                p {
+                    color: v.$dga-color-graphite-gray;
+                    font-size: 0.875rem;
+                    font-weight: 400;
+                    line-height: 1.375rem;
+                }
+            }
+
+            .table-actions {
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding-left: 2rem;
+
+                .btn-group {
+                    gap: 0.5rem;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    margin-right: 0;
+                }
+
+                .btn {
+                    color: v.$dga-color-skobeloff;
+                    border: 2px solid v.$dga-color-soft-sky-blue;
+                    border-radius: 0.25rem;
+                    padding: 0.5rem 0.75rem;
+                    background: none;
+
+                    &:hover {
+                        color: v.$dga-color-skobeloff !important;
+                        background: v.$dga-color-soft-sky-blue !important;
+                    }
+                }
+
+                .btn[name="bulk_action.delete"] {
+                    border-color: v.$dga-color-skobeloff;
+                }
+            }
+
+            .context {
+                padding-left: 2rem;
+            }
+
+            @include m.breakpoint(md) {
+                .table-actions {
+                    flex-direction: row;
+                    padding-left: 1rem;
+
+                    .btn-group {
+                        flex-direction: row;
+                    }
+                }
+                .context {
+                    padding-left: 1rem;
+                }
+            }
+        }
+    }
+}
+
+.dga-organization-read .primary,
+.dga-group-read .primary,
+.dga-organization-bulk_process .module-content .primary,
+.dga-harvest-search {
+    .search-form {
+        margin-bottom: 1.5rem;
+
+        h1 {
+            margin-bottom: 0;
+        }
+
+        .control-order-by {
+            margin: 0;
+            width: 100%;
+            @include m.control-order-by;
+        }
+    }
+
+    .extra {
+        margin-top: 1.5rem;
+    }
+
+    @include m.breakpoint(sm) {
+        .search-form .show-filters {
+            padding: 0.75rem !important;
+        }
+    }
+
+    @include m.breakpoint(md) {
+        .search-form {
+            margin-bottom: 1rem;
+
+            .control-order-by {
+                margin-left: auto;
+                width: auto;
+
+                .select2-chosen {
+                    margin-right: 5rem;
+                }
+            }
+        }
+    }
+}
+
+.dga-organization-members,
+.dga-organization-manage_members,
+.dga-group-members,
+.dga-group-manage_members {
+    .page-heading {
+        color: v.$dga-color-midnight-green;
+        font-size: 1.5rem;
+        line-height: 1.3;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .table {
+        margin-bottom: 1rem;
+
+        thead {
+            border-top: none;
+        }
+
+        .media {
+            font-weight: 600;
+        }
+
+        tr {
+            th,
+            td {
+                font-size: 0.875rem;
+                vertical-align: middle;
+                border-bottom: 1px solid v.$dga-color-soft-sky-blue;
+            }
+
+            &:last-child {
+                th,
+                td {
+                    border-bottom: none;
+                }
+            }
+        }
+
+        .btn {
+            padding: 0.5rem 0.75rem;
+            background: none;
+            border: 2px solid v.$dga-color-soft-sky-blue;
+            min-height: unset;
+
+            i {
+                width: 1rem;
+                height: 1rem;
+            }
+
+            &:hover {
+                background: v.$dga-color-soft-sky-blue !important;
+            }
+        }
+
+        .btn-default i {
+            content: url("#{v.$imagePath}/edit.svg");
+        }
+
+        .btn-danger i {
+            content: url("#{v.$imagePath}/bin.svg");
+        }
+    }
+
+    @include m.breakpoint(sm) {
+        .table tr {
+            td,
+            th {
+                font-size: 1rem;
+            }
+        }
+    }
+}
+
+.dga-organization-about,
+.dga-group-about {
+    .primary {
+        h1 {
+            color: v.$dga-color-midnight-green;
+            font-size: 2rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            color: v.$dga-color-midnight-green;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            color: v.$dga-color-graphite-gray;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.8;
+        }
+
+        .hierarchy-tree-top {
+            padding-left: 1.25rem;
+            margin: 1.5rem 0;
+            list-style-type: disc;
+
+            li {
+                background: none;
+            }
+
+            li::marker {
+                font-size: 1rem;
+                line-height: 1;
+                color: v.$dga-color-skobeloff;
+            }
+
+            a,
+            .highlighted a {
+                color: v.$dga-color-skobeloff;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.8;
+                text-shadow: none;
+            }
+
+            .hierarchy-tree {
+                padding-left: 1.25rem;
+                margin: 0;
+                list-style-type: circle;
+                background: none;
+
+                li {
+                    padding-left: 0;
+                    background: none;
+                }
+            }
+        }
+
+        .table {
+            td, th {
+                width: 50%;
+            }
+
+            color: v.$dga-color-dark-blue;
+            margin-bottom: 1rem;
+
+            .dataset-label {
+                font-weight: 600;
+            }
+
+            a {
+                color: v.$dga-color-skobeloff;
+            }
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .table {
+            @include m.collapsable-table;
+        }
+    }
+}
+
+.dga-organization-member_new,
+.dga-group-member_new {
+    h1 {
+        color: v.$dga-color-midnight-green;
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1.3;
+        margin: 1rem 0 2.5rem;
+    }
+
+    .module-content > .btn {
+        margin-top: 1rem;
+    }
+
+    .form-label {
+        color: v.$dga-color-graphite-gray;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .add-member-or-wrap {
+        align-items: center;
+    }
+
+    .add-member-or {
+        color: v.$dga-color-silver-gray;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .select2-container {
+        @include s2.select2-container;
+    }
+
+    input {
+        height: 3rem;
+    }
+
+    .helptext {
+        display: flex;
+        margin-top: 0.25rem;
+
+        i,
+        p {
+            color: v.$dga-color-silver-gray;
+            font-size: 0.875rem;
+            line-height: 1.375rem;
+        }
+
+        i {
+            padding: 0 0.5rem 0 0.25rem;
+        }
+
+        p {
+            font-weight: 400;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+}
+
+#organization-info {
+    .description, .empty {
+        line-height: 1.8;
+    }
+
+    .read-more {
+        &::after {
+            content: none;
+        }
+
+        a {
+            text-decoration: none;
+            line-height: 1.8;
+        }
+    }
+}

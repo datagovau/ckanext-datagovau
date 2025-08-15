@@ -1,0 +1,103 @@
+{% block facet_list %}
+  {% set hide_empty = hide_empty or false %}
+  {% with items = items or h.get_facet_items_dict(name, search_facets) %}
+    {% if items or not hide_empty %}
+      {% block facet_list_item %}
+        <section class="facet-card module module-narrow module-shallow mb-3">
+          {% block facet_list_heading %}
+            <h2 class="module-heading" data-module="dga-class-toggle"
+                data-module-class-name="collapsed">
+              {{ title }}
+            </h2>
+          {% endblock %}
+          {% block facet_list_items %}
+            {% with items = items or h.get_facet_items_dict(name, search_facets) %}
+              {% if items %}
+                <nav class="facet-nav pb-2"
+                     aria-label="{{ _('Filter by: {title}').format(title=title) }}">
+                  <!-- Searchable Input -->
+                  <div class="facet-search-input mb-1">
+                    <input type="search"
+                           class="form-control"
+                           placeholder="{{ _('Search') }}"
+                           aria-label="{{ _('Search') }}"
+                           data-module="dga-facet-filter"
+                           data-module-name="{{ name }}"
+                           data-module-category="{{ title }}"
+                           id="facet-search-input">
+                    <button type="button" class="clear-btn" aria-label="Clear search">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <ul id="facet-container-{{ name }}"
+                      class="list-unstyled nav nav-simple nav-facet py-0 px-3">
+                    {% for item in items[:10] %}
+                      {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
+                      {% set label = label_function(item) if label_function else item.display_name | replace("notspecified", _("Not Specified")) %}
+                      {% set label_truncated = label|truncate(22) if not label_function else label %}
+                      {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
+                      <li
+                        class="nav-item m-0 p-0 py-2 {% if item.active %} active{% endif %}">
+                        <!-- Checkbox wrapped in a link -->
+                        <a href="{{ href }}"
+                           class="facet-item d-flex align-items-center m-0 p-0 ">
+                          {% set safe_id = name ~ "-" ~ h.dga_hash_string(item.name) %}
+                          <input type="checkbox"
+                                 id="{{ safe_id }}"
+                                 name="{{ name }}"
+                                 value="{{ item.name }}"
+                            {% if item.active %} checked{% endif %}
+                                 onclick="event.stopPropagation();"
+                                 onchange="window.location.href='{{ href }}'">
+                          <label for="{{ safe_id }}" class="ms-2">
+                            <span
+                              class="item-label">{{ label_truncated }} ({{ count }})</span>
+                          </label>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                  {% if items|length >= 10 %}
+                    <p
+                      class="module-footer">
+                      <a class="read-more show-more" role="button">
+                        {{ _('Show more') }}
+                      </a>
+                      <a class="read-more show-less" role="button">
+                        {{ _('Show less') }}
+                      </a>
+                    </p>
+                  {% endif %}
+                  <form id="facet-wrapper-form-{{ name }}"
+                        hx-post="{{ h.url_for('dga_dataset.get_full_facet_list') }}"
+                        hx-trigger="dga:load-facets once from:body"
+                        hx-target="#facet-container-{{ name }}"
+                        hx-swap="beforeend">
+                    <input type="hidden"
+                           name="items"
+                           value='{{ h.dga_facet_to_json(items[10:]) }}'>
+                    <input type="hidden"
+                           name="name"
+                           value='{{ name }}'>
+                    <input type="hidden"
+                           name="controller"
+                           value='{{ g.blueprint }}'>
+                    <input type="hidden"
+                           name="action"
+                           value='{{ g.view }}'>
+                    <input type="hidden"
+                           name="extras"
+                           value='{{ dict(extras or {}, **request.args) | tojson }}'>
+                  </form>
+                </nav>
+              {% else %}
+                <nav
+                  class="px-3 pb-3 empty">{{ _('There are no {facet_type} that match this search.').format(facet_type=title) }}</nav>
+              {% endif %}
+            {% endwith %}
+          {% endblock %}
+        </section>
+      {% endblock %}
+    {% endif %}
+  {% endwith %}
+{% endblock %}

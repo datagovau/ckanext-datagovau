@@ -3,18 +3,16 @@
     "types": {
         "Dataset": {
             "fields": {
-                "geospatial_topic": {"value": "Environment"},
-
                 "@type": {"remove": true},
                 "accessLevel": {"remove": true},
                 "publisher": {"remove": true},
                 "identifier": {"remove": true},
-                "modified": {"remove": true},
                 "theme": {"remove": true},
 
                 "title": {"map": "title"},
                 "description": {"map": "notes", "validators": ["dga_tsm_parse_description"]},
                 "issued": {"map": "temporal_coverage_from", "validators": ["dga_tsm_parse_issued_date"]},
+                "modified": {"map": "remote_last_updated", "validators": ["dga_tsm_parse_issued_date"]},
                 "keyword": {"validators": ["dga_tsm_words_into_tags"], "map": "tags"},
                 "spatial": {"map": "spatial_coverage", "validators": ["dga_tsm_parse_spatial"]},
 

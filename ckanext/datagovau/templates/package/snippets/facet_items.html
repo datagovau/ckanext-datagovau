@@ -1,0 +1,24 @@
+{% for item in items %}
+  {% set updated_extras = dict(extras, **{name: item.name}) %}
+  {% set href = h.remove_url_param(name, item.name, controller=controller, action=action, extras=extras) if item.active else h.add_url_param(controller=controller, action=action, extras=updated_extras) %}
+  {% set label = label_function(item) if label_function else item.display_name | replace("notspecified", _("Not Specified")) %}
+  {% set label_truncated = label|truncate(22) if not label_function else label %}
+  {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
+  <li class="nav-item m-0 p-0 py-2 {% if item.active %} active{% endif %}"
+          {% if hidden %} hidden{% endif %}>
+    <a href="{{ href }}"
+       class="facet-item d-flex align-items-center m-0 p-0 ">
+      {% set safe_id = name ~ "-" ~ h.dga_hash_string(item.name) %}
+      <input type="checkbox"
+             id="{{ safe_id }}"
+             name="{{ name }}"
+             value="{{ item.name }}"
+              {% if item.active %} checked{% endif %}
+             onclick="event.stopPropagation();"
+             onchange="window.location.href='{{ href }}'">
+      <label for="{{ safe_id }}" class="ms-2">
+        <span class="item-label">{{ label_truncated }} ({{ count }})</span>
+      </label>
+    </a>
+  </li>
+{% endfor %}

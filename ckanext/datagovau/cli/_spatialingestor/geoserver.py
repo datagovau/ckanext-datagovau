@@ -37,12 +37,14 @@ class GeoServer(NamedTuple):
     def check_workspace(self, workspace: str) -> bool:
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.head(url, timeout=_timeout()).ok
+            return s.head(url, timeout=_timeout("head")).ok
 
     def drop_workspace(self, workspace: str):
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.delete(url + "?recurse=true&quietOnNotFound", timeout=_timeout())
+            return s.delete(
+                url + "?recurse=true&quietOnNotFound", timeout=_timeout("delete")
+            )
 
     def create_workspace(self, workspace: str):
         url = self._workspace_url()
@@ -50,20 +52,20 @@ class GeoServer(NamedTuple):
             return s.post(
                 url,
                 json={"workspace": {"name": workspace}},
-                timeout=_timeout(),
+                timeout=_timeout("post"),
             )
 
     def create_store(self, workspace: str, is_cs: bool, data: dict[str, Any]):
         url = self._store_url(workspace, is_cs)
         with self._session() as s:
-            return s.post(url, json=data, timeout=_timeout())
+            return s.post(url, json=data, timeout=_timeout("post"))
 
     def create_layer(
         self, workspace: str, is_cs: bool, store: str, data: dict[str, Any]
     ):
         url = self._layer_url(workspace, is_cs, store)
         with self._session() as s:
-            return s.post(url, json=data, timeout=_timeout())
+            return s.post(url, json=data, timeout=_timeout("post"))
 
     def get_style(self, workspace: str, style: str, quiet: bool = False):
         url = self._style_url(workspace, style)
@@ -71,17 +73,17 @@ class GeoServer(NamedTuple):
         if quiet:
             params["quietOnNotFound"] = True
         with self._session() as s:
-            return s.get(url, params=params, timeout=_timeout())
+            return s.get(url, params=params, timeout=_timeout("get"))
 
     def create_style(self, workspace: str, data: dict[str, Any]):
         url = self._style_url(workspace)
         with self._session() as s:
-            return s.post(url, json=data, timeout=_timeout())
+            return s.post(url, json=data, timeout=_timeout("post"))
 
     def delete_style(self, workspace: str, style: str):
         url = self._style_url(workspace, style)
         with self._session() as s:
-            return s.delete(url, timeout=_timeout())
+            return s.delete(url, timeout=_timeout("delete"))
 
     def update_style(
         self,
@@ -98,13 +100,13 @@ class GeoServer(NamedTuple):
                 data=data,
                 headers={"Content-type": content_type},
                 params={"raw": raw},
-                timeout=_timeout(),
+                timeout=_timeout("put"),
             )
 
     def add_style(self, workspace: str, layer: str, style: str, data: dict[str, Any]):
         url = f"{self.host}rest/layers/{layer}"
         with self._session() as s:
-            return s.put(url, json=data, timeout=_timeout())
+            return s.put(url, json=data, timeout=_timeout("put"))
 
     def _workspace_url(self, workspace: str = "") -> str:
         return f"{self.host}rest/workspaces/{workspace}"

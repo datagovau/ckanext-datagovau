@@ -1,0 +1,54 @@
+{#
+    Template variables:
+
+    user - currently viewed user
+    tokens - list of ApiToken entities
+
+    #}
+
+<div class="overflow-auto">
+
+    <table class="table table-striped table-bordered table-condensed mb-3 table-no-break">
+        <thead class="border-top-0">
+            <tr>
+                {% block head_cells %}
+                    {% block head_cell_token %}<th scope="col" class="w-50">{{ _('Token') }}</th>{% endblock %}
+                    {% block head_cell_last_access %}<th scope="col" class="w-25">{{ _('Admin') }}</th>{% endblock %}
+                    {% block head_cell_actions %}<th scope="col" class="w-25 text-center">{{ _('Actions') }}</th>{% endblock %}
+                {% endblock head_cells %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for token in tokens %}
+                <tr>
+                    {% block token_cells scoped %}
+                        {% block token_cell_token %}
+                            <td colspan="1">
+                                {{ token.name }}
+                            </td>
+                        {% endblock token_cell_token %}
+                        {% block token_cell_last_access %}
+                            <td>
+                                {{ h.render_datetime(token.last_access, with_hours=True) or _('Never') }}
+                            </td>
+                        {% endblock token_cell_last_access %}
+                        {% block token_cell_actions %}
+                            <td class="py-2">
+                                {% set action = h.url_for("user.api_token_revoke", id=user['name'], jti=token['id']) %}
+                                <form action="{{ action }}" method="POST" class="d-flex justify-content-center">
+                                    {{ h.csrf_input() }}
+                                    <div class="btn-group">
+                                        <button type="submit" href="{{ action }}" class="btn btn-sm px-3 py-2 token-delete" title="{{ _('Revoke') }}" data-module="confirm-action">
+                                            {% snippet 'svg/bin.svg' %}
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        {% endblock token_cell_actions %}
+                    {% endblock token_cells %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>

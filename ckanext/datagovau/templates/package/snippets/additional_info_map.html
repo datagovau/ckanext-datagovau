@@ -1,0 +1,27 @@
+<div class="additional-info-map">
+  {% snippet "spatial/snippets/dataset_map_base.html", extent=extent %}
+  <div class="accordion source-extent-preview" id="source-extent">
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#source-extent-body"
+                aria-expanded="false">
+          {{ _("Spatial extent source") }}
+        </button>
+      </div>
+      <div id="source-extent-body" class="accordion-collapse collapse"
+           data-bs-parent="#source-extent">
+        <div class="d-flex flex-column accordion-body">
+          <button
+            class="btn btn-primary-outlined btn-sm flex-shrink-0 align-self-end float-md-end btn-copy"
+            title="{{ _("Copy") }}"
+            data-module="copy-into-buffer"
+            data-module-copy-value='{{ extent | tojson | replace('\n', '') | replace('  ', '') }}'>
+            {{ _("Copy") }}
+          </button>
+          <pre>{{ h.dga_pretty_json(extent) }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

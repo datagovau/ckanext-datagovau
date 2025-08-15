@@ -1,0 +1,63 @@
+{% block item %}
+    <div class="check-link-record">
+
+        {% set res = record.resource %}
+        {% set pkg = res.package if res else null %}
+
+        {% if res %}
+            {% block resource scoped %}
+                <p class="h4">
+                    {{ _("Resource:") }}
+                    <a class="resource-link"
+                       href="{{ h.url_for("resource.read", id=pkg.name, resource_id=res.id) }}">{{ res.name or _("Unknown") }}</a>
+                </p>
+            {% endblock resource %}
+        {% endif %}
+
+        {% block checked_at %}
+            <p class="h5">
+                {{ _("Date of check:") }}
+                <date>
+                    {{ h.render_datetime(record.created_at, None, true) }}
+                </date>
+                <span class="time-ago">
+                    [{{ h.time_ago_from_timestamp(record.created_at) }}]
+                </span>
+            </p>
+        {% endblock checked_at %}
+
+        {% block state %}
+            <p class="h5">
+                {{ _("State:") }}
+                <span class="state-value">
+                    {{ record.state }}
+                </span>
+            </p>
+        {% endblock state %}
+
+        {% if pkg %}
+            {% block package scoped %}
+                <p class="h5">
+                    {{ _("Dataset:") }}
+                    <a class="dataset-link" href="{{ h.url_for(pkg.type ~ ".read", id=pkg.name) }}">{{ pkg.title }}</a>
+                </p>
+            {% endblock package %}
+        {% endif %}
+
+        <div class="footer">
+            {% block explanation %}
+                <p class="explanation">
+                    {{ record.details.explanation }}
+                </p>
+            {% endblock explanation %}
+            {% block copy %}
+                <button class="btn btn-secondary btn-sm pull-right float-end"
+                        title="{{ _("Copy URL") }}"
+                        data-module="copy-into-buffer" data-module-copy-value="{{ record.url }}">
+                    <i class="fa fa-copy"></i>
+                    {{ _("Copy URL") }}
+                </button>
+            {% endblock copy %}
+        </div>
+    </div>
+{% endblock item %}

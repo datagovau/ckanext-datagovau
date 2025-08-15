@@ -1,0 +1,24 @@
+{% ckan_extends %}
+
+{% block activity_stream %}
+    <ul class="activity {% if not activity_stream %}activity-empty{% endif %}"
+        data-module="dga-align-activity">
+        {% set can_show_activity_detail = h.check_access('activity_list', {'id': id, 'include_data': True, 'object_type': object_type}) %}
+
+        {% for activity in activity_stream %}
+            {%- snippet "snippets/activities/{}.html".format(activity.activity_type.replace(' ', '_')),
+      "snippets/activities/fallback.html",
+      activity=activity, can_show_activity_detail=can_show_activity_detail,
+      ah={
+        'actor': actor,
+        'dataset': dataset,
+        'organization': organization,
+        'user': user,
+        'group': group,
+      },
+      id=id-%}
+        {% else %}
+            {{ _("No activity found for this type") }}
+        {% endfor %}
+    </ul>
+{% endblock %}

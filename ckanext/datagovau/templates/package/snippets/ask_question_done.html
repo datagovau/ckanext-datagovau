@@ -1,0 +1,9 @@
+<form hx-post="{{ h.url_for('dga_dataset.ask_question', package_id=package_id or data.package_id) }}" hx-target="this" hx-swap="outerHTML" class="ask-question-done">
+    <p>{{ _('Thank you for submitting a question!') }}</p>
+
+    <p>{{ _('We will review your question and get back to you as soon as possible.') }}</p>
+
+    <button class="btn btn-primary" type="submit">{{ _("Ask another question") }}</button>
+
+    <input type="hidden" name="refresh" value="true">
+</form>

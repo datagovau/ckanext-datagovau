@@ -1,0 +1,49 @@
+@use "../variables" as v;
+
+.resource-list {
+    margin: 0;
+
+    .resource-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+        margin-bottom: 1.5rem!important;
+        padding: 1rem;
+        border: 1px solid v.$dga-outer-border-color!important;
+
+        .badge {
+            background-color: v.$dga-outer-border-color;
+            color: v.$dga-color-dark-cyan;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1.5;
+            padding: 5px 10px;
+            border-radius: 0.25rem;
+        }
+
+
+        .resource-name {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: v.$dga-color-skobeloff;
+            margin-bottom: 0.25rem;
+        }
+
+        .resource-license {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.8;
+            color: v.$dga-color-silver-gray;
+        }
+
+        &:hover {
+            background-color: unset;
+        }
+
+        &:last-of-type {
+            border-bottom: 1px solid v.$dga-outer-border-color;
+        }
+    }
+}

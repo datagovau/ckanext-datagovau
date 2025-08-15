@@ -1,59 +1,31 @@
 from __future__ import annotations
 
-import inspect
-import json
 import logging
+from typing import Any
 
-import ckan.lib.helpers as h
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
-from ckan import authz, model
-from ckan.lib import jobs
+from ckan import model, types
+from ckan.common import CKANConfig
+from ckan.lib.plugins import DefaultTranslation
 
+from ckanext.metaexport.formatters import Format, Formatter
+from ckanext.metaexport.interfaces import IMetaexport
 from ckanext.transmute.interfaces import ITransmute
-from ckanext.xloader.plugin import xloaderPlugin
 
+from ckanext.datagovau import metaexport
 from ckanext.datagovau.geoserver_utils import (
     CONFIG_PUBLIC_URL,
-    delete_ingested,
     run_ingestor,
 )
 
-from . import utils
+from . import config, implementations, utils
 from .logic import transmutators
+from .middleware import DGARedisSessionSerializer
 
 log = logging.getLogger(__name__)
 
 ingest_rest_list = ["kml", "kmz", "shp", "shapefile"]
-
-CONFIG_IGNORE_WORKFLOW = "ckanext.datagovau.spatialingestor.ignore_workflow"
-
-
-def _dga_xnotify(self, resource, operation):
-    try:
-        return _original_xnotify(self, resource, operation)
-    except tk.ObjectNotFound:
-        # resource has `deleted` state
-        pass
-
-
-_original_xnotify = xloaderPlugin.notify
-xloaderPlugin.notify = _dga_xnotify
-
-
-_original_permission_check = authz.has_user_permission_for_group_or_org
-
-
-def _dga_permission_check(group_id, user_name, permission):
-    stack = inspect.stack()
-    # Bypass authorization to enable datasets to be removed from/added to AGIFT
-    # classification
-    if stack[1].function == "package_membership_list_save":
-        return True
-    return _original_permission_check(group_id, user_name, permission)
-
-
-authz.has_user_permission_for_group_or_org = _dga_permission_check
 
 
 @tk.blanket.actions
@@ -62,71 +34,45 @@ authz.has_user_permission_for_group_or_org = _dga_permission_check
 @tk.blanket.config_declarations
 @tk.blanket.helpers
 @tk.blanket.validators
-class DataGovAuPlugin(p.SingletonPlugin):
+@tk.blanket.blueprints
+class DataGovAuPlugin(
+    implementations.SearchAutocomplete,
+    implementations.PackageController,
+    implementations.Iso19115,
+    p.SingletonPlugin,
+    DefaultTranslation,
+):
     p.implements(p.IConfigurer, inherit=False)
-    p.implements(p.IPackageController, inherit=True)
     p.implements(p.IDomainObjectModification)
     p.implements(ITransmute, inherit=True)
+    p.implements(p.IMiddleware, inherit=True)
+    p.implements(p.ITranslation)
+    p.implements(p.IFacets, inherit=True)
+    p.implements(IMetaexport, inherit=True)
 
     # ITransmute
+
     def get_transmutators(self):
         return transmutators.get_transmutators()
 
     # IConfigurer
 
-    def update_config(self, config):
-        tk.add_template_directory(config, "templates")
+    def update_config(self, config_: CKANConfig):
+        tk.add_template_directory(config_, "templates")
         tk.add_resource("assets", "datagovau")
-        tk.add_public_directory(config, "assets")
-
-    # IPackageController
-
-    def before_dataset_index(self, pkg_dict):
-        if pkg_dict["type"] == "harvest":
-            return pkg_dict
-
-        pkg_dict["unpublished"] = tk.asbool(pkg_dict.get("unpublished"))
-        # uploading resources to datastore will cause SOLR error
-        # for multivalued field
-        # inside set_datastore_active_flag action before
-        # reindexing the dataset, it retrieves the data from package_show
-        # therefore these two fields are not converted.
-        geospatial_topic = pkg_dict["geospatial_topic"]
-        if geospatial_topic and not isinstance(geospatial_topic, str):
-            pkg_dict["geospatial_topic"] = json.dumps(geospatial_topic)
-
-        return pkg_dict
-
-    def before_dataset_search(self, search_params):
-        stat_facet = search_params["extras"].get("ext_dga_stat_group")
-        if stat_facet:
-            search_params.setdefault("fq_list", []).append(
-                _dga_stat_group_to_fq(stat_facet)
-            )
-        return search_params
-
-    def after_dataset_delete(self, context, pkg_dict):
-        if pkg_dict.get("id") and not tk.asbool(tk.config[CONFIG_IGNORE_WORKFLOW]):
-            try:
-                jobs.enqueue(
-                    delete_ingested,
-                    kwargs={"pkg_id": pkg_dict["id"]},
-                    rq_kwargs={"timeout": 1000},
-                )
-            except Exception as e:
-                h.flash_error(f"{e}")
+        tk.add_public_directory(config_, "public")
 
     # IDomainObjectModification
 
-    def notify(self, entity, operation):
+    def notify(self, entity: Any, operation: str):
+        if config.ignore_si_workflow():
+            return
+
         if (
             operation != "changed"
             or not isinstance(entity, model.Package)
             or entity.state != "active"
         ):
-            return
-
-        if tk.config[CONFIG_IGNORE_WORKFLOW]:
             return
 
         ingest_resources = [
@@ -140,16 +86,40 @@ class DataGovAuPlugin(p.SingletonPlugin):
         else:
             _do_spatial_ingest(entity.id)
 
+    # IMiddleware
 
-_stat_fq = {
-    "api": "res_extras_datastore_active:true OR res_format:WMS",
-    "open": "isopen:true",
-    "unpublished": "unpublished:true",
-}
+    def make_middleware(self, app: types.CKANApp, config_: CKANConfig):
+        if tk.config.get("SESSION_TYPE", None) == "redis":
+            app.session_interface.serializer = DGARedisSessionSerializer()
+        return app
 
+    # IFacets
+    def dataset_facets(
+        self, facets_dict: dict[str, Any], package_type: str
+    ) -> dict[str, Any]:
+        facets_dict["organization"] = tk._("Organisation")
+        return facets_dict
 
-def _dga_stat_group_to_fq(group: str) -> str:
-    return _stat_fq.get(group, "*:*")
+    def group_facets(
+        self, facets_dict: dict[str, Any], group_type: str, package_type: str | None
+    ) -> dict[str, Any]:
+        facets_dict["organization"] = tk._("Organisation")
+        return facets_dict
+
+    def organization_facets(
+        self,
+        facets_dict: dict[str, Any],
+        organization_type: str,
+        package_type: str | None,
+    ) -> dict[str, Any]:
+        facets_dict["organization"] = tk._("Organisation")
+        return facets_dict
+
+    # IMetaexport
+
+    def register_data_extractors(self, formatters: type[Formatter]):
+        fmt: Format = formatters.get("gmd")
+        fmt.set_data_extractor(metaexport.gmd_extractor)
 
 
 def _do_spatial_ingest(pkg_id: str):
@@ -157,7 +127,6 @@ def _do_spatial_ingest(pkg_id: str):
 
     Suits for tab, mapinfo, geotif, and grid formats, because geoserver cannot
     ingest them via it's ingestion API.
-
     """
     log.debug("Try ingesting %s using local spatial ingestor", pkg_id)
 
@@ -174,34 +143,25 @@ def _do_ingesting_wrapper(dataset_id: str):
     This wrapper can be enqueued as a background job. It allows web-node to
     skip import of the `_spatialingestor`, which requires `GDAL` to be
     installed system-wide.
-
     """
     from .cli._spatialingestor import do_ingesting
 
     do_ingesting(dataset_id, False)
 
 
-def _do_geoserver_ingest(entity, ingest_resources):
+def _do_geoserver_ingest(entity: model.Package, ingest_resources: list[model.Resource]):
     geoserver_resources = [
         res for res in entity.resources if tk.config[CONFIG_PUBLIC_URL] in res.url
     ]
 
     ingest_res = ingest_resources[0]
-    send = False
 
     if not geoserver_resources:
         send = True
+    elif any(r.last_modified == ingest_res.last_modified for r in geoserver_resources):
+        send = False
     else:
-        if [
-            r
-            for r in geoserver_resources
-            if r.last_modified == ingest_res.last_modified
-        ]:
-            send = False
-        else:
-            geo_res = geoserver_resources[0]
-            if ingest_res.last_modified > geo_res.last_modified:
-                send = True
+        send = ingest_res.last_modified > geoserver_resources[0].last_modified
 
     if send:
         log.debug("Try ingesting %s using geoserver ingest API", entity.id)

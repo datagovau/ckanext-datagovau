@@ -6,7 +6,7 @@ fields:
     label: Name
     validators: ignore_missing unicode_safe
     form_snippet: large_text.html
-    form_placeholder: My Organization
+    form_placeholder: My Organisation
     form_attrs:
       data-module: slug-preview-target
 
@@ -16,18 +16,19 @@ fields:
     form_snippet: slug.html
     form_placeholder: my-organization
 
-  - field_name: notes
+  - field_name: description
     label: Description
     form_snippet: markdown.html
-    form_placeholder: A little information about my organization...
+    form_placeholder: A little information about my organisation...
 
   - field_name: url
     label: Image URL
+    form_snippet: organization_upload.html
     form_placeholder: http://example.com/my-image.jpg
 
   - field_name: __
     label: Parent
-    form_snippet: org_hierarchy.html
+    form_snippet: dga-org-hierarchy.html
 
   - field_name: jurisdiction
     label: Jurisdiction
@@ -54,21 +55,26 @@ fields:
         label: Tasmanian Government
       - value: Local Government
         label: Local Government
+    form_attrs:
+      data-module: autocomplete
 
   - field_name: spatial_coverage
     label: Geospatial Coverage
     form_placeholder: Geospatial coverage of organisation jurisdiction as a gazetteer URL
+    display_snippet: spatial.html
     required: true
 
   - field_name: website
     label: Website
     form_placeholder: Website/homepage of organisation
     required: true
+    display_snippet: link.html
 
   - field_name: email
     label: Email
     form_placeholder: 'Email contact for general open data enquiries'
     required: true
+    display_snippet: email.html
 
   - field_name: telephone
     label: Telephone

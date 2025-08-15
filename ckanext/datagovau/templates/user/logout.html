@@ -1,0 +1,23 @@
+{% extends "user/auth.html" %}
+
+{% block subtitle %}{{ _('Logged Out') }}{% endblock %}
+
+{% block primary %}
+  <div class="primary col-12" role="main">
+    {% block pre_primary %}
+    {% endblock %}
+    {% block primary_content %}
+      <section class="module">
+        <div class="module-content">
+          <h1 class="page-heading">
+            {% block page_heading %}{{ _('Logged Out') }}{% endblock %}
+          </h1>
+          <p>{% trans %}You are now logged out.{% endtrans %}</p>
+        </div>
+      </section>
+    {% endblock %}
+  </div>
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

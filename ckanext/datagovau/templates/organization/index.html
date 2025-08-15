@@ -1,0 +1,60 @@
+{% ckan_extends %}
+
+{% block breadcrumb_content %}
+    <li class="active">{% link_for h.humanize_entity_type('organization', group_type, 'breadcrumb') or _('Organisations'),
+        named_route=group_type+'.index' %}</li>
+{% endblock %}
+
+
+{% import 'macros/banner.html' as banner_macro %}
+
+{% block header %}
+    {{ super() }}
+    {% call banner_macro.banner(title=_('Organisations'), description=_('Explore the
+    government agencies that publish on Data.gov.au. Each organisation is responsible
+    for the creation, maintenance, and safe sharing of the datasets they manage.')) %}
+        {% if h.check_access('organization_create') %}
+            {% link_for _('Add organisation'), named_route='organization.new', class_='btn btn-light', icon='plus' %}
+        {% endif %}
+    {% endcall %}
+{% endblock %}
+
+
+{% block secondary %}
+{% endblock %}
+
+{% block primary %}
+    <div class="primary col-12" role="main">
+        {% block primary_content_inner %}
+        <h1 class="hide-heading">{% block page_heading %}{{ h.humanize_entity_type('organization', group_type, 'page title') or _('Organisations') }}{% endblock %}</h1>
+        {% block organizations_search_form %}
+            {% snippet 'snippets/search_form.html', form_id='organization-search-form', type=group_type, query=q, sorting_selected=sort_by_selected, count=page.item_count, placeholder=h.humanize_entity_type('organization', group_type, 'search placeholder') or _('Search organisations...'), show_empty=request.args, no_bottom_border=true if page.items, sorting = [(_('Name Ascending'), 'title asc'), (_('Name Descending'), 'title desc')] %}
+        {% endblock %}
+        {% block search_title %}{% endblock %}
+        {% block organizations_list %}
+            {% if page.items or request.args %}
+            {% if page.items %}
+                {% snippet "organization/snippets/organization_list.html", organizations=page.items %}
+            {% endif %}
+            {% else %}
+            <p class="empty">
+                {{ _('There are currently no organisations for this site') }}.
+                {% if h.check_access('organization_create') %}
+                {% link_for _('How about creating one?'), named_route=group_type+'.new' %}</a>.
+                {% endif %}
+            </p>
+            {% endif %}
+        {% endblock %}
+        {% block page_pagination %}
+            <div class="pagination-container">
+                {{ page.pager(q=q or '', sort=sort_by_selected or '') }}
+                {% if page.item_count %}
+                    <span class="pager-summary">
+                        {{ page.first_item }} - {{ page.last_item }} of {{ page.item_count }} results
+                    </span>
+                {% endif %}
+            </div>
+        {% endblock %}
+        {% endblock %}
+    </div>
+{% endblock primary %}

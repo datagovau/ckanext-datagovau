@@ -1,0 +1,97 @@
+@use "../variables" as v;
+
+.media-grid {
+    background: inherit;
+    padding: 0;
+    border: none;
+    margin-bottom: 2.5rem;
+
+    .media-item {
+        width: 100%;
+        margin: 0 0 1rem 0;
+        padding: 1rem;
+        border: v.$border-default;
+        border-radius: 0.25rem;
+        position: relative;
+
+
+        .media-image {
+            width: 25%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            float: right;
+            max-width:  210px;
+            max-height: 125px;
+            margin: 0;
+        }
+
+        .media-heading {
+            color: v.$dga-color-graphite-gray;
+            font-size: 1.25rem;
+            line-height: 1.3;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .media-description {
+            color: v.$dga-color-graphite-gray;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .count {
+            color: v.$dga-color-skobeloff;
+            font-weight: 600;
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+        }
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &.organisation {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        &:before, &:after {
+            content: none;
+        }
+
+        .media-item {
+            margin-bottom: 15px;
+            text-align: center;
+
+            .media-image {
+                float: none;
+                margin: auto;
+            }
+
+        }
+
+        @media (min-width: v.$screen-sm-min) {
+            flex-direction: row;
+            .media-item {
+                width: 49%;
+            }
+        }
+    }
+}
+
+//FIXME Should be deleted after ckan-2.10.1 (https://github.com/ckan/ckan/pull/7467)
+@media (max-width: 768px) {
+    .wrapper::before {
+        display: none;
+    }
+
+    .wrapper .module > .page-header {
+        margin-top: 0;
+    }
+}

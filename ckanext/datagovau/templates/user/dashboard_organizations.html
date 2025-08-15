@@ -1,0 +1,32 @@
+{% ckan_extends %}
+
+{% set organizations = h.organizations_available(permission='manage_group', include_dataset_count=True, include_member_count=True) %}
+{% set page = h.dga_paginate_items(organizations) %}
+
+{% block page_primary_action %}
+    {% if h.check_access('organization_create') %}
+        {% link_for h.humanize_entity_type('organization', org_type, 'add link') or _('Add Organisation'), named_route=org_type ~ '.new', class_="btn btn-primary", icon="plus-square" %}
+    {% endif %}
+{% endblock %}
+
+
+{% block primary_content_inner %}
+    <h2 class="hide-heading">{{ h.humanize_entity_type('organization', org_type, 'my label') or _('My Organisations') }}</h2>
+
+    {% if organizations %}
+        <div class="wide">
+            {% snippet "organization/snippets/organization_list.html", organizations=page.items, show_capacity=True %}
+        </div>
+    {% else %}
+        <p class="empty">
+            {{ h.humanize_entity_type('organization', org_type, 'you not member') or _('You are not a member of any organisations.') }}
+            {% if h.check_access('organization_create') %}
+                {% link_for _('Create one now?'), named_route=org_type ~ '.new' %}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% block page_pagination %}
+        {% snippet "user/snippets/page_pagination.html", page=page %}
+    {% endblock %}
+{% endblock %}

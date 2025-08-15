@@ -1,0 +1,13 @@
+Hi there,
+
+A request has been raised for a dataset. Please respond to this as soon as possible.
+
+The request is from {{ name }}, {{ email}}:
+
+{{ content }}
+
+The Australian Government has mandated that agencies have a responsibility to be transparent to any public consumer of open data.
+If you have questions about why you got this email or what to do, email support@data.gov.au
+
+Regards,
+Data.gov.au team

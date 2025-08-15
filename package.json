@@ -8,7 +8,8 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-touch-fd": "^2.0.0",
     "postcss-sort-media-queries": "^5.2.0",
-    "sass": "^1.78.0"
+    "pyright": "^1.1.296",
+    "sass": "^1.83.4"
   },
   "scripts": {
     "dev": "DEBUG=1 gulp watch",

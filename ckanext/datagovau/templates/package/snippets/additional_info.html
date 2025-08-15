@@ -1,21 +1,243 @@
-{% ckan_extends %}
 
-{% block agls_geospatial_topic %}
-  {% if pkg.get('geospatial_topic') %}
-    <tr>
-      <th scope="row" class="dataset-label">Geospatial Topics</th>
-      <td class="dataset-details">
-        <ul class="">
-          {% if pkg.geospatial_topic is string %}
-            <li>{{ pkg.geospatial_topic }}</li>
-          {% else %}
-            {% for field in pkg.geospatial_topic if field %}
-              <li>{{ field }}</li>
-            {% endfor %}
-          {% endif %}
 
-        </ul>
-      </td>
-    </tr>
-  {% endif %}
-{% endblock agls_geospatial_topic %}
+{% set pkg = pkg_dict or c.pkg_dict %}
+{% set schema = h.scheming_get_dataset_schema('dataset') %}
+{% set data_level = h.scheming_field_by_name(schema.dataset_fields, 'data_level') %}
+
+<section class="additional-info" prefix="dc: http://purl.org/dc/elements/1.1/
+  dcat: http://www.w3.org/ns/dcat#
+  dcam: http://purl.org/dc/dcam/
+  aglsterms: http://www.agls.gov.au/agls/terms/
+  agentterms: http://www.agls.gov.au/agls/agentterms/
+  availterms: http://www.agls.gov.au/agls/availterms/
+  adminterms: http://www.agls.gov.au/agls/adminterms/
+  v: http://www.w3.org/2006/vcard/ns#
+  dct: http://purl.org/dc/terms/">
+
+  <h3>{{ _('Additional Info') }}</h3>
+  <table class="table table-striped table-bordered table-sm">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Field') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% block agls_title %}
+        <tr>
+          <th scope="row" class="dataset-label">Title</th>
+          <td class="dataset-details" property="dc:type">{{ pkg.title }}</td>
+        </tr>
+      {% endblock %}
+
+      {% block agls_language %}
+        <tr>
+          <th scope="row" class="dataset-label">Language</th>
+          <td class="dataset-details"
+              property="dc:language">{{ pkg.language or 'English' }}</td>
+        </tr>
+      {% endblock %}
+
+      {% block agls_license %}
+        <tr>
+          <th scope="row" class="dataset-label">Licence</th>
+          <td class="dataset-details">
+            {% snippet 'snippets/license_value.html', pkg_dict = pkg %}
+          </td>
+        </tr>
+      {% endblock %}
+
+      {% block agls_data_status %}
+        {% if pkg.get('data_state') %}
+          <tr>
+            <th scope="row" class="dataset-label">Data Status</th>
+            <td class="dataset-details">{{ pkg.data_state }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_update_freq %}
+        {% if pkg.get('update_freq') %}
+          <tr>
+            <th scope="row" class="dataset-label">Update Frequency</th>
+            <td class="dataset-details">{{ pkg.update_freq }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_landing_page %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _('Landing Page') }}</th>
+          <td class="dataset-details" property="dct:source">
+            <a href="{{ h.url_for('dataset.read', id=pkg.id, qualified=True) }}">
+              {{ h.url_for('dataset.read', id=pkg.id, qualified=True) }}
+            </a>
+          </td>
+        </tr>
+      {% endblock %}
+
+      {% block agls_date_updated %}
+        {% if pkg.get('remote_last_updated') %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Remote Last Updated") }}</th>
+            <td class="dataset-details" property="dct:modified">
+              {{ h.render_datetime(pkg.remote_last_updated, date_format="%d/%m/%Y") }}
+            </td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_contact_point %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Contact Point") }}</th>
+          <td class="dataset-details" property="dcat:contactPoint">
+            {% set org = h.get_organization(pkg.organization.id) %}
+            {% if (not pkg.get("contact_point") or pkg.get("contact_point") == "unknown") and org.email %}
+              <div about="http://" typeof="v:VCard">
+                <span property="v:fn">{{ org.title }}</span><br/>
+                <span
+                  property="v:email"> {{ h.mail_to(email_address=org.email, name=org.email) }}</span>
+              </div>
+            {% elif pkg.get("contact_point") == "unknown" %}
+              {% set original_source = h.dga_get_original_harvest_source(pkg) %}
+              {% if original_source.href and original_source.title %}
+                <div class="description-text">
+                  This publisher has not provided a contact point. Try visiting the
+                  original
+                  resource for more information:
+                  <a href="{{ original_source.href }}" target="_blank"
+                     rel="noreferrer">{{ original_source.title }}</a>
+                </div>
+              {% else %}
+                <div class="description-text">
+                  This publisher has not provided a contact point, and no additional
+                  information is available.
+                </div>
+              {% endif %}
+            {% else %}
+              <div about="http://" typeof="v:VCard">
+                <span property="v:fn">{{ pkg.organization.title }}</span><br/>
+                <span
+                  property="v:email"> {{ h.mail_to(email_address=pkg.contact_point, name=pkg.contact_point) }}</span>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+
+      {% endblock %}
+
+      {% block agls_data_granularity %}
+        {% if pkg.get('data_granularity') %}
+          <tr>
+            <th scope="row" class="dataset-label">Data Granularity</th>
+            <td class="dataset-detail">{{ pkg.data_granularity }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_temporal_coverage %}
+        {% if pkg.get('temporal_coverage_from') %}
+          <tr>
+            <th scope="row" class="dataset-label">Reference Period</th>
+            <td class="dataset-details" property="dct:temporal">
+              {{ h.render_datetime(pkg.temporal_coverage_from, date_format="%d/%m/%Y") }}
+              {% if pkg.get('temporal_coverage_to') %}
+                -
+                {{ h.render_datetime(pkg.temporal_coverage_to, date_format="%d/%m/%Y") }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_spatial_coverage %}
+        {% set spatial_coverage = pkg.get('spatial_coverage') %}
+        {% set spatial = pkg.get('spatial') %}
+        {% if spatial_coverage or spatial %}
+          {% set valid_extent = h.dga_get_valid_extent(spatial_coverage, spatial) %}
+          <tr>
+            <th scope="row" class="dataset-label">Geospatial Coverage</th>
+            <td class="dataset-details"
+                property="dct:spatial">
+              {% if valid_extent %}
+                {% snippet "package/snippets/additional_info_map.html", extent=valid_extent %}
+              {% else %}
+                {{ spatial_coverage or spatial }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_theme %}
+        {% if pkg.get('theme') %}
+          <tr>
+            <th scope="row" class="dataset-label">Theme</th>
+            <td class="dataset-details" property="agls:function">{{ pkg.theme }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_jurisdiction %}
+        {% if pkg.get('jurisdiction') %}
+          <tr>
+            <th scope="row" class="dataset-label">Jurisdiction</th>
+            <td class="dataset-details"
+                property="aglsterms:AglsJuri">{{ pkg.jurisdiction }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_data_portal %}
+        {% set original_source = h.dga_get_original_harvest_source(pkg) %}
+        {% if original_source and original_source.site_url != h.url_for("dataset.search", _external=True) %}
+          <tr>
+            <th scope="row" class="dataset-label">Data Portal</th>
+            <td class="dataset-details">{{ original_source.title }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <th scope="row" class="dataset-label">Data Portal</th>
+            <td class="dataset-details">Data.gov.au</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_field_of_research %}
+        {% if pkg.get('field_of_research') %}
+          <tr>
+            <th scope="row" class="dataset-label">Fields of Research</th>
+            <td class="dataset-details">{{ pkg.field_of_research }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_data_level %}
+        {% if pkg.get('data_level') %}
+          <tr>
+            <th scope="row" class="dataset-label">Data Level</th>
+            <td
+              class="dataset-details">{{ h.scheming_choices_label(h.scheming_field_choices(data_level),pkg.data_level) }}</td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+
+      {% block agls_geospatial_topic %}
+        {% if pkg.get('geospatial_topic') %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Geospatial Topics") }}</th>
+            <td class="dataset-details">
+              <ul class="">
+                {% with topics = [pkg.geospatial_topic] if pkg.geospatial_topic is string else pkg.geospatial_topic %}
+                  {% for topic in topics if topic %}
+                    <li>{{ h.dga_humanize_geospatial_topic(topic) }}</li>
+                  {% endfor %}
+                {% endwith %}
+              </ul>
+            </td>
+          </tr>
+        {% endif %}
+      {% endblock %}
+    </tbody>
+  </table>
+</section>

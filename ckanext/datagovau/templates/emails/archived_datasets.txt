@@ -1,0 +1,14 @@
+Hi {{ recipient }},
+
+This is an automatic email to inform you that the following datasets have not been updated in 2 years and have been archived as a result:
+{% for title, url in datasets %}
+* {{ title }} at {{ url }}
+{% endfor %}
+
+Archived datasets will no longer appear in search results by default. To view archived datasets, users must enable the archived datasets filter before searching on Data.gov.au.
+
+For more information on archived content and how to remove the archive tag from a dataset please see our User Guide.
+
+Regards,
+
+Data.gov.au team

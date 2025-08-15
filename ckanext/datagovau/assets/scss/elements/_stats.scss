@@ -1,0 +1,45 @@
+@use "../mixins" as m;
+
+.stats {
+    margin-top: 2rem;
+
+    .stats-wrapper {
+        display: flex;
+        gap: 3rem;
+        align-items: center;
+
+        .stat-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-heading {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 26px;
+            margin: 0;
+        }
+
+        .stat-number {
+            @include m.stats-box
+        }
+    }
+
+    .stats-wrapper {
+        display: block !important;
+
+        .stat-box {
+            justify-content: space-between;
+            gap: unset;
+
+            &:first-of-type {
+                margin-bottom: 16px;
+
+                @media (min-width: 578px) {
+                    margin-bottom: 18px;
+                }
+            }
+        }
+    }
+}

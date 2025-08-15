@@ -8,6 +8,9 @@ groups:
         type: int
         default: 10
 
+      - key: ckanext.datagovau.spatialingestor.request_timeout.<method>
+        type: dynamic
+
       - key: ckanext.datagovau.spatialingestor.geoserver.url
 
       - key: ckanext.datagovau.spatialingestor.username
@@ -32,6 +35,8 @@ groups:
 
       - key: ckanext.datagovau.spatialingestor.ignore_workflow
         type: bool
+        description: |
+            Skip spatial ingestion after dataset modifications.
 
       - key: ckanext.datagovau.spatialingestor.large_file_threshold
         type: int
@@ -70,3 +75,40 @@ groups:
         default: 700
         description: |
           Number of days since last update before dataset is marked as archived.
+
+      - key: ckanext.datagovau.suggest_dataset.allow_anonymous
+        type: bool
+        default: true
+        description: Allow anonymous users to suggest datasets
+
+      - key: ckanext.datagovau.ask_question.allow_anonymous
+        type: bool
+        default: true
+        description: Allow anonymous users to ask questions
+
+      - key: ckanext.datagovau.lga_service.timeout
+        type: int
+        default: 10
+        description: Request timeout for map service.
+
+      - key: ckanext.datagovau.lga_service.search_url
+        required: true
+        description: |
+            URL of the ArcGIS search endpoint that returns list of LGA details.
+
+      - key: ckanext.datagovau.lga_service.search_params
+        required: true
+        validators: convert_to_json_if_string dict_only
+        default: {"searchText": "LGA", "layers": 0}
+        description: Parameters for LGA search service.
+
+      - key: ckanext.datagovau.lga_service.name_attribute
+        required: true
+        default: lga_name_2024
+        description: |
+            The attribute inside LGA service's response, that contains LGA name.
+
+      - key: ckanext.datagovau.suggest_dataset.emails
+        type: list
+        description: |
+            The list of email addresses that will receive 'suggest a dataset' emails. If not provided, the emails are sent by default to all sysadmins of the portal.

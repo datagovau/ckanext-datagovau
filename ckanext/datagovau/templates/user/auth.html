@@ -1,0 +1,54 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Login') }}{% endblock %}
+
+{% block main_content %}
+  {% block flash %}
+    <div class="flash-messages">
+      {% block flash_inner %}
+        {% for category, message in h.get_flashed_messages(with_categories=true) %}
+          <div class="alert alert-dismissible fade show {{ category }}">
+            {{ h.literal(message) }}
+          </div>
+        {% endfor %}
+      {% endblock %}
+    </div>
+  {% endblock %}
+
+  {% block toolbar %}
+    <div class="toolbar" role="navigation" aria-label="{{ _('Breadcrumb') }}">
+      {% block breadcrumb %}
+        {% if self.breadcrumb_content() | trim %}
+          <ol class="breadcrumb">
+            {% snippet 'snippets/home_breadcrumb_item.html' %}
+            {% block breadcrumb_content %}{% endblock %}
+          </ol>
+        {% endif %}
+      {% endblock %}
+    </div>
+  {% endblock %}
+
+  <div
+    class="row wrapper{% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' or c.action=='resource_read' %} no-nav{% endif %} dga-login">
+    {% block primary %}
+      <div class="primary col-md-8 col-xs-12" role="main">
+        {#
+        The pre_primary block can be used to add content to before the
+        rendering of the main content columns of the page.
+        #}
+        {% block pre_primary %}
+        {% endblock %}
+
+        {% block primary_content %}
+        {% endblock %}
+      </div>
+    {% endblock %}
+
+    {% block secondary %}
+      <aside class="secondary col-md-4">
+        {% block secondary_content %}
+        {% endblock %}
+      </aside>
+    {% endblock %}
+  </div>
+{% endblock %}

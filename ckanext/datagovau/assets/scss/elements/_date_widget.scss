@@ -1,0 +1,194 @@
+@use "../variables" as v;
+
+// Mixins
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.date-facet {
+  .module-heading {
+    margin-bottom: 0 !important;
+  }
+
+  .date-input-wrapper {
+    position: relative;
+    padding: 16px;
+    border-top: 1px solid v.$dga-color-soft-sky-blue;
+
+    .date-input {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      width: 100%;
+      padding: 8px 16px;
+      border: 1.5px solid v.$dga-color-soft-sky-blue;
+      border-radius: 4px;
+      cursor: pointer;
+      color: v.$dga-color-silver-gray;
+      @include flex-between;
+      align-items: center;
+      background-color: white;
+    }
+
+    .calendar-dropdown {
+      padding: 8px;
+
+      .calendars-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 32px;
+        margin-bottom: 24px;
+      }
+
+      .calendar-grid {
+        flex: 1;
+        max-width: calc(50% - 12px);
+
+        .year-selector {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 8px;
+          margin-bottom: 16px;
+          border-bottom: 1px solid v.$dga-color-soft-sky-blue;
+
+          .year-nav {
+            background: none;
+            padding: 8px;
+            border: none;
+            color: v.$dga-color-skobeloff;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .fa {
+                font-size: 14px;
+            }
+
+            &[disabled] {
+                pointer-events: none;
+                color: v.$dga-color-silver-gray;
+            }
+
+            &:hover {
+              background-color: v.$dga-outer-border-color;
+              border-radius: 4px;
+            }
+          }
+
+          .current-year {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            color: #757575;
+
+            &.active {
+              color: #414042;
+            }
+          }
+        }
+
+        .month-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          column-gap: 12px;
+
+          .month-btn {
+            height: 48px;
+            padding: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 4px;
+            color: v.$dga-color-skobeloff;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 18px;
+            transition: all 0.2s ease;
+
+            &[disabled] {
+                pointer-events: none;
+                color: v.$dga-color-silver-gray;
+            }
+
+            &:hover {
+              background-color: v.$dga-outer-border-color;
+              color: v.$dga-color-dark-cyan;
+            }
+
+            &.selected {
+              background-color: v.$dga-outer-border-color;
+              color: v.$dga-color-dark-cyan;
+            }
+
+            &.disabled {
+              color: v.$dga-color-silver-gray;
+              cursor: not-allowed;
+              opacity: 0.5;
+
+              &:hover {
+                background-color: transparent;
+              }
+            }
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 24px;
+
+        .btn-primary {
+          &:disabled {
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    background-color: v.$color-white !important;
+
+    div {
+      background-color: v.$color-white !important;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1200px) {
+    .date-input {
+      font-size: 14px !important;
+      padding: 8px !important;
+    }
+
+    .calendars-container {
+      flex-direction: column;
+      gap: 0 !important;
+
+      .calendar-grid {
+        max-width: unset !important;
+        margin-bottom: 16px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 12px !important;
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

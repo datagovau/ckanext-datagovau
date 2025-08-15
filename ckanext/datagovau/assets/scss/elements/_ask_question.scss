@@ -1,0 +1,12 @@
+.ask-question-modal {
+    .modal-dialog {
+        .modal-body {
+            .form-buttons {
+                display: flex;
+                gap: 0.75rem;
+                justify-content: end;
+                margin: 0;
+            }
+        }
+    }
+}

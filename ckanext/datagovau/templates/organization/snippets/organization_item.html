@@ -1,0 +1,28 @@
+<div class="col-12 col-lg-6">
+  <a href="{{ h.url_for(organization.type ~ '.read', id=organization.name) }}"
+     class="card-link">
+    <div class="card">
+      <div class="content-frame">
+        <div class="content-wrapper">
+          <h2 class="card-title">
+            {{ organization.display_name }}
+          </h2>
+          {% if organization.description %}
+            <p class="card-text">
+              {{ h.markdown_extract(organization.description, extract_length=100) }}
+            </p>
+          {% endif %}
+          <div class="datasets-count">
+            {{ ungettext('{num} Dataset', '{num} Datasets', organization.package_count).format(num=organization.package_count) }}
+          </div>
+        </div>
+      </div>
+      <div class="image-frame">
+        <img
+          src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}"
+          alt="{{ organization.name }}"
+          class="organization-logo">
+      </div>
+    </div>
+  </a>
+</div>

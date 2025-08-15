@@ -1,0 +1,15 @@
+{% if allowable_parent_groups is not defined %}{% set allowable_parent_groups = c.allowable_parent_groups %}{% endif %}
+
+<div class="form-group control-medium control-select org-hierarchy">
+  <label class="form-label" for="field-parent">{{ _("Parent") }}</label>
+  <div class="controls">
+    <select class="form-control" id="field-parent" name="groups__0__name" data-module="autocomplete">
+      {% set selected_parent = (data.get('groups') or [{'name': ''}])[0]['name'] %} {{ selected_parent }}
+      <option value="" {% if not selected_parent %} selected="selected" {% endif %}>{{ _('None - top level') }}</option>
+      {% for group in allowable_parent_groups or h.get_allowable_parent_groups(data.id) %}
+        <option value="{{ group.name }}" {% if group.name == selected_parent %}selected="selected"{% endif %}>{{ group.title }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <br>
+</div>

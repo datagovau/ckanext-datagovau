@@ -58,7 +58,7 @@ def perform_ingest(
         for pkg in bar:
             try:
                 do_ingesting(pkg.id, force)
-            except Exception as e:
+            except Exception as e:  # noqa: PERF203
                 # TODO: be more specific about possible errors
                 if skip_errors:
                     tk.error_shout(f"Error during {pkg.id} ingestion: {e}")
@@ -121,8 +121,8 @@ def perform_drop_user(username: str):
     pkgs = model.Session.query(model.Package).filter_by(creator_user_id=user.id)
     if pkgs.count():
         tk.error_shout(
-            "There are some(%d) datasets created by this user: %s"
-            % (pkgs.count(), [pkg.name for pkg in pkgs])
+            f"There are some({pkgs.count()}) datasets "
+            f"created by this user: {[pkg.name for pkg in pkgs]}"
         )
         raise click.Abort
 
@@ -133,8 +133,7 @@ def perform_drop_user(username: str):
     )
     if activities.count():
         tk.error_shout(
-            "There are some(%d) activity records that mentions user"
-            % activities.count()
+            f"There are some({activities.count()}) activity records that mentions user"
         )
         raise click.Abort
 

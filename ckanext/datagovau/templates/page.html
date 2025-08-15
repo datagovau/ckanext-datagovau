@@ -1,19 +1,62 @@
 {% ckan_extends %}
 
+{% block bodytag %}{{ super() }} class="{{ h.dga_generate_page_unique_class() }}" {% endblock %}
+
 {% block breadcrumb %}
-  <div data-module="dga-breadcrumbs">
-    {{ super() }}
-  </div>
+    <div data-module="dga-breadcrumbs">
+        {{ super() }}
+    </div>
 {% endblock breadcrumb %}
 
-{# FIXME Should be deleted after ckan-2.10.1 (https://github.com/ckan/ckan/pull/7467) #}
-{% block secondary %}
-  <aside class="secondary col-md-3">
-    {% block secondary_content %}{{ super() }}{% endblock %}
-  </aside>
-{% endblock secondary %}
-{% block primary %}
-  <div class="primary col-md-9 col-xs-12" role="main">
-    {% block primary_content %}{{ super() }}{% endblock %}
-  </div>
-{% endblock primary %}
+{% block page_header %}
+    <header class="module-content page-header">
+        {% if self.content_action() | trim %}
+            <div class="content_action">
+                {% block content_action %}{% endblock %}
+            </div>
+        {% endif %}
+        <ul class="nav nav-tabs" data-module="dga-nav-tabs">
+            {% block content_primary_nav %}{% endblock %}
+        </ul>
+    </header>
+{% endblock %}
+
+{% block main_content %}
+
+    {% block toolbar %}
+        {{ super() }}
+    {% endblock %}
+
+    {% block flash %}
+        {{ super() }}
+    {% endblock %}
+
+    <div class="row wrapper
+
+        {% block wrapper_class %}{% endblock %}{% if self.secondary()|trim == '' or c.action=='resource_read' %} no-nav{% endif %}">
+        {% block pre_primary %} {{ super() }} {% endblock %}
+
+        {% block secondary %}
+            <aside class="secondary col-md-4">
+                {% block secondary_content %}{{ super() }}{% endblock %}
+            </aside>
+        {% endblock %}
+
+        {% block primary %}
+            <div class="primary col-md-8 col-xs-12" role="main">
+                {% block primary_content %}{{ super() }}{% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    {% asset 'datagovau/dga-js' %}
+
+    {% if 'spatial_metadata' in g.plugins %}
+        {% asset 'datagovau/dga-spatial-js' %}
+    {% endif %}
+
+{% endblock scripts %}

@@ -1,6 +1,0 @@
-pytest-ckan
-pytest-factoryboy
-pytest-mock
-pre-commit
-black
-flake8

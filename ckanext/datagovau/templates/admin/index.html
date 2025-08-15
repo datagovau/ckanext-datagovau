@@ -1,0 +1,108 @@
+{% ckan_extends %}
+
+{% block primary_content_inner %}
+    <h2>{{ _('Current Sysadmins') }}</h2>
+
+    <table class="table table-header table-hover table-bordered" data-module="dga-delete-sysadmin">
+        <thead>
+            <tr>
+                <th>{{ _('Username') }}</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in sysadmins %}
+                <tr>
+                    <td>{{ h.linked_user(user) }}</td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <form method="POST" action="{% url_for 'user.sysadmin' %}"
+                                  id="form-{{ loop.index }}">
+                                {{ h.csrf_input() }}
+                                <input type="hidden" value="{{ user }}"
+                                       name="username"/>
+                                <input type="hidden" value="0" name="status"/>
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-sm"
+                                    title="{{ _('Revoke Sysadmin permission') }}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteSysadminModal"
+                                >
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>{{ _('Promote user to Sysadmin') }}</h3>
+
+    <form method="POST" action="{% url_for 'user.sysadmin' %}">
+        {{ h.csrf_input() }}
+        <div class="row">
+            <div class="col">
+
+                <div class="form-group">
+                    <input
+                        id="promote-username" type="text" name="username"
+                        placeholder="Username"
+                        value="" class="control-medium" data-module="autocomplete"
+                        data-module-source="/api/2/util/user/autocomplete?ignore_self=true&q=?"
+                    >
+                    <input type="hidden" value="1" name="status"/>
+                </div>
+
+                <div class="form-actions">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        title="{{ _('Promote user to Sysadmin') }}"
+                    >{{ _('Promote') }}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal fade" id="deleteSysadminModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Please confirm action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ _("Are you sure you want to delete sysadmin access? If you press
+                    ‘Delete’ this action can’t be undone.") }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-outlined" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block secondary_content %}
+    <div class="module module-narrow module-shallow">
+        <h2 class="module-heading">
+            <i class="fa fa-info-circle"></i>
+            {{ _('Administer CKAN') }}
+        </h2>
+        <div class="module-content">
+
+            {% set docs_url = "http://docs.ckan.org/en/{0}/sysadmin-guide.html".format(g.ckan_doc_version) %}
+            {% trans %}
+                <p>As a sysadmin user you have full control over this CKAN instance.
+                    Proceed with care!</p>
+                <p>For guidance on using sysadmin features, see the CKAN <a
+                    href="{{ docs_url }}" target="_blank" rel="noreferrer">sysadmin
+                    guide.</a></p>
+            {% endtrans %}
+        </div>
+    </div>
+{% endblock %}

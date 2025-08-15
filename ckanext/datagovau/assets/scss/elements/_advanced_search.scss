@@ -1,0 +1,313 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+
+.search-tweaks-advanced-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    &.enabled {
+        position: initial;
+    }
+
+    &.use-solr-query {
+        position: relative;
+
+        input {
+            height: 3rem;
+        }
+
+        .btn {
+            border-radius: 0 0.25rem 0.25rem 0;
+        }
+    }
+
+    .advanced-toggles {
+        color: v.$dga-color-graphite-gray;
+        position: relative;
+        margin-left: 1px;
+        order: 10;
+        flex: 1;
+
+        label {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5rem;
+        }
+
+        &.advanced-active {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+
+            .toggle-item.enable-solr {
+                display: flex;
+            }
+        }
+
+        .toggle-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+
+            &.enable-solr {
+                display: none;
+            }
+
+            input {
+                width: 1.25rem;
+                height: 1.25rem;
+                border: 1px solid #757575;
+                border-radius: 0.25rem;
+                margin: 0px;
+            }
+
+            label:after {
+                content: none;
+            }
+        }
+    }
+
+    .advanced-search-submit {
+        order: 11;
+
+        .btn {
+            float: right;
+            padding: 0.5rem 1rem;
+            border: 1.5px solid v.$dga-color-soft-sky-blue;
+        }
+    }
+
+    .original-search-widget, .advanced-search-widget, .solr-search-widget {
+        width: 100%;
+    }
+
+    .advanced-search-widget {
+        margin-bottom: 0px;
+    }
+
+    .composite-field {
+        border: 1.5px solid v.$dga-color-soft-sky-blue !important;
+        color: v.$dga-color-silver-gray;
+        margin-bottom: 0.5rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        padding-right: 1rem !important;
+
+        input {
+            font-size: 1rem;
+            line-height: 1.75rem;
+            color: v.$dga-color-graphite-gray;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .input .selected-value .value-label {
+            color: v.$dga-color-silver-gray;
+            font-size: 1rem;
+            line-height: 1.75rem;
+        }
+
+        .type-input,
+        .junction-input {
+            line-height: 2.75rem;
+            color: v.$dga-color-graphite-gray;
+            border: 1px solid v.$dga-color-soft-sky-blue;
+            border-radius: 0.25rem;
+        }
+
+        .type-input {
+            .selected-value,
+            .options {
+                font-size: 1rem;
+            }
+
+            .options li:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+        }
+
+        .junction-input {
+            .value-label,
+            .options {
+                font-size: 1rem;
+            }
+
+            .options li:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+        }
+
+        .drag-handle {
+            &.left-drag-handle {
+                margin-inline-end: 10px !important;
+            }
+
+            &.center-drag-handle {
+                visibility: hidden;
+            }
+        }
+
+        .switch-input {
+            .switch-label {
+                font-size: 0.875rem !important;
+            }
+
+            .switch-wrapper {
+                background: v.$dga-outer-border-color !important;
+                margin: 0 10px !important;
+            }
+
+            &.active {
+                .switch-wrapper {
+                    background: v.$dga-color-skobeloff !important;
+                }
+            }
+        }
+
+        .options.svelte-7kihaa.svelte-7kihaa {
+            white-space: normal !important;
+        }
+
+        .remove-field svg {
+            margin-top: -2px;
+        }
+
+        @media (max-width: 820px) {
+            .options.svelte-7kihaa.svelte-7kihaa {
+                max-width: 450px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .options.svelte-7kihaa.svelte-7kihaa {
+                max-width: 300px;
+            }
+        }
+    }
+
+    .solr-search-widget {
+        .input-group-btn .btn {
+            border: 1.5px solid v.$dga-color-soft-sky-blue;
+            padding: 0.5rem 1rem;
+            color: v.$dga-color-silver-gray;
+        }
+    }
+
+    button.add-field {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.75rem;
+        background: v.$dga-color-soft-sky-blue;
+        color: v.$dga-color-dark-cyan;
+        padding-top: 1.125rem;
+        padding-bottom: 1.125rem;
+
+        &:before {
+            content: url("#{v.$imagePath}/add.svg");
+            width: 18px;
+            height: 18px;
+            position: relative;
+            top: -3px;
+            right: 8px;
+        }
+
+        strong {
+            display: none;
+        }
+    }
+
+    .search-input-group {
+        margin-bottom: 0;
+    }
+
+    .original-search-widget {
+        input {
+            line-height: 1.375rem;
+        }
+
+        .input-group-btn {
+            border: none;
+
+            .btn {
+                color: v.$dga-color-silver-gray;
+                padding: 1rem;
+                border: 1.5px solid v.$dga-color-soft-sky-blue;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                z-index: 0;
+            }
+        }
+    }
+
+    @include m.breakpoint(lg) {
+        .type-input .pseudo-select {
+            min-width: 230px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .composite-field {
+            padding-right: 0 !important;
+            padding-bottom: 0 !important;
+            row-gap: 0.75rem !important;
+
+            .input {
+                border-bottom: 1.5px solid v.$dga-color-soft-sky-blue !important;
+            }
+
+            .search-adjustment {
+                gap: 0.75rem !important;
+            }
+
+            .remove-field-container > .remove-field {
+                min-height: 3rem;
+            }
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .advanced-toggles {
+
+
+            &.advanced-active {
+                flex-wrap: wrap;
+            }
+        }
+
+        .advanced-active {
+            margin-bottom: unset;
+        }
+
+        .control-order-by {
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-tweaks-advanced-search {
+            position: unset;
+        }
+    }
+}
+
+.advanced-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .checkbox {
+        &::before {
+            border-width: 1px;
+        }
+    }
+
+    @media (min-width: v.$screen-sm-min) {
+        gap: 1.25rem;
+        flex-direction: row;
+    }
+}

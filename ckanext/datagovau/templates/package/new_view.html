@@ -1,0 +1,23 @@
+{% ckan_extends %}
+
+{% block subtitle %}{{ _('Add view') }} {{ g.template_title_delimiter }}
+  {{ h.resource_display_name(resource) }}{% endblock %}
+{% block form_title %}{{ _('Add view') }}{% endblock %}
+
+{% block content_primary_nav %}
+{% endblock %}
+
+{% block form %}
+  <p class="create-dataset-heading">{{ _('Add view') }}</p>
+  <form method="post" data-module="basic-form resource-form">
+    {{ h.csrf_input() }}
+    {% include 'package/snippets/view_form.html' %}
+    <div class="form-actions">
+      <button
+        class="btn btn-default {% if not h.resource_view_display_preview(data) %}hide{% endif %}"
+        name="preview" value="True" type="submit">{{ _('Preview') }}</button>
+      <button class="btn btn-primary" name="save" value="Save" type="submit">
+        {% block save_button_text %}{{ _('Add') }}{% endblock %}</button>
+    </div>
+  </form>
+{% endblock %}

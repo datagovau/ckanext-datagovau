@@ -1,0 +1,95 @@
+@use "../variables" as v;
+
+#suggest-dataset-block {
+    margin-top: 2.5rem;
+
+    .accordion-item {
+        border: unset;
+        background: unset;
+
+        .accordion-header {
+            .accordion-button  {
+                font-size: 1.125rem;
+                font-weight: 500;
+                line-height: 23.4px;
+                color: v.$dga-color-midnight-green;
+                background: inherit;
+                padding: 0;
+
+                display: flex;
+                gap: 0.5rem;
+                flex-direction: column;
+                align-items: initial;
+
+                svg {
+                    margin-left: 0.5rem;
+                    transition: 300ms ease all;
+                }
+
+                &:after {
+                    display: none;
+                }
+
+                &.collapsed {
+
+                    svg {
+                        transform: rotate(180deg);
+                    }
+                }
+
+                &:not(.collapsed) {
+                    box-shadow: unset;
+                }
+            }
+        }
+
+        .accordion-collapse .accordion-body {
+            padding: 2rem 0 0 0;
+
+            .accordion-body-inner {
+                background: v.$color-white;
+                padding: 1rem;
+                border-radius: 4px;
+            }
+
+            form {
+                .form-buttons {
+                    display: flex;
+                    gap: 0.75rem;
+                    justify-content: space-between;
+
+                    .btn {
+                        flex: 1;
+                        display: flex;
+                        justify-content: center;
+                    }
+                }
+            }
+
+            form.suggestion-done {
+                text-align: center;
+                font-size: 1rem;
+            }
+
+        }
+    }
+
+    @media (min-width: v.$screen-md-min) {
+        .accordion-item {
+            .accordion-header .accordion-button {
+                flex-direction: row;
+            }
+
+            .accordion-collapse .accordion-body {
+
+                form {
+                    .form-buttons {
+                        .btn {
+                            flex: initial;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

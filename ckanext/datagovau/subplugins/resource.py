@@ -11,6 +11,7 @@ from typing import Any
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+from ckan import types
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class ResourcePlugin(p.SingletonPlugin):
 
 
 @tk.chained_action
-def resource_create(next_, context, data_dict):
+def resource_create(next_: Any, context: types.Context, data_dict: dict[str, Any]):
     result = next_(context, data_dict)
 
     if _is_extractable(result):
@@ -36,7 +37,7 @@ def resource_create(next_, context, data_dict):
 
 
 @tk.chained_action
-def resource_update(next_, context, data_dict):
+def resource_update(next_: Any, context: types.Context, data_dict: dict[str, Any]):
     result = next_(context, data_dict)
 
     if _is_extractable(result):

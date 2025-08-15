@@ -1,0 +1,192 @@
+@use "../variables" as v;
+@use "buttons" as btn;
+
+.activity {
+    margin-bottom: 3rem;
+    color: v.$dga-color-graphite-gray;
+    background: url("#{v.$imagePath}/vertical-line.svg") 15px 0 repeat-y;
+
+    a {
+        color: v.$dga-color-skobeloff;
+    }
+
+    .item {
+        display: flex;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+
+        span:first-child {
+            width: 2rem;
+            height: 2rem;
+            margin-right: 1rem;
+
+            i {
+                flex: 0;
+                width: 2rem;
+                height: 2rem;
+
+                &:first-child:before {
+                    color: v.$dga-color-soft-sky-blue;
+                    font-size: 2rem;
+                    position: relative;
+                    top: -6px;
+                }
+
+                &:last-child:before {
+                    font-size: 1rem;
+                    color: v.$dga-color-midnight-green;
+                    width: 2rem;
+                    height: 2rem;
+                    position: relative;
+                    top: -3px;
+                }
+            }
+        }
+
+        .user-image {
+            flex: 0;
+            width: 2rem;
+            height: 2rem;
+            margin-right: 1rem;
+        }
+
+        .activity-text {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-top: 2px;
+            flex: 1;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            *:not(:last-child) {
+                margin-right: 0.25rem;
+            }
+        }
+
+        .date {
+            color: v.$dga-color-silver-gray;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1rem;
+            flex: 1 1 100%;
+            margin-left: 6rem;
+            margin-top: 0.5rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        background: url("#{v.$imagePath}/vertical-line.svg") 9px 0 repeat-y;
+        .item {
+            span:first-child {
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-right: 0.25rem;
+
+                i {
+                    width: 1.25rem;
+                    height: 1.25rem;
+
+                    &:first-child:before {
+                        font-size: 1.25rem;
+                        top: -13px;
+                    }
+
+                    &:last-child:before {
+                        font-size: 0.5rem;
+                        width: 1.25rem;
+                        height: 1.25rem;
+                        top: -11px;
+                    }
+                }
+            }
+
+            .user-image {
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-right: 0.5rem;
+            }
+
+            .activity-text {
+                margin-top: -0.25rem;
+            }
+
+            .date {
+                margin-left: 3.25rem;
+            }
+
+            .activity-text, .date {
+                font-size: 0.875rem;
+                line-height: 1.8;
+            }
+        }
+    }
+}
+
+#activity_types_filter {
+
+    label {
+        color: v.$dga-color-graphite-gray;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        padding-bottom: 0;
+
+        &:after {
+            content: none;
+        }
+    }
+
+    .select2-container {
+        flex: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        margin-top: 0;
+    }
+}
+
+#activity_types_filter_select.form-select {
+    border: v.$border-default;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    box-shadow: unset;
+    font-size: 1rem;
+    color: v.$dga-color-graphite-gray;
+    width: unset;
+    display: inline;
+}
+
+.activity_buttons {
+    margin-bottom: 1rem;
+    gap: 0.75rem;
+
+    a {
+        padding: 0.5rem 1rem;
+        line-height: 1.8;
+        @include btn.btn-primary-outlined;
+    }
+
+    @media (max-width: 575.98px) {
+        a {
+            font-size: 0.875rem;
+            flex: auto;
+            justify-content: center;
+        }
+    }
+}
+
+.activity {
+    .item {
+        .date {
+            &.dga-datastore {
+                @media (min-width: 768px) {
+                    margin-left: 3rem;
+                }
+            }
+        }
+    }
+}
+

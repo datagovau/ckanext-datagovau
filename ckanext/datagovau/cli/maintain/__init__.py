@@ -15,6 +15,7 @@ from ckan import model
 
 from ckanext.datagovau.cli.maintain.bioregional_ingest import bioregional_ingest
 from ckanext.datagovau.cli.maintain.purge_user import purge_deleted_users
+from ckanext.datagovau.utils import lga
 
 log = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ def zip_extract(
         for resource in select_extractable_resources(ckan, ids):
             try:
                 ckan.action.dga_extract_resource(id=resource["id"], tmp_dir=tmp_dir)
-            except ckanapi.ValidationError:
+            except ckanapi.ValidationError:  # noqa: PERF203
                 log.error(
                     "Cannot update resource %s from dataset %s",
                     resource["id"],
@@ -93,7 +94,7 @@ def force_purge_orgs():
         " where \"state\"='deleted' AND is_organization='t');",
         'delete from member where group_id in (select id from "group" where'
         " \"state\"='deleted' AND is_organization='t');",
-        'delete from "group" where "state"=\'deleted\' AND' " is_organization='t';",
+        "delete from \"group\" where \"state\"='deleted' AND is_organization='t';",
     ]
 
     _execute_sql_delete_commands(sql_commands)
@@ -129,7 +130,7 @@ def _execute_sql_delete_commands(commands: list[str]):
         try:
             model.Session.execute(sa.text(command))
             model.Session.commit()
-        except ProgrammingError:
+        except ProgrammingError:  # noqa: PERF203
             log.warning(
                 'Could not execute command "%s". Table does not exist.', command
             )
@@ -405,6 +406,15 @@ _sources = {
         "title": "Connector Redland",
         "url": "https://opendata.redland.qld.gov.au/api/feed/dcat-us/1.1.json",
     },
+    "gbrmpa_arcgis": {
+        "config": '{"tsm_named_schema": "gbrmpa_arcgis"}',
+        "frequency": "MANUAL",
+        "name": "gbrmpa_arcgis",
+        "notes": "GBRMPA ArcGIS harvester",
+        "source_type": "gbrmpa_arcgis",
+        "title": "GBRMPA ArcGIS",
+        "url": "https://gbrmpa.maps.arcgis.com/",
+    },
 }
 
 
@@ -437,3 +447,57 @@ def recreate_harvesters(names: tuple[str], organization: str | None):
             )
 
         click.echo(f"Source {name} recreated.")
+
+
+@maintain.command()
+@click.argument("vocabulary_name")
+@click.argument("tags", nargs=-1)
+def add_terms_vocabulary(vocabulary_name: str, tags: list[str]):
+    """Add new terms to the specified vocabulary."""
+    vocab = model.Vocabulary.get(vocabulary_name)
+
+    if not vocab:
+        click.secho(f"Vocabulary '{vocabulary_name}' not found.", fg="yellow")
+        return
+
+    for tag in tags:
+        data = {"name": tag, "vocabulary_id": vocab.id}
+        tk.get_action("tag_create")({"ignore_auth": True}, data)
+        click.secho(f"Added '{tag}' to vocabulary '{vocabulary_name}'.", fg="green")
+
+
+@maintain.command()
+@click.option(
+    "-n", "--name", help="Refresh data only for given LGA(implies --refresh-geometry)"
+)
+@click.option("--refresh-geometry", is_flag=True, help="Remove cached geometries")
+def fetch_lga(name: str | None, refresh_geometry: bool):
+    """Cache LGA geometry to make spatial search widget faster."""
+    names: list[str]
+    if name:
+        refresh_geometry = True
+        names = [name]
+    else:
+        lga.lga_names.reset()
+        names = lga.lga_names()
+
+    for name in names:
+        if refresh_geometry:
+            lga.lga_geometry.reset(name)
+        lga.lga_geometry(name)
+
+
+@maintain.command()
+def remove_cesium_view():
+    """Lookup and remove National Map View in resources."""
+    resource_views = model.Session.query(model.ResourceView).filter_by(
+        view_type="cesium_view"
+    )
+    for resource_view in resource_views:
+        click.secho(
+            f"Delete National Map preview for resource '{resource_view.resource_id}'",
+            fg="yellow",
+        )
+        model.Session.delete(resource_view)
+    model.Session.commit()
+    click.secho("National Map previews removed", fg="green")

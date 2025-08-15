@@ -1,3 +1,91 @@
 {% ckan_extends %}
 
+{% import 'macros/banner.html' as banner_macro %}
+
 {% block subtitle %}{{ _("Datasets") }} - Page {{ c.page.page }} {% endblock %}
+
+{% block header %}
+  {{ super() }}
+  {% call banner_macro.banner(title=_('Datasets'), description=_('Explore the central
+    source of Australian open government data. Anyone can access the public data
+    published by federal, state and local government agencies.')) %}
+    {% if h.check_access('package_create') %}
+      {% link_for _('Add dataset'), named_route='dataset.new', class_='btn btn-light', icon='plus' %}
+    {% endif %}
+  {% endcall %}
+{% endblock %}
+
+{% block primary %}
+  <div class="primary col-md-8 col-xs-12 dataset-search-page" role="main">
+    {% block primary_content %}
+      <section class="module">
+        <div class="module-content">
+          {% block page_primary_action %}
+            {% if h.check_access('package_create') %}
+              <div class="page_primary_action">
+                {{ h.snippet ('snippets/add_dataset.html', dataset_type=dataset_type) }}
+              </div>
+            {% endif %}
+          {% endblock %}
+          {% block form %}
+            {% set facets = {
+              'fields': fields_grouped,
+              'search': search_facets,
+              'titles': facet_titles,
+              'translated_fields': translated_fields,
+              'remove_field': remove_field } %}
+            {% set sorting = [
+              (_('Relevance'), 'score desc, metadata_modified desc'),
+              (_('Name Ascending'), 'title_string asc'),
+              (_('Name Descending'), 'title_string desc'),
+              (_('Last Modified'), 'metadata_modified desc'),
+              (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ] %}
+
+            <label class="search-label" for="search">
+              {{ _("Search data") }}
+            </label>
+            {% snippet 'snippets/search_form.html', form_id='dataset-search-form', type=dataset_type, query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, placeholder=h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Enter keyword or dataset name'), facets=facets, show_empty=request.args, error=query_error, fields=fields %}
+          {% endblock %}
+          {% block package_search_results_list %}
+            {% snippet 'snippets/package_list.html', packages=page.items %}
+          {% endblock %}
+        </div>
+
+        {% if h.dga_user_can_suggest_dataset() %}
+          {% snippet 'package/snippets/suggest_dataset.html' %}
+        {% endif %}
+
+        {% block page_pagination %}
+          <div class="pagination-container">
+            {{ page.pager(q=q) }}
+            {% if page.item_count %}
+              <span class="pager-summary">
+                {{ page.first_item }} - {{ page.last_item }} of {{ page.item_count }} results
+              </span>
+            {% endif %}
+          </div>
+        {% endblock %}
+      </section>
+    {% endblock %}
+  </div>
+{% endblock primary %}
+
+{% block secondary %}
+  <aside class="secondary col-md-4 dataset-search-page">
+    {% block secondary_content %}
+      <div class="filters">
+        <div>
+          {% if 'spatial_metadata' in g.plugins %}
+            {% snippet 'snippets/spatial_query.html', default_extent=[[-43.0, 112.0], [-10.0, 154.0]] %}
+          {% endif %}
+          {% for facet in facet_titles %}
+            {{ h.snippet('snippets/facet_list.html', title=facet_titles[facet], name=facet, search_facets=search_facets) }}
+          {% endfor %}
+          {% snippet "snippets/date_widget.html" %}
+        </div>
+        <a class="close no-text hide-filters"><i class="fa fa-times"></i><span
+          class="text">close</span></a>
+      </div>
+    {% endblock secondary_content %}
+  </aside>
+{% endblock secondary %}

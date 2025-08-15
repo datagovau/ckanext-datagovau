@@ -1,0 +1,11 @@
+{% ckan_extends %}
+
+{% block breadcrumb_content %}
+    {{ h.build_nav('user.index', _('Users')) }}
+    {{ h.build_nav('admin.index', _('Sysadmin settings')) }}
+{% endblock %}
+
+{% block content_primary_nav %}
+    {{ super() }}
+    {{ h.build_nav_icon("check_link.report", _("Broken links"), icon='link') }}
+{% endblock %}

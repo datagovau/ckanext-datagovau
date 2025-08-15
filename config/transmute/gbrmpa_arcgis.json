@@ -1,0 +1,60 @@
+{
+    "root": "Dataset",
+    "types": {
+        "Dataset": {
+            "fields": {
+                "owner": {"remove": true},
+                "guid": {"remove": true},
+                "type": {"remove": true},
+                "typeKeywords": {"remove": true},
+                "snippet": {"remove": true},
+                "thumbnail": {"remove": true},
+                "documentation": {"remove": true},
+                "categories": {"remove": true},
+                "spatialReference": {"remove": true},
+                "accessInformation": {"remove": true},
+                "classification": {"remove": true},
+                "licenseInfo": {"remove": true},
+                "culture": {"remove": true},
+                "properties": {"remove": true},
+                "advancedSettings": {"remove": true},
+                "url": {"remove": true},
+                "proxyFilter": {"remove": true},
+                "access": {"remove": true},
+                "size": {"remove": true},
+                "subInfo": {"remove": true},
+                "appCategories": {"remove": true},
+                "industries": {"remove": true},
+                "languages": {"remove": true},
+                "largeThumbnail": {"remove": true},
+                "banner": {"remove": true},
+                "screenshots": {"remove": true},
+                "listed": {"remove": true},
+                "numComments": {"remove": true},
+                "numRatings": {"remove": true},
+                "avgRating": {"remove": true},
+                "numViews": {"remove": true},
+                "groupCategories": {"remove": true},
+                "scoreCompleteness": {"remove": true},
+                "groupDesignations": {"remove": true},
+                "apiToken1ExpirationDate": {"remove": true},
+                "apiToken2ExpirationDate": {"remove": true},
+                "contentOrigin": {"remove": true},
+                "lastViewed": {"remove": true},
+
+                "id": {"map":  "id", "validators": ["dga_tsm_gbrmpa_id"]},
+                "title": {"map": "title"},
+                "license_id": {"default": "cc-by-4.0"},
+                "description": {"map": "notes", "validators": ["dga_tsm_parse_description"]},
+                "created": {"map": "temporal_coverage_from", "validators": ["dga_tsm_time_from_unix_timestamp"]},
+                "modified": {"map": "remote_last_updated", "validators": ["dga_tsm_time_from_unix_timestamp"]},
+                "tags": {"map": "tags", "validators": ["dga_tsm_words_into_tags"], "default": []},
+                "extent": {"map": "spatial_coverage", "validators": ["dga_tsm_gbrmpa_to_spatial"]},
+                "contact_point": {"default": "unknown"}
+            }
+        },
+        "Resource": {
+            "fields": {}
+        }
+    }
+}

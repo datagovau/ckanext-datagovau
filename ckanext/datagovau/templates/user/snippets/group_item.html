@@ -1,0 +1,33 @@
+{% set notes = group.description %}
+
+<div class="card">
+    <div class="content-frame">
+        <div class="content-wrapper">
+            <h2 class="card-title mb-3">
+                <a href="{{ h.url_for(group.type ~ '.read', id=group.name) }}"
+                    class="card-link">
+                    {{ group.display_name }}
+                </a>
+            </h2>
+            {% if notes %}
+                <p class="card-text">
+                    {{ h.markdown_extract(notes, extract_length=100) }}
+                </p>
+            {% endif %}
+            <div class="organization-counters d-flex gap-4 align-self-end w-100">
+                <div class="datasets-count">
+                    {{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count)
+                    }}
+                </div>
+                <div class="datasets-count">
+                    {{ ungettext('{num} members', '{num} members', group.member_count).format(num=group.member_count) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="image-frame">
+        <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}"
+            alt="{{ group.name }}"
+            class="organization-logo">
+    </div>
+</div>

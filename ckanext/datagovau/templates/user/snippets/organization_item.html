@@ -1,0 +1,44 @@
+{% set description = organization.description %}
+
+<div class="card">
+    <div class="content-frame">
+        <div class="content-wrapper">
+            <h2 class="card-title mb-1">
+                <a href="{{ h.url_for(organization.type ~ '.read', id=organization.name) }}"
+                    class="card-link">
+                    {{ organization.display_name }}
+                </a>
+            </h2>
+
+            {% if organization.jurisdiction %}
+                <h6 class="card-subtitle mb-3 text-muted fw-normal lh-lg">
+                    {{ organization.jurisdiction }}
+                </h6>
+            {% endif %}
+
+
+            {% if description %}
+                <p class="card-text">
+                    {{ h.markdown_extract(description, extract_length=100) }}
+                </p>
+            {% endif %}
+
+            <div class="organization-counters d-flex gap-4 align-self-end align-items-center w-100">
+                <div class="datasets-count">
+                    {{ ungettext('{num} Dataset', '{num} Datasets', organization.package_count).format(num=organization.package_count) }}
+                </div>
+                <div class="datasets-count">
+                    {{ ungettext('{num} members', '{num} members', organization.member_count).format(num=organization.member_count) }}
+                </div>
+                <div class="capacity">
+                    {{ organization.capacity | title }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="image-frame">
+        <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}"
+            alt="{{ organization.name }}"
+            class="organization-logo">
+    </div>
+</div>

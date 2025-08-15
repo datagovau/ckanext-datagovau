@@ -1,0 +1,32 @@
+{% ckan_extends %}
+
+{% block breadcrumb_content %}
+  <li>{% link_for _('Group'), named_route=group_type+'.index' %}</li>
+  <li
+    class="active">{% link_for group_dict.display_name|truncate(35), named_route=group_type+'.read', id=group_dict.name %}</li>
+{% endblock %}
+
+{% block content_action %}{% endblock %}
+
+{% block secondary %}
+  <aside class="secondary col-md-4">
+    <div class="module">
+      <h2 class="module-heading secondary-heading"
+          data-bs-toggle="collapse"
+          data-bs-target="#groupSecondaryContent"
+          aria-expanded="true"
+          aria-controls="groupSecondaryContent"
+          style="cursor: pointer;">
+        {{ _('Group') }}
+      </h2>
+    </div>
+    <div id="groupSecondaryContent" class="collapse show">
+      {% block secondary_content %}
+        {% snippet "group/snippets/info.html", group=group_dict, show_nums=true, am_following=am_following %}
+      {% endblock %}
+    </div>
+  </aside>
+{% endblock %}
+
+{% set action = "create" if g.view == "new" else "edit" %}
+{% block wrapper_class %} group-{{ action }}-page{% endblock wrapper_class %}

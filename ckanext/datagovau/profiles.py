@@ -1,9 +1,13 @@
+from __future__ import annotations
+
+from typing import Any
+
 from ckanext.dcat.profiles import SchemaOrgProfile
 from ckanext.dcat.profiles.base import RDF, BNode, Literal, namespaces
 
 
 class DgaSchemaOrgProfile(SchemaOrgProfile):
-    def additional_fields(self, dataset_ref, dataset_dict):
+    def additional_fields(self, dataset_ref: Any, dataset_dict: dict[str, Any]):
         # Add optional creator ################################################
         creator_details = BNode()
         self.g.add((creator_details, RDF.type, namespaces["schema"].Organization))

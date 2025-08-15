@@ -1,0 +1,126 @@
+{% set user = user_dict if not user else user %}
+{% set orgs_available = h.organizations_available(permission='manage_group',
+    include_dataset_count=True,
+    include_member_count=True,
+    user=user['id'])
+%}
+{% set groups_available = h.groups_available(am_member=True,
+    include_dataset_count=True,
+    include_member_count=True,
+    user=user['id'])
+%}
+{% set about_formatted = h.render_markdown(user['about'])|safe %}
+
+
+<div id="user-info" class="module context-info">
+    <h2 class="module-heading secondary-heading collapsed"
+        data-bs-toggle="collapse"
+        data-bs-target="#dga-user-sidebar"
+        aria-expanded="true"
+        aria-controls="dga-user-sidebar"
+        style="cursor: pointer;">
+        {{ user.display_name }}
+    </h2>
+
+    <div id="dga-user-sidebar" class="collapse">
+        <section class="module-content">
+            {% block secondary_content_inner %}
+                {% block user_image %}
+                    <div class="image">{{ h.user_image(user.id, size=270) }}</div>
+                {% endblock %}
+                {% block user_heading %}
+                    <h1 class="heading text-decoration-none">{{ user.display_name }}</h1>
+                {% endblock %}
+                {% block user_about %}
+                    <div class="user-about fw-normal  lh-lg">
+                        {% if about_formatted %}
+                            <div data-module="dga-about-preview" data-module-full-text="{{ about_formatted }}">
+                                <p class="about-preview"></p>
+                                {% if about_formatted|length > 30 %}
+                                    <p class="about-read-more">
+                                        {{ _("Show More") }}
+                                    </p>
+                                {% endif %}
+                                </p>
+                            </div>
+                        {% else %}
+                            <p class="empty">
+                                {% if is_myself %}
+                                    {% trans %}You have not provided a biography.{% endtrans %}
+                                {% else %}
+                                    {% trans %}This user has no biography.{% endtrans %}
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endblock %}
+                {% block user_nums %}
+                    <div class="nums border-top-0 me-1 lh-lg mb-4">
+                        <div>
+                            <div>{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</div>
+                            <div class="nums-value">{{ h.SI_number_span(user.number_created_packages) }}</div>
+                        </div>
+                        <div >
+                            <div>{{ h.humanize_entity_type('organization', org_type, 'facet label') or _('Organisations') }}</div>
+                            <div class="nums-value">{{ orgs_available | count }}</div>
+                        </div>
+                        <div >
+                            <div>{{ h.humanize_entity_type('group', group_type, 'facet label') or _('Groups') }}</div>
+                            <div class="nums-value">{{ groups_available | count }}</div>
+                        </div>
+                    </div>
+                {% endblock %}
+
+            {% endblock %}
+
+            <hr class="dga-sidebar-divider"/>
+
+            {% block user_info %}
+                <div class="info fw-normal lh-lg my-4 pt-0 border-0">
+                    <p class="mb-2">
+                        {% if user.name.startswith('http://') or user.name.startswith('https://') %}
+                            <span class="info-title  d-md-block d-lg-inline">{{ _('Open ID') }}</span>
+                            <span>{{ user.name|urlize(25) }}{# Be great if this just showed the domain #}</span>
+                        {% else %}
+                            <span class="info-title  d-md-block d-lg-inline">{{ _('Username') }}</span>
+                            <span>{{ user.name }}</span>
+                        {% endif %}
+                    </p>
+                    {% if is_myself %}
+                        <p class="mb-2">
+                            <span class="info-title  d-md-block d-lg-inline">{{ _('Email') }}</span>
+                            <span>{{ user.email }}</span>
+                        </p>
+                    {% endif %}
+                    <p class="mb-2">
+                        <span class="info-title  d-md-block d-lg-inline">{{ _('Member Since') }}</span>
+                        <span>{{ h.render_datetime(user.created) }}</span>
+                    </p>
+                    {% if is_sysadmin %}
+                        <p class="mb-2">
+                            <span class="info-title  d-md-block d-lg-inline">{{_('Last Active') }}</span>
+                            <span>{{ h.time_ago_from_timestamp(user.last_active) }}</span>
+                        </p>
+                    {% endif %}
+                    <p class="mb-2">
+                        <span class="info-title  d-md-block d-lg-inline">{{ _('State') }}</span class="info-title  d-md-block d-lg-inline">
+                        <span>{{ _(user.state) }}</span>
+                    </p>
+                </div>
+            {% endblock %}
+
+            {% block content_action %}
+                {% if h.check_access('user_update', user) %}
+                    <hr class="dga-sidebar-divider"/>
+
+                    <div class="manage mt-4">
+                        {% link_for _('Manage'), named_route='user.edit', id=user.name, class_='btn btn-default', icon="cog" %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+
+        </section>
+
+
+    </div>
+</div>

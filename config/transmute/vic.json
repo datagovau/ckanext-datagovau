@@ -3,15 +3,19 @@
     "types": {
         "Dataset": {
             "fields": {
-                "jurisdiction": {"remove": "true"},
+                "extras": {"remove": true, "weight": 10},
                 "data_state": {"remove": "true"},
-                "update_freq": {"remove": "true"},
                 "notes": {"validators": ["dga_tsm_parse_description"]},
                 "metadata_created": {},
                 "license_id": {"default": "notspecified"},
                 "contact_point": {"default": "unknown"},
 
-                "date_created_data_asset": {"default_from": "metadata_created", "map": "temporal_coverage_from"}
+                "date_created_data_asset": {"default_from": "metadata_created", "map": "temporal_coverage_from"},
+                "remote_last_updated": {"default_from": "metadata_modified", "validators": [
+                    "dga_tsm_parse_date", "tsm_to_string"
+                    ]
+                },
+                "original_name": {"default_from": "name"}
             }
         },
         "Resource": {

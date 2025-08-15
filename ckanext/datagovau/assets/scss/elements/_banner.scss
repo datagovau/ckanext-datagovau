@@ -1,0 +1,73 @@
+@use "../variables" as v;
+
+.banner {
+    color: v.$color-white;
+    background-image: url("#{v.$imagePath}/banner-bg.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    .banner-overlay {
+        background-color: rgba(0, 62, 84, 0.8509803922);
+        padding-top: 4rem;
+        padding-bottom: 4.25rem;
+
+        @media (max-width: 1200px) {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        @media (max-width: 991.98px) {
+            padding-bottom: 3rem;
+        }
+
+        @media (max-width: 575.98px) {
+            padding-bottom: 4.25rem;
+        }
+    }
+
+    h2 {
+        font-size: 2.75rem;
+        font-weight: 600;
+        line-height: 3.575rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .description {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.8;
+        margin-bottom: 0.75rem;
+    }
+
+    .btn {
+        margin-bottom: 0.75rem;
+    }
+
+    .original-search-widget {
+        margin-top: 41px;
+
+        input {
+            height: 3rem;
+        }
+
+        .input-group-btn button {
+            border: 1.5px solid v.$dga-color-soft-sky-blue;
+            height: 3rem;
+            margin-bottom: 0;
+        }
+    }
+
+    .advanced-toggles {
+        margin-top: 1.5rem;
+        color: v.$color-white;
+
+        .toggle-item input[type="checkbox"] {
+            border: 1px solid v.$dga-color-soft-sky-blue;
+        }
+    }
+
+    .enable-solr i {
+        color: white;
+    }
+}

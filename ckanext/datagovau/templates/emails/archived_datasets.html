@@ -1,0 +1,49 @@
+{% extends "emails/dga_base_email.html" %}
+
+{% block content %}
+    <table class="bg-white p24-32 w100">
+        <tbody>
+            <tr>
+                <td class="h1">
+                    Hi {{ recipient }},
+                </td>
+            </tr>
+            <tr>
+                <td class="pt20">
+                    This is an automatic email to inform you that the following datasets have not been updated in 2 years and have been archived as a result:
+                </td>
+            </tr>
+            <tr>
+                <td class="pt20">
+                    <ul>
+                        {% for title, url in datasets %}
+                            <li>
+                                {{ title }} at <a href="{{ url }}">{{ url }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="pt32">
+                    Archived datasets will no longer appear in search results by default. To view archived datasets, users must enable the archived datasets filter before searching on Data.gov.au.
+                </td>
+            </tr>
+            <tr>
+                <td class="pt32">
+                    For more information on archived content and how to remove the archive tag from a dataset please see our User Guide.
+                </td>
+            </tr>
+            <tr>
+                <td class="pt32">
+                    <p>Regards,</p>
+                    <p>Data.gov.au team</p>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

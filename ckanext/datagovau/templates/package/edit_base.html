@@ -1,0 +1,17 @@
+{% ckan_extends %}
+
+{% block content_primary_nav %}
+    {{ h.build_nav_icon(pkg.type ~ '.edit', _('Edit metadata'), id=pkg.name, icon='pencil-dga') }}
+    {{ h.build_nav_icon(pkg.type ~ '.resources', _('Reorder resources'), id=pkg.name, icon='reorder-dga') }}
+    {% if h.check_config_permission('allow_dataset_collaborators') and h.check_access('package_collaborator_create', {'id': pkg_dict.id}) %}
+        {{ h.build_nav_icon(pkg.type ~ '.collaborators_read', _('Collaborators'), id=pkg.name, icon='users')}}
+    {% endif %}
+
+    {% if 'search_tweaks_field_relevance' in g.plugins and h.check_access("search_tweaks_field_relevance_promote", {"id": pkg_dict.id}) %}
+        {{ h.build_nav_icon('search_tweaks_field_relevance.promote', _('Promote'), id=pkg.name, icon='arrow-up-short-wide') }}
+    {% endif %}
+{% endblock %}
+{% block content_action %}
+{% endblock %}
+
+{% block wrapper_class %} dataset-edit-page pe-lg-3{% endblock wrapper_class%}

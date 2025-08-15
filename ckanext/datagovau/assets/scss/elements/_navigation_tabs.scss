@@ -1,0 +1,69 @@
+@use "../variables" as v;
+
+
+.dashboard,
+.primary {
+    .page-header {
+        background-color: v.$dga-main-bg;
+        border-bottom: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .module-content {
+        border-radius: 0.25rem;
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            border: none;
+            background-color: v.$dga-color-light-gray;
+            margin: 0px;
+
+            li {
+                border-top-left-radius: 0.25rem;
+                border-top-right-radius: 0.25rem;
+                white-space: nowrap;
+
+                @media (min-width: v.$screen-md-min) {
+                    flex: 1;
+                }
+
+                a {
+                    color: v.$dga-color-graphite-gray;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: unset;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    line-height: 1.5rem;
+                    padding: 1rem 0.75rem;
+                    gap: 6px;
+
+                    @media (min-width: v.$screen-xs-min) {
+                        padding: 1rem;
+                    }
+
+
+                    i, svg {
+                        display: none;
+                        @media (min-width: v.$screen-sm-min) {
+                            display: inline;
+                        }
+
+                    }
+                }
+
+                &.active,
+                &:hover, &:focus, &:active {
+                    a {
+                        background-color: v.$color-white;
+                        color: v.$dga-color-skobeloff;
+                    }
+                }
+            }
+        }
+    }
+}

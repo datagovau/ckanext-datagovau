@@ -1,9 +1,7 @@
-{% ckan_extends %}
-
-{% block group_list %}
-  <ul class="media-grid">
-    {% block group_list_inner %}
-      {{ super() }}
-    {% endblock %}
-  </ul>
-{% endblock %}
+<div>
+  <div class="row row-cols-1 row-cols-xl-2 organization-list g-3 g-lg-4">
+    {% for group in groups %}
+      {% snippet "group/snippets/group_item.html", group=group, position=loop.index, show_capacity=show_capacity %}
+    {% endfor %}
+  </div>
+</div>

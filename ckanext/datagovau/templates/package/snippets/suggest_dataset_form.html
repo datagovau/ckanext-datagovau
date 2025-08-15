@@ -1,0 +1,16 @@
+{% import 'macros/form.html' as form %}
+
+{% set data = data or {} %}
+{% set errors = errors or {} %}
+{% set is_empty = not data.content and not data.name and not data.email %}
+
+<form hx-post="{{ h.url_for('dga_dataset.suggest') }}" hx-target="this" hx-swap="outerHTML" hx-trigger="submit, change">
+    {{ form.markdown('content', id='field-content', label=_('What sort of data are you looking for?'), value=data.content, error=errors.content, placeholder=_('It helps if you’re really specific on the kind of data you’re looking for and what you would use it for. Feel free to report any problems you run into as well.'), is_required=true) }}
+    {{ form.input('name', id='field-name', label=_('Your name'), placeholder=_('Enter your name'), value=data.name, error=errors.name, classes=['control-medium'], is_required=true) }}
+    {{ form.input('email', id='field-email', label=_('Email'), placeholder=_('Enter your email'), value=data.email, error=errors.email, classes=['control-medium'], is_required=true) }}
+
+    <div class="form-buttons">
+        <button class="btn btn-primary dga-btn-submit" type="submit" name="submit" value="1" data-module="dga-send-button">{{ _("Send") }}</button>
+        <button class="btn btn-light me-auto dga-btn-clear" type="submit" name="refresh" value="1" {{ 'disabled' if is_empty }}>{{ _("Clear") }}</button>
+    </div>
+</form>

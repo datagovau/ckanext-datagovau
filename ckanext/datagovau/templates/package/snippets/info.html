@@ -1,5 +1,20 @@
-{% ckan_extends %}
+{% block package_info %}
+	{% if pkg %}
+		<section id="package-info d-flex align-items-start flex-column" class="module module-narrow  module-shallow package-info">
+			{% block package_info_inner %}
+            {% block heading %}
+			<div class="info-heading-wrapper d-flex align-items-start p-3 mb-4 align-self-stretch">
+				<p class="heading-info-dga mb-0">{{ h.dataset_display_name(pkg) }} edit</p>
+			</div>
+            {% endblock %}
+			<div class="info-view-dataset-wrapper d-flex align-items-start p-3 align-self-stretch">
+				{% link_for h.humanize_entity_type('package', pkg.type, 'view label') or _('View dataset'), named_route=pkg.type ~ '.read', id=pkg.name, class_='btn btn-default', icon='eye' %}
 
-{% block heading %}
-  <h1 class="heading">{{ pkg.title or pkg.name }}</h1>
-{% endblock heading %}
+			</div>
+
+            {% endblock %}
+
+
+		</section>
+	{% endif %}
+{% endblock %}

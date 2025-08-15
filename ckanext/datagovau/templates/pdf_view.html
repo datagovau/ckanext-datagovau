@@ -1,0 +1,25 @@
+<div>
+  <div id="loader">
+    {% snippet "pygments/pygment_indicator.html" %}
+    Loading content...
+  </div>
+  <object id="previewObject"
+          style="margin:auto; max-height:100%; min-height:100vh; min-width:100%; display:block"
+          data="{{ resource_view.get('pdf_url') or resource.get('url') }}?preview=1"
+          type="application/pdf">
+    <p>{{ _('Your browser does not support object tags.') }}</p>
+  </object>
+</div>
+
+<script>
+  const obj = document.getElementById('previewObject');
+  const loader = document.getElementById('loader');
+
+  obj.addEventListener('load', () => {
+    loader.style.display = 'none';
+  });
+
+  obj.addEventListener('error', () => {
+    loader.style.display = 'none';
+  });
+</script>

@@ -7,6 +7,8 @@ import time
 from typing import Any
 from urllib.parse import quote
 
+import os
+
 import psycopg2
 import requests
 
@@ -22,11 +24,17 @@ CONFIG_IGNORE = "ckanext.datagovau.spatialingestor.pkg_blacklist"
 CONFIG_URL = "ckanext.datagovau.spatialingestor.geoserver.url"
 
 
-def _timeout():
-    return tk.config[CONFIG_TIMEOUT]
+def _timeout(method: str | None = None):
+    timeout = tk.config[CONFIG_TIMEOUT]
+    if method:
+        timeout = tk.asint(tk.config.get(f"{CONFIG_TIMEOUT}.{method.lower()}", timeout))
+
+    return timeout
 
 
 class Geoserverobj:
+    filtered_resources: dict[str, Any]
+
     def __init__(self):
         self.filtered_resources = {
             "shp": [],
@@ -76,12 +84,14 @@ class Geoserverobj:
                     split_url = task["href"].split("/geoserver")
                     split_url[0] = self.geoserver_url
                     api_point = "".join(split_url)
-                    post = requests.post(api_point, timeout=30)
+                    post = requests.post(api_point, timeout=_timeout("post"))
                     if post.ok:
                         log.info("Import executed for layer creation.")
 
     def get_all_tasks(self):
-        tasks = requests.get(self.geoserver_url + "/rest/imports", timeout=30)
+        tasks = requests.get(
+            self.geoserver_url + "/rest/imports", timeout=_timeout("get")
+        )
         if tasks.status_code == 200:
             return tasks.json()
 
@@ -96,6 +106,12 @@ class Geoserverobj:
 
         log.info("Adding %s to import.", res["id"])
         url = res.get("url")
+
+        if url.startswith("https://"):
+            url = url.replace("https://", "http4s://", 1)
+        elif url.startswith("http://"):
+            url = url.replace("http://", "http4://", 1)
+
         self.main_res = res
         import_data = {
             "import": {
@@ -112,8 +128,9 @@ class Geoserverobj:
             self.geoserver_url + "/rest/imports",
             data=json.dumps(import_data),
             headers={"Content-Type": "application/json"},
-            timeout=30,
+            timeout=_timeout("post"),
         )
+
         if res_import.ok:
             import_data = res_import.json()
             if import_data["import"].get("tasks"):
@@ -149,54 +166,60 @@ class Geoserverobj:
             log.error("%s", res_import.content)
         return False
 
-    def get_data(self, url):
+    def get_data(self, url: str):
         with self._session() as s:
             api_point = self.update_geo_url(url)
-            return s.get(api_point, json={}, timeout=_timeout())
+            return s.get(api_point, json={}, timeout=_timeout("get"))
 
     def upload_file_to_datastore(
         self,
-        workspace,
-        datastore,
-        storage_type,
-        file,
-        filename,
-        content_type,
-        extension,
+        workspace: str,
+        datastore: str,
+        storage_type: str,
+        file: str,
+        filename: str,
+        content_type: str,
+        extension: str,
     ):
-        rsrc = requests.get(file, timeout=30)
+        rsrc = requests.get(file, timeout=_timeout("get"))
         with self._session() as s:
             s.put(
                 f"{self.geoserver_url}/rest/workspaces/{workspace}/{storage_type}/{datastore}/file{extension}",
                 files={"file": rsrc.content},
                 headers={"Content-type": content_type},
-                timeout=_timeout(),
+                timeout=_timeout("put"),
             )
 
-    def update_datastore(self, workspace, datastore, storage_type, data):
+    def update_datastore(
+        self,
+        workspace: str,
+        datastore: str,
+        storage_type: str,
+        data: dict[str, Any],
+    ):
         with self._session() as s:
             s.put(
                 f"{self.geoserver_url}/rest/workspaces/{workspace}/{storage_type}/{datastore}.json",
                 json=data,
-                timeout=_timeout(),
+                timeout=_timeout("put"),
             )
 
-    def get_task(self, url):
+    def get_task(self, url: str):
         with self._session() as s:
             api_point = self.update_geo_url(url)
-            return s.get(api_point, json={}, timeout=_timeout())
+            return s.get(api_point, json={}, timeout=_timeout("get"))
 
-    def update_task(self, url, data):
+    def update_task(self, url: str, data: dict[str, Any]):
         with self._session() as s:
             api_point = self.update_geo_url(url)
-            s.put(api_point, json=data, timeout=_timeout())
+            s.put(api_point, json=data, timeout=_timeout("put"))
 
-    def get_file_format(self, url):
+    def get_file_format(self, url: str):
         with self._session() as s:
             split_url = url.split("/geoserver")
             split_url[0] = self.geoserver_url
             api_point = "".join(split_url) + "/data"
-            resp = s.get(api_point, json={}, timeout=_timeout())
+            resp = s.get(api_point, json={}, timeout=_timeout("get"))
             if resp.ok and resp.status_code == 200:
                 data = resp.json()
                 if not data["format"] and data.get("file"):
@@ -206,14 +229,14 @@ class Geoserverobj:
                         return file_ext[-1]
         return None
 
-    def update_layer(self, url, data):
+    def update_layer(self, url: str, data: dict[str, Any]):
         with self._session() as s:
             split_url = url.split("/geoserver")
             split_url[0] = self.geoserver_url
             api_point = "".join(split_url) + "/layer/"
-            return s.put(api_point, json=data, timeout=_timeout())
+            return s.put(api_point, json=data, timeout=_timeout("put"))
 
-    def into_workspace(self, raw):
+    def into_workspace(self, raw: str):
         if any(c.isalpha() for c in raw):
             if not raw[0].isalpha():
                 raw += "-"
@@ -232,12 +255,14 @@ class Geoserverobj:
     def check_workspace(self, workspace: str) -> bool:
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.head(url, timeout=_timeout()).ok
+            return s.head(url, timeout=_timeout("head")).ok
 
     def drop_workspace(self, workspace: str):
         url = self._workspace_url(workspace)
         with self._session() as s:
-            return s.delete(url + "?recurse=true&quietOnNotFound", timeout=_timeout())
+            return s.delete(
+                url + "?recurse=true&quietOnNotFound", timeout=_timeout("delete")
+            )
 
     def create_workspace(self, workspace: str):
         url = self._workspace_url()
@@ -246,7 +271,7 @@ class Geoserverobj:
             return s.post(
                 url,
                 json={"workspace": {"name": workspace}},
-                timeout=_timeout(),
+                timeout=_timeout("post"),
             )
 
     def _workspace_url(self, workspace: str = "") -> str:
@@ -262,7 +287,7 @@ class Geoserverobj:
 
         return using_grid
 
-    def _clear_old_table(self, dataset, table_name):
+    def _clear_old_table(self, dataset: dict[str, Any], table_name: str):
         self.table_name = table_name
         log.info("Delete existing rows in DB for dataset %s", dataset["id"])
         cur, conn = _get_cursor()
@@ -274,7 +299,7 @@ class Geoserverobj:
 
     def create_store(self, datastore: str, workspace: str, table_name: str | None):
         if not table_name:
-            dsdata = {
+            dsdata: dict[str, Any] = {
                 "dataStore": {
                     "name": datastore,
                     "connectionParameters": {
@@ -308,10 +333,10 @@ class Geoserverobj:
         if not r.ok:
             log.error("Failed to create Geoserver store %s: %s", r.url, r.content)
 
-    def _create_store(self, workspace: str, is_cs: bool, data):
+    def _create_store(self, workspace: str, is_cs: bool, data: dict[str, Any]):
         url = self._store_url(workspace, is_cs)
         with self._session() as s:
-            return s.post(url, json=data, timeout=_timeout())
+            return s.post(url, json=data, timeout=_timeout("post"))
 
     def _store_url(self, workspace: str, is_cs: bool, store: str = "") -> str:
         type_ = "coveragestores" if is_cs else "datastores"
@@ -319,12 +344,12 @@ class Geoserverobj:
 
         return f"{base}/{type_}/{store}"
 
-    def update_geo_url(self, url):
+    def update_geo_url(self, url: str):
         split_url = url.split("/geoserver")
         split_url[0] = self.geoserver_url
         return "".join(split_url)
 
-    def _delete_resources(self, dataset_dict):
+    def _delete_resources(self, dataset_dict: dict[str, Any]):
         geoserver_resources = [
             res
             for res in dataset_dict.get("resources")
@@ -342,11 +367,16 @@ class Geoserverobj:
             split_url[0] = self.geoserver_url
             api_point = "".join(split_url)
             with self._session() as s:
-                return s.get(api_point + "/layer", json={}, timeout=_timeout())
+                return s.get(api_point + "/layer", json={}, timeout=_timeout("get"))
         return None
 
     def _create_resources_from_formats(
-        self, workspace, layer_name, existing_formats, pkg_id, using_grid
+        self,
+        workspace: str,
+        layer_name: str,
+        existing_formats: list[str],
+        pkg_id: str,
+        using_grid: bool,
     ):
         if self.main_res:
             ##  Get updated dataset data before creating new resources
@@ -427,7 +457,7 @@ class Geoserverobj:
                             dataset["title"] + " - Preview this Dataset (WMS)"
                         )
                         data["description"] = (
-                            "View the data in this " "dataset online via an online map"
+                            "View the data in this dataset online via an online map"
                         )
                         data["format"] = "wms"
                         data["url"] = ws_addr + "wms?request=GetCapabilities"
@@ -465,7 +495,7 @@ class Geoserverobj:
                     log.debug("%s GeoJSON Resource", action_word)
                     data["name"] = dataset["title"] + " GeoJSON"
                     data["description"] = (
-                        "For use in web-based data " "visualisation of this collection"
+                        "For use in web-based data visualisation of this collection"
                     )
                     data["format"] = "geojson"
                     data["url"] = url
@@ -475,7 +505,7 @@ class Geoserverobj:
                     )
 
 
-def call_action(action: str, data, ignore_auth=False) -> Any:
+def call_action(action: str, data: dict[str, Any], ignore_auth: bool = False) -> Any:
     return tk.get_action(action)(
         {
             "user": tk.config["ckanext.datagovau.spatialingestor.username"],
@@ -577,7 +607,7 @@ def run_ingestor(pkg_id: str):
     )
 
 
-def delete_ingested(pkg_id):
+def delete_ingested(pkg_id: str):
     dataset_dict = call_action("package_show", {"id": pkg_id})
     if not dataset_dict:
         return

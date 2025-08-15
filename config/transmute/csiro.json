@@ -37,7 +37,6 @@
             ["tsm_get_nested", "metadataLanguage"]
           ]
         },
-        "update_freq": {"remove": "true"},
         "contact_point": {
           "default": "CSIROEnquiries@csiro.au"
         }

@@ -1,0 +1,337 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+
+.badge {
+    img, .fa {
+        font-size: 16px;
+        vertical-align: bottom;
+    }
+
+    a {
+        line-height: 16px;
+    }
+
+    &[data-format="archived"] {
+        border: 1.5px solid var(--Neutral, #CCCCCC);
+        background-color: #F5F5F5;
+        @include m.badge-base;
+    }
+
+    &[data-format="private"] {
+        border: 1.5px solid v.$dga-color-skobeloff;
+        background-color: #FFFFFF;
+        @include m.badge-base;
+    }
+
+    &[data-format="draft"] {
+        border: 1.5px solid var(--Neutral, #CCCCCC);
+        background-color: #FFFFFF;
+        @include m.badge-base;
+    }
+}
+
+.card-unpublished {
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+}
+
+.advanced-toggles {
+    .enable-solr {
+        display: none;
+    }
+
+    &.advanced-active {
+        .enable-solr {
+            display: flex;
+        }
+    }
+}
+
+.pending-request {
+    z-index: 1000;
+}
+
+.dataset-archived {
+    margin-bottom: 25px
+}
+
+.resource-upload-field .select-type .upload-type {
+    margin-bottom: -20px
+}
+
+.dataset-list {
+    .dataset-item:last-of-type {
+        margin-bottom: 20px;
+        padding-bottom: 20px !important;
+        border: v.$border-default;
+    }
+}
+
+.dataset-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: v.$dga-footer-color;
+    border: v.$border-default;
+    border-radius: 4px;
+
+    &-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dataset-badges {
+        display: flex;
+        margin-bottom: 10px;
+
+        .badge {
+            margin-right: 5px;
+
+            &-private {
+                color: #fff;
+                background-color: #6c757d;
+            }
+
+            &-draft {
+                color: #fff;
+                background-color: #17a2b8;
+            }
+        }
+    }
+
+    .dataset-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+
+        &-link {
+            text-decoration: none;
+            color: v.$dga-color-graphite-gray;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .dataset-organization {
+        color: v.$dga-color-skobeloff;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin: 0.5rem 0;
+
+        a {
+            text-decoration: none !important;
+
+            &:hover {
+                text-decoration: underline !important;
+                color: v.$dga-color-skobeloff;
+            }
+        }
+    }
+
+    .dataset-description {
+        color: v.$dga-color-graphite-gray;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        margin: 0.5rem 0 1.5rem;
+    }
+
+    .dataset-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        font-size: 14px;
+        font-weight: 400;
+        color: v.$dga-color-silver-gray;
+
+        &-updated {
+            margin: 0;
+            color: v.$dga-color-silver-gray;
+            flex-shrink: 0;
+        }
+
+        .dataset-resources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li a {
+                background: #ffffff;
+            }
+
+            .resource-format {
+                box-sizing: border-box;
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding: 5px 10px;
+
+                height: 28px;
+
+                border: 1.5px solid v.$dga-color-soft-sky-blue;
+                border-radius: 4px;
+                color: v.$dga-color-skobeloff;
+                font-size: 12px;
+                font-weight: 500;
+                text-transform: uppercase;
+                text-decoration: none;
+
+                flex-shrink: 0;
+
+                span {
+                    flex-grow: 1;
+                    text-align: center;
+                }
+
+                &:hover {
+                    color: v.$dga-color-dark-cyan;
+                    border-color: v.$dga-tag-hover-border-color;
+                    background: v.$dga-tag-hover-border-color;
+                }
+            }
+        }
+    }
+}
+
+.dataset {
+    &-private-text {
+        color: v.$dga-color-skobeloff;
+        font-weight: 500;
+        line-height: 18px;
+        text-transform: uppercase;
+    }
+
+    &-draft-text {
+        color: v.$dga-color-silver-gray;
+        font-weight: 500;
+        line-height: 18px;
+        text-transform: uppercase;
+    }
+
+    &-archived-text {
+        color: v.$dga-color-graphite-gray;
+        font-weight: 500;
+        line-height: 18px;
+    }
+}
+
+
+.stages {
+    font-size: 16px;
+    line-height: 24px;
+
+    li {
+        padding: 12px 32px;
+
+        .highlight {
+            padding: 12px 32px;
+        }
+    }
+
+    li::after {
+      border-top-color: v.$dga-color-light-gray;
+      border-bottom-color: v.$dga-color-light-gray;
+    }
+
+    li.last.active {
+        &::before {
+            right: 53px;
+        }
+
+        &::after {
+            border-top-color: v.$dga-outer-border-color;
+            border-bottom-color: v.$dga-outer-border-color;
+          }
+    }
+
+    // Active state styling
+    li.active {
+        display: flex;
+        justify-content: center;
+        font-weight: 600;
+
+        &::before {
+            background-color: v.$dga-outer-border-color;
+            color: v.$dga-color-dark-cyan;
+            font-weight: 600;
+            line-height: 24px;
+            border: 1px solid v.$dga-color-dark-cyan;
+            position: relative;
+            right: 75px;
+            margin-right: 8px;
+        }
+
+        .highlight {
+            display: flex;
+            justify-content: center;
+            background-color: v.$dga-outer-border-color;
+            color: v.$dga-color-dark-cyan;
+            text-align: center;
+        }
+    }
+
+    // Uncomplete state styling
+    .last.uncomplete {
+      display: flex;
+      justify-content: center;
+      background-color: v.$dga-color-light-gray;
+
+      .highlight {
+        display: flex;
+        justify-content: center;
+        color: v.$dga-color-graphite-gray;
+      }
+
+      &::before {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        right: 50px;
+        border: 1px solid v.$dga-color-graphite-gray;
+        color: v.$dga-color-graphite-gray;
+        background-color: inherit;
+        font-weight: 500;
+        line-height: 24px;
+        margin-right: 8px;
+      }
+    }
+
+    // Complete state styling (for stage-2)
+    li.complete {
+      display: flex;
+      justify-content: center;
+      background-color: v.$dga-color-light-gray;
+
+      &::after {
+            border-top-color: v.$dga-color-light-gray;
+            border-bottom-color: v.$dga-color-light-gray;
+        }
+
+      .highlight {
+        background-color: v.$dga-color-light-gray;
+        color: v.$dga-color-silver-gray;
+        text-align: center;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      &::before {
+        content: url("#{v.$imagePath}/completed-icon.svg");;
+        background-color: #F7F7F7;
+        color: v.$dga-color-silver-gray;
+        font-weight: 500;
+        line-height: 24px;
+        border: 1px solid v.$dga-color-silver-gray;
+        position: relative;
+        right: 73px;
+        margin-right: 8px;
+      }
+    }
+}

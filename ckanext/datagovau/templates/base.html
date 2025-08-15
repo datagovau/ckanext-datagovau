@@ -3,10 +3,10 @@
 {% block meta %}
   {{ super() }}
   <meta name="google-site-verification"
-        content="B8scmW2_LMm4IW_ogXK9lojznO57GBpYlWrFjfGz3X8"/>
+    content="B8scmW2_LMm4IW_ogXK9lojznO57GBpYlWrFjfGz3X8"/>
   <meta name="twitter:site" content="@datagovau"/>
   <meta name="og:site_name" content="data.gov.au"/>
-  {% include "dga/snippets/gtm.html" %}
+  <link href="{{ h.url_for_static('images/banner-bg.jpeg') }}" rel="preload" as="image"/>
 {% endblock %}
 
 {% block styles %}
@@ -18,10 +18,15 @@
   {{ super() }}
 
   <script src="https://cdn.ravenjs.com/3.26.2/raven.min.js"
-          crossorigin="anonymous"></script>
+          crossorigin="anonymous" async ></script>
 
   <script src="https://data.gov.au/data/dataset/2b491307-2db1-4d1b-a9f9-ba021c3fe2e0/resource/9fa99c8c-7b43-48ed-a2e1-b5a7d6bf8c51/download/banner.js"
-          crossorigin="anonymous"></script>
+      crossorigin="anonymous" defer></script>
 
-  {% asset 'datagovau/dga-js' %}
+  {% if request.endpoint != "dataset_resource.view" %}
+      <!-- Start of datagovau Zendesk Widget script -->
+      <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=b6aac038-b1c4-490b-ba64-ecede8e77ac7" async ></script>
+      <!-- End of datagovau Zendesk Widget script -->
+  {% endif %}
+
 {% endblock %}

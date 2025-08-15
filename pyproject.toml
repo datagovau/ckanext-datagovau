@@ -31,6 +31,8 @@ dependencies = [
              "requests",
              "shapely",
              "typing_extensions",
+             "ckanext-iso19115~=0.2.1",
+             "redis>=5,<6", # solve conflice between charts and security extension
 ]
 dynamic = ["version"]
 
@@ -45,6 +47,9 @@ dev = [
 [project.entry-points."ckan.plugins"]
 datagovau = "ckanext.datagovau.plugin:DataGovAuPlugin"
 dga_resource = "ckanext.datagovau.subplugins.resource:ResourcePlugin"
+gbrmpa_arcgis_harvester="ckanext.datagovau.harvesters:GbrmpaHarvester"
+dga_ckan_harvester="ckanext.datagovau.harvesters:DgaCKANHarvester"
+dga_update_facets="ckanext.datagovau.plugins.update_facets.plugin:DgaUpdateFacets"
 
 [project.entry-points."ckan.rdf.profiles"]
 dga_schemaorg = "ckanext.datagovau.profiles:DgaSchemaOrgProfile"
@@ -66,7 +71,7 @@ target-version = "py39"
 
 [tool.ruff.lint]
 select = [
-       # "ANN0", # type annotations for function arguments
+       "ANN0", # type annotations for function arguments
        "B",  # likely bugs and design problems
        # "BLE",  # do not catch blind exception
        "C4",  # better list/set/dict comprehensions
@@ -84,7 +89,7 @@ select = [
        "D2",  # doc formatting
        "D4",  # doc convention
        # "PL",  # pylint
-       # "PERF", # performance anti-patterns
+       "PERF", # performance anti-patterns
        "PT",  # pytest style
        "PIE",  # misc lints
        "RET",  # improvements for return statements
@@ -100,7 +105,6 @@ select = [
 ignore = [
        "RET503", # don't enforce return-None
        "E712", # comparison to bool: violated by SQLAlchemy filters
-       "PT004", # fixture does not return anything, add leading underscore: violated by clean_db
        "PLC1901", # simplify comparison to empty string: violated by SQLAlchemy filters
 ]
 
@@ -109,6 +113,10 @@ ignore = [
 "ckanext/datagovau/logic/*" = [
             "D417", # actions don't describe context and data_dict
 ]
+"ckanext/datagovau/logic/transmutators.py" = [
+            "D2", # ignore historicaly incorrect documentation, eventually must be fixed
+]
+
 
 [tool.ruff.lint.flake8-import-conventions.aliases]
 "ckan.plugins" = "p"

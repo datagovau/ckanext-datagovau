@@ -1,0 +1,24 @@
+{% macro banner(title='', description='', classes=[]) %}
+    {%- set extra_html = caller() if caller -%}
+    <div class="banner">
+        <div class="banner-overlay">
+            <div class="{{ ' '.join(classes) }}">
+                <div class="container">
+                    {% if title %}
+                        <h2>{{ title }}</h2>
+                    {% endif %}
+
+                    {% if description %}
+                        <p class="col-12 col-md-7 mb-2 description">{{ description }}</p>
+                    {% endif %}
+
+                    {% if extra_html %}
+                        <div class="extra">
+                            {{ extra_html }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

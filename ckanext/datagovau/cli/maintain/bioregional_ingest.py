@@ -113,9 +113,7 @@ def bioregional_ingest(
         else:
             download = b.download_record(record, no_verify, timeout, url)
             if not download or not isinstance(download, b.Download):
-                echo(
-                    f"\tCannot download {record.dataset['id']}:" f" {download.reason()}"
-                )
+                echo(f"\tCannot download {record.dataset['id']}: {download.reason()}")
                 continue
 
             echo(f"\tDownload data from URL {download.response.url}")
@@ -124,7 +122,7 @@ def bioregional_ingest(
             echo(
                 "\tDownloading"
                 f" {record.dataset['folder_name']} {size} bytes"
-                f" ({size // 1024 ** 2}MB)"
+                f" ({size // 1024**2}MB)"
             )
             start = time()
             with click.progressbar(download.start(record), length=size) as bar:

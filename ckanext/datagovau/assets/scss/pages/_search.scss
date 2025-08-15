@@ -1,0 +1,451 @@
+@use "../variables" as v;
+@use "../mixins" as m;
+@use "../select2" as s;
+
+.dga-dataset-search {
+    .primary {
+        .module-content {
+            padding: 0;
+            background: v.$dga-main-bg;
+        }
+    }
+}
+
+.search-form {
+    padding-bottom: unset;
+    border-bottom: unset;
+
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: space-between;
+
+    @include m.breakpoint(lg) {
+        gap: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .search-autocomplete-wrapper {
+        margin-bottom: -5px;
+
+        // hidden fields with facets that break flex layout
+        ~ span {
+            display: none;
+        }
+    }
+
+    .suggestion-box {
+        border: 1.5px solid v.$dga-color-soft-sky-blue;
+        border-radius: 4px !important;
+        margin: 0 !important;
+        padding: 24px 28px;
+        transform: translate(0, 100%) translateY(40px);
+
+        .suggestion-section {
+            &:not(:first-child) {
+                margin-top: 32px;
+            }
+
+            .suggestions {
+                font-size: 1rem !important;
+                line-height: 1.375 !important;
+
+                margin: 0 !important;
+
+                &:before {
+                    font-size: 1.125rem !important;
+                    font-weight: 600 !important;
+                    color: v.$dga-color-cadet-blue;
+                    padding-bottom: 4px;
+                }
+
+                &:not(:first-child) {
+                    margin-top: 32px;
+                }
+
+                li {
+                    margin-top: 12px;
+
+                    a {
+                        color: v.$dga-color-graphite-gray !important;
+
+                        &:hover, &:focus {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dga-dataset-search .dataset-search-page {
+    background-color: v.$dga-color-light-gray;
+
+    h1 {
+        color: v.$dga-color-midnight-green;
+        font-size: 24px;
+        font-weight: 500;
+        display: inline-block;
+        margin: 0px;
+    }
+
+    .search-form {
+        h1 {
+            margin: 0px;
+            width: 100%;
+
+            @include m.breakpoint(md) {
+                width: auto;
+            }
+
+        }
+
+        .control-order-by {
+            min-width: 320px;
+            margin: 0px;
+            float: none;
+            width: 100%;
+
+            @include m.breakpoint(md) {
+                width: auto;
+            }
+
+            label {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .control-order-by {
+        @include m.control-order-by;
+    }
+
+    #field-order-by {
+        color: v.$dga-color-graphite-gray;
+        border: 1px #fff;
+    }
+
+    @media (max-width: 767.98px) {
+        .control-order-by {
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+    }
+
+    .search-label {
+        color: v.$dga-color-graphite-gray;
+        font-weight: 500;
+        font-size: 1rem;
+        line-height: 1.5;
+
+        &:after {
+            content: "";
+        }
+    }
+
+    .search-input-group input {
+        border: 1.5px solid v.$dga-color-soft-sky-blue;
+        border-right: none;
+        color: v.$dga-color-graphite-gray;
+    }
+
+    .fa {
+        line-height: unset;
+    }
+
+    .switch-wrapper {
+        background: v.$dga-color-soft-sky-blue !important;
+    }
+
+    button.add-field {
+        background: v.$dga-color-soft-sky-blue;
+        color: v.$dga-color-dark-cyan;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .composite-field {
+        border: 1.5px solid v.$dga-color-soft-sky-blue !important;
+        color: v.$dga-color-silver-gray;
+
+        .type-input {
+            border: v.$border-default;
+            color: #171E2F;
+
+            .options li:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+        }
+
+        .junction-input {
+            border: v.$border-default;
+            color: #171E2F;
+
+            .options li:hover {
+                background-color: v.$dga-outer-border-color;
+            }
+        }
+    }
+
+    p.extra {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .dataset-item {
+        border-color: v.$color-white;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .js .main .secondary .filters {
+        background-color: v.$dga-color-light-gray;
+        padding: 20px;
+
+        > div {
+            background-color: v.$dga-color-light-gray;
+
+            .module-footer {
+                display: initial;
+            }
+        }
+    }
+}
+
+.facet-card .dataset-map {
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    color: v.$dga-color-graphite-gray;
+    grid-template-columns: repeat(5, 1fr);
+
+    .dataset-map-header,
+    .dataset-map-left-panel,
+    .dataset-map-controls {
+        display: none;
+    }
+
+    .dataset-map-header {
+        // grid-area: h;
+        grid-column: 1 / span 5;
+    }
+
+    .dataset-map-left-panel {
+        // grid-area: s;
+        grid-column: 1 / span 5;
+    }
+
+    #dataset-map-container {
+        // grid-area: m;
+        grid-column: 1 / span 5;
+
+    }
+
+    .dataset-map-footer {
+        grid-column: 1 / span 5;
+        padding: 0px 1rem;
+
+        flex-direction: column;
+
+        @media (min-width: v.$screen-md-min) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+    }
+
+
+    .dataset-map-header {
+        color: v.$dga-color-midnight-green;
+
+        .heading {
+            font-size: 1.25rem;
+        }
+
+        .fa {
+            color: v.$dga-color-skobeloff;
+            font-size: 1rem;
+        }
+
+        .btn-simple {
+            opacity: 0.5;
+            padding: 0.5rem;
+
+            .fa {
+                font-size: 1.325rem;
+                color: black;
+            }
+        }
+    }
+
+    .sub-heading {
+        font-size: 1.125rem;
+        color: v.$dga-color-midnight-green;
+        font-weight: 600;
+    }
+
+    .select2-container {
+        @include s.select2-container;
+    }
+
+    .coordinates-block {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem 1rem;
+
+        .coord-field {
+            width: 47%;
+
+            @media (min-width: v.$screen-sm-min) {
+                width: 23%;
+            }
+
+            @media (min-width: v.$screen-md-min) {
+                width: 47%;
+            }
+
+            label {
+                &:after {
+                    content: none;
+                }
+            }
+        }
+    }
+
+    &.dga-expanded-map {
+        box-shadow: 0px 0px 20px #ccc;
+        padding: 1rem;
+        position: absolute;
+        top: 0;
+        left: 0.75rem;
+        right: 0.75rem;
+        z-index: 1;
+
+        @media (min-width: v.$screen-md-min) {
+            margin: auto;
+            position: fixed;
+            top: 15vh;
+            max-height: 80vh;
+            overflow-y: auto;
+            max-width: v.$screen-md-min - 30px;
+        }
+        @media (min-width: v.$screen-lg-min) {
+            max-width: v.$screen-lg-min - 30px;
+        }
+
+        #dataset-map-container {
+            height: 420px;
+        }
+
+        .dataset-map-header {
+            display: flex;
+        }
+
+        .dataset-map-left-panel,
+        .dataset-map-controls {
+            display: block;
+        }
+
+        @media (min-width: v.$screen-md-min) {
+            .dataset-map-left-panel {
+                grid-column: 1 / span 2;
+            }
+            #dataset-map-container {
+                grid-column: 3 / span 3;
+            }
+        }
+
+        .dataset-map-footer {
+            padding: 0px;
+        }
+
+    }
+
+    #dataset-map-container {
+        height: 220px;
+
+        .leaflet-bar {
+            border: none;
+
+            a {
+                width: 40px;
+                height: 40px;
+                border: 1px solid v.$dga-color-soft-sky-blue;
+                box-shadow: none;
+                background-size: 16px;
+
+                &:first-child {
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+
+                &:last-child {
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                }
+            }
+        }
+
+        .leaflet-editing-icon {
+            border-radius: 2px;
+            width: 1rem;
+            height: 1rem;
+            border: none;
+            background: v.$dga-color-cadet-blue;
+        }
+
+        .leaflet-draw-section {
+            // &:not(:first-child) {
+            //     margin-top: -13px;
+            // }
+        }
+
+        .leaflet-draw-toolbar {
+            .leaflet-draw-draw-rectangle {
+                background-image: url("#{v.$imagePath}/map-icons/pencil.svg");
+            }
+
+            .leaflet-draw-edit-edit {
+                background-image: url("#{v.$imagePath}/map-icons/resize.svg");
+                background-position: 50%;
+
+                &.leaflet-disabled {
+                    display: none;
+                }
+            }
+
+        }
+
+        .leaflet-control-container {
+            &, & > div {
+                background: transparent;
+            }
+        }
+
+        .leaflet-control {
+            .leaflet-dga-expand {
+                background-image: url("#{v.$imagePath}/map-icons/move.svg");
+            }
+        }
+
+        .leaflet-control-zoom {
+            .leaflet-control-zoom-in {
+                background-image: url("#{v.$imagePath}/map-icons/plus.svg");
+            }
+
+            .leaflet-control-zoom-out {
+                background-image: url("#{v.$imagePath}/map-icons/minus.svg");
+            }
+
+            span {
+                display: none;
+            }
+        }
+    }
+}

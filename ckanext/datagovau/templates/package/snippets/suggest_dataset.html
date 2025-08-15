@@ -1,0 +1,28 @@
+{% set isCollapsed = isCollapsed or true %}
+
+<div id="suggest-dataset-block">
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button {{ 'collapsed' if isCollapsed }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <span>{{ _("Can't find what you're looking for?") }}</span>
+
+                <span>
+                    {{ _("Suggest a new dataset") }}
+                    {% snippet "svg/caret-top.svg" %}
+                </span>
+            </button>
+          </h2>
+
+          {# accordion-collapse collapse #}
+          <div id="collapseTwo" class="accordion-collapse collapse {{ 'show' if not isCollapsed }}" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="accordion-body-inner">
+                    {% snippet 'package/snippets/suggest_dataset_form.html' %}
+
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

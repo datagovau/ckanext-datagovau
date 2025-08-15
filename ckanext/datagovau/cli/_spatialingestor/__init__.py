@@ -87,7 +87,13 @@ def _clear_old_table(dataset: dict[str, Any]) -> str:
     return table_name
 
 
-def _apply_sld(name: str, workspace: str, layer_name: str, url=None, filepath=None):
+def _apply_sld(
+    name: str,
+    workspace: str,
+    layer_name: str,
+    url: str | None = None,
+    filepath: str | None = None,
+):
     server = get_geoserver()
 
     if url:
@@ -235,8 +241,15 @@ def _perform_workspace_requests(datastore: str, workspace: str, table_name: str 
         fail(f"Failed to create Geoserver store {r.url}: {r.content}")
 
 
-def _update_package_with_bbox(bbox, latlngbbox, ftdata, dataset, native_crs, bgjson):
-    def _clear_box(string):
+def _update_package_with_bbox(
+    bbox: str,
+    latlngbbox: str,
+    ftdata: dict[str, Any],
+    dataset: dict[str, Any],
+    native_crs: str,
+    bgjson: Any,
+):
+    def _clear_box(string: str):
         return (
             string.replace("BOX", "")
             .replace("(", "")
@@ -278,7 +291,12 @@ def _update_package_with_bbox(bbox, latlngbbox, ftdata, dataset, native_crs, bgj
 
 
 def _create_resources_from_formats(
-    ws_addr, layer_name, bbox_obj, existing_formats, dataset, using_grid
+    ws_addr: str,
+    layer_name: str,
+    bbox_obj: dict[str, Any],
+    existing_formats: list[str],
+    dataset: dict[str, Any],
+    using_grid: bool,
 ):
     bbox_str = (
         "&bbox="
@@ -324,7 +342,7 @@ def _create_resources_from_formats(
                         "package_id": dataset["id"],
                         "name": dataset["title"] + " - Preview this Dataset (WMS)",
                         "description": (
-                            "View the data in this " "dataset online via an online map"
+                            "View the data in this dataset online via an online map"
                         ),
                         "format": "wms",
                         "url": ws_addr + "wms?request=GetCapabilities",
@@ -362,8 +380,7 @@ def _create_resources_from_formats(
                         "package_id": dataset["id"],
                         "name": dataset["title"] + " GeoJSON",
                         "description": (
-                            "For use in web-based data "
-                            "visualisation of this collection"
+                            "For use in web-based data visualisation of this collection"
                         ),
                         "format": "geojson",
                         "url": url,
@@ -372,7 +389,7 @@ def _create_resources_from_formats(
                 )
 
 
-def _delete_resources(dataset):
+def _delete_resources(dataset: dict[str, Any]):
     server = get_geoserver()
     geoserver_resources = [
         res for res in dataset["resources"] if server.public_url in res["url"]
@@ -463,7 +480,7 @@ def do_ingesting(dataset_id: str, force: bool):
 
         datastore = workspace + ("cs" if using_grid else "ds")
         log.debug(
-            "do_ingesting():: before _perform_workplace_requests().  datastore" " = %s",
+            "do_ingesting():: before _perform_workplace_requests().  datastore = %s",
             datastore,
         )
 
@@ -641,7 +658,7 @@ def _get_dataset(dataset_id: str) -> dict[str, Any] | None:
         return call_action("package_show", {"id": dataset_id}, True)
 
 
-def call_action(action: str, data: dict[str, Any], ignore_auth=False) -> Any:
+def call_action(action: str, data: dict[str, Any], ignore_auth: bool = False) -> Any:
     return tk.get_action(action)(
         {"user": config.username(), "ignore_auth": ignore_auth}, data
     )

@@ -1,0 +1,79 @@
+@use "../variables" as v;
+
+.table {
+    table-layout: fixed;
+    margin-bottom: 2.5rem;
+    color: v.$dga-color-graphite-gray;
+
+    &.table-no-break {
+        tr {
+            td, th {
+                white-space: nowrap;
+            }
+
+        }
+    }
+
+    thead {
+        border-top: 1px solid v.$dga-outer-border-color;
+        border-bottom: 2px solid v.$dga-color-skobeloff;
+        font-weight: 600;
+
+        tr th,
+        tr td {
+            font-weight: 600;
+        }
+    }
+
+    tbody {
+        border: unset !important;
+
+        tr:nth-of-type(n) > * {
+            color: inherit;
+        }
+    }
+
+    tr {
+        border: none;
+
+        th, td {
+            background-color: v.$color-white;
+            box-shadow: unset;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            width: auto;
+            word-wrap: break-word;
+            white-space: normal;
+            border-width: 0;
+            border-bottom: 1px solid v.$dga-outer-border-color;
+        }
+
+        &:last-child {
+            th, td {
+                border-bottom: none;
+            }
+        }
+
+        &.toggle-show-more {
+            border: 1px solid v.$dga-outer-border-color;
+
+            a {
+                font-weight: 600;
+                color: v.$dga-color-skobeloff;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &.dga-datastore {
+        tr {
+            border-top: 1px solid v.$dga-outer-border-color;
+
+            th, {
+                font-weight: 600;
+            }
+        }
+    }
+}

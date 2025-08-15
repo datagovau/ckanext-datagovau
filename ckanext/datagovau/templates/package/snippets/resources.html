@@ -1,0 +1,58 @@
+{#
+Displays a sidebar module with navigation containing the provided resources.
+If no resources are provided then the module will not be displayed.
+
+pkg       - The package dict that owns the resources.
+active    - The id of the currently displayed resource.
+action    - The resource action to use (default: 'read', meaning route 'resource.read').
+
+Example:
+
+  {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id %}
+
+#}
+{% set resources = pkg.resources or [] %}
+{% set can_edit = pkg and h.check_access('package_update', {'id':pkg.id }) %}
+{% if pkg and resources %}
+  {% block resources %}
+    <section class="module module-narrow resources" data-module="dga-resource-show-more">
+      {% block resources_inner %}
+        {% block resources_title %}
+          <h2 class="module-heading">{{ _("Resources") }}</h2>
+        {% endblock %}
+        {% block resources_list %}
+          <ul class="list-unstyled nav nav-simple">
+            {% for resource in resources %}
+              {% set url = h.url_for('%s_resource.read' % pkg.type, id=pkg.name, resource_id=resource.id) %}
+              {% if active == resource.id %}
+                <li class="nav-item active border-bottom-0 m-0 p-0">
+                  <a class="m-0 p-3" href="#" title="{{ h.resource_display_name(resource) }}">{{ h.resource_display_name(resource)|truncate(45) }}</a>
+                </li>
+              {% else %}
+                <li class="nav-item border-bottom-0 m-0 p-0 {%if loop.index > 6%}resource-more d-none{%endif%}">
+                  <a class="m-0 p-3" href="{{ url }}" title="{{ h.resource_display_name(resource) }}">{{ h.resource_display_name(resource)|truncate(45) }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          {% set show_more = resources | length > 6 %}
+          {% set show_add_resources = can_edit and not is_activity_archive %}
+          {% if show_more or show_add_resources %}
+            <div class="module-show-more py-4 pb-3 pb-md-4">
+              {% if  show_more %}
+                <div class="px-3 {%if show_add_resources%}mb-4{%endif%}">
+                  <button id="show-more-resources" class="btn btn-light btn-sm nav-item-show-more show-more border-0">{{ _("Show more") }}</button>
+                </div>
+              {% endif %}
+              {% if show_add_resources %}
+                  <div class="new-resource-button-wrapper">
+                    {% link_for _('Add new resource'), named_route=pkg.type ~ '_resource.new', id=pkg.name, class_='btn btn-light btn-sm ', icon='plus' %}
+                  </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endblock %}
+      {% endblock %}
+    </section>
+  {% endblock %}
+{% endif %}

@@ -1,0 +1,30 @@
+{% extends "user/auth.html" %}
+
+{% block subtitle %}{{ _('Login') }}{% endblock %}
+
+{% block breadcrumb_content %}
+    <li class="active">{{ h.nav_link(_('Login'), named_route='user.login') }}</li>
+{% endblock %}
+
+{% block primary_content %}
+<section class="module">
+  <div class="module-content">
+    <h1 class="page-heading">{% block page_heading %}{{ _('Login') }}{% endblock %}</h1>
+    {% block form %}
+      {% snippet "user/snippets/login_form.html", error_summary=error_summary %}
+    {% endblock %}
+  </div>
+</section>
+{% endblock %}
+
+{% block secondary_content %}
+  <section class="module module-narrow module-shallow">
+    <h2>{{ _('Forgotten your password?') }}</h2>
+    <div class="module-content">
+      <p>{% trans %}No problem, use our password recovery form to reset it.{% endtrans %}</p>
+      <div class="action">
+        <a class="btn btn-default" href="{{ h.url_for('user.request_reset') }}">{{ _('Password reset') }}</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

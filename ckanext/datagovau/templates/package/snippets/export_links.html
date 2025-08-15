@@ -1,0 +1,15 @@
+<div class="d-flex flex-row-reverse justify-content-{{ position }} flex-wrap gap-3">
+    <span class="label label-inverse label-inverse-json ms-0">
+        <img src="{{ h.url_for_static('/json-icon.png') }}" alt="JSON format icon"/>
+        <a style="color: lightgrey;"
+           href="{{ h.url_for('api.action', ver=3, logic_function='package_show', id=pkg.id) }}">JSON</a>
+    </span>
+    <span class="label label-inverse label-inverse-rdf ms-0">
+            <img src="{{ h.url_for_static('/rdf-icon.png') }}" alt="RDF format icon"/>
+            <a style="color: lightgrey;" href="{{ h.url_for('dataset_read', id=pkg.id) }}.rdf">RDF</a>
+    </span>
+    <span class="label label-inverse label-inverse-xml ms-0">
+            <i class="fa fa-file-text"></i>
+            <a style="color: lightgrey;" href="{{ h.url_for('metaexport.export', id=pkg.name, format='iso19115') }}">ISO19115-3 XML</a>
+    </span>
+</div>

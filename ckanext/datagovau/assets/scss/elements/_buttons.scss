@@ -1,0 +1,284 @@
+@use "../variables" as v;
+
+@mixin btn-primary-outlined {
+    color: v.$dga-color-skobeloff;
+    border-color: v.$dga-color-skobeloff;
+    background-color: v.$color-white;
+    border-width: 2px;
+
+    &:hover,
+    &:active {
+        background-color: v.$dga-color-skobeloff !important;
+        color: v.$color-white !important;
+
+        svg {
+            circle {
+                fill: v.$color-white;
+            }
+
+            path {
+                stroke: v.$color-white;
+                fill: v.$color-white;
+            }
+        }
+    }
+}
+
+@mixin btn-small {
+    padding: 0.5rem 0.75rem;
+}
+
+.btn {
+    padding: 0.75rem 2.5rem;
+    border-radius: 4px;
+    transition: color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+    box-shadow: unset;
+    line-height: 1rem;
+    min-height: 3rem;
+    font-weight: 600;
+    font-size: 1rem;
+    justify-content: center;
+
+    i {
+        font-size: 14px;
+    }
+
+    &:focus {
+        outline: 3px solid v.$dga-color-outline !important;
+        outline-offset: 0;
+    }
+
+    &.btn-primary {
+        color: v.$color-white;
+        border-color: v.$dga-color-skobeloff;
+        background-color: v.$dga-color-skobeloff;
+
+        &:hover,
+        &:active {
+            background-color: v.$dga-color-dark-cyan;
+        }
+
+        &.disabled {
+            color: v.$color-white !important;
+        }
+
+        .fa.fa-plus-square:before {
+            content: "\f067";
+        }
+    }
+
+    &.btn-primary-outlined {
+        @include btn-primary-outlined;
+
+        .fa.fa-download {
+            content: url("#{v.$imagePath}/download.svg")
+        }
+    }
+
+    &.btn-short {
+        padding: 12px;
+    }
+
+    &.btn-light,
+    &.btn-default,
+    &.btn-link,
+    &.btn-success {
+        @include btn-primary-outlined;
+    }
+
+    &.btn-sm {
+        height: auto;
+        line-height: inherit;
+        padding: 0.25rem 0.5rem;
+    }
+
+    &.disabled {
+        color: v.$dga-color-skobeloff !important;
+    }
+
+    &.btn-download {
+        gap: 8px;
+        color: white;
+        background: v.$dga-color-skobeloff;
+
+        i svg path {
+            stroke: white;
+            fill: white;
+        }
+
+    }
+
+    &:disabled {
+        opacity: 0.3;
+    }
+}
+
+.btn-group {
+    .dropdown-toggle {
+        @include btn-primary-outlined;
+
+        i {
+            display: none;
+        }
+
+        &:after {
+            border: 0;
+            display: block;
+            width: 14px !important;
+            height: 9px !important;
+            background-image: url("#{v.$imagePath}/arrow-down-skobeloff.svg");
+            background-repeat: no-repeat;
+            margin: 0;
+            color: v.$dga-color-skobeloff;
+        }
+
+        &:hover:after {
+            background-image: url("#{v.$imagePath}/arrow-down-white.svg");
+        }
+    }
+
+    .btn-download + .dropdown-toggle {
+        border-left: 2px solid white;
+        border-top: none;
+        border-bottom: none;
+        padding: 1rem;
+        background-color: v.$dga-color-skobeloff;
+
+        .caret {
+            display: none;
+        }
+
+        &:after {
+            background-image: url("#{v.$imagePath}/arrow-down-white.svg");
+        }
+
+        &:hover,
+        &:active {
+            background-color: v.$dga-color-dark-cyan;
+        }
+    }
+
+    .dropdown-menu {
+        border-radius: 4px;
+        border: 1px solid v.$dga-outer-border-color !important;
+        padding: 0;
+        margin-top: 4px !important;
+
+        a {
+            color: v.$dga-color-skobeloff;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.5;
+            padding: 8px 16px;
+
+            i svg path {
+                stroke: v.$dga-color-skobeloff;
+            }
+
+
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: v.$dga-outer-border-color;
+                color: v.$dga-color-dark-cyan;
+
+                i svg path {
+                    stroke: v.$dga-color-dark-cyan;
+                }
+            }
+
+            &.active:not(:hover, :focus, :active) {
+                color: #fff;
+            }
+
+        }
+
+    }
+}
+
+.scroll-to-top button {
+    display: none;
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    height: 48px;
+    width: 48px;
+    padding: 13px;
+    background: v.$dga-color-skobeloff;
+    border: 1px solid v.$color-white;
+    z-index: 10;
+
+    i {
+        font-size: 19px;
+        color: v.$color-white;
+    }
+}
+
+.resource-data-api {
+    border-radius: 4px;
+    border: 1px solid v.$dga-outer-border-color !important;
+    padding: 0;
+
+    a {
+        color: v.$dga-color-skobeloff;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.5;
+        padding: 8px 16px;
+        background-color: white;
+
+        i {
+            display: none;
+        }
+
+        &:before {
+            width: 16px;
+            height: 16px;
+            content: "";
+            background-image: url("#{v.$imagePath}/api.svg");
+            background-repeat: no-repeat;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: v.$dga-outer-border-color;
+            color: v.$dga-color-dark-cyan;
+        }
+    }
+}
+
+.btn-outline-danger {
+    &.dga {
+        border-radius: 0.25rem;
+        border: 2px solid #8E101C;
+        color: #8E101C;
+
+        &:hover {
+            background-color: #8E101C;
+            color: #fff;
+        }
+    }
+}
+
+
+@mixin btn-remove-url {
+    color: v.$dga-color-skobeloff;
+    background-color: v.$color-white;
+    border: 2px solid v.$dga-color-skobeloff;
+    border-radius: 0.25rem !important;
+    padding: 6px 12px;
+    font-size: 1rem;
+    line-height: 1.5;
+    height: 36px;
+    min-height: unset;
+    top: 0.4rem !important;
+
+    &:hover {
+        background-color: v.$dga-color-skobeloff;
+        color: v.$color-white;
+    }
+}

@@ -1,0 +1,67 @@
+@use "../variables" as v;
+@use "buttons" as btn;
+
+[class*="dga-check_link-"] {
+    .primary {
+        .content-actions {
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+}
+
+.check-link-record {
+    border: 1px solid v.$dga-color-soft-sky-blue;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+    p {
+        color: v.$dga-color-silver-gray;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 25.2px;
+        margin-bottom: 0.25rem;
+
+        date, .time-ago, .state-value {
+            color: v.$dga-color-graphite-gray;
+        }
+    }
+
+    .resource-link, .dataset-link {
+        color: v.$dga-color-skobeloff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .resource-link {
+        font-size: 18px;
+        line-height: 23.4px;
+    }
+
+    .dataset-link {
+        font-size: 14px;
+        line-height: 25.2px;
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+
+        .explanation {
+        }
+
+        .btn {
+            @include btn.btn-primary-outlined;
+            min-width: 8rem;
+            margin-left: 1rem;
+
+            & {
+                border-color: v.$dga-color-soft-sky-blue;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+    }
+}
