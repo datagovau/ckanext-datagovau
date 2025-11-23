@@ -52,3 +52,13 @@ def lga_name() -> str:
 def suggest_dataset_emails() -> list[str]:
     """The list of email addresses that will receive 'suggest a dataset' emails."""
     return tk.config[SUGGEST_DATASET_EMAILS]
+
+
+def alert_drupal_base_url() -> str:
+    """Base URL of the Drupal site to fetch alerts from."""
+    return tk.config["ckanext.datagovau.alerts.drupal_base_url"]
+
+
+def alert_cache_ttl() -> int:
+    """Time (in seconds) to cache alerts fetched from Drupal site."""
+    return tk.config["ckanext.datagovau.alerts.cache_ttl"]

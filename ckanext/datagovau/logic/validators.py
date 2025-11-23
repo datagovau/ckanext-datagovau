@@ -284,3 +284,6 @@ def dga_resource_format(
             errors[key].append(
                 tk._("Upload at least one file of any format before uploading PDF.")
             )
+
+    if filepath and filepath.lower().endswith(".sav") and not data.get(format_key):
+        data[format_key] = "SAV"

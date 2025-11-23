@@ -4,9 +4,12 @@ import hashlib
 import json
 import logging
 import re
-from typing import Any, Callable, Literal, cast
+from collections.abc import Callable
+from typing import Any, Literal, cast
 
+import requests
 import sqlalchemy as sa
+from bs4 import BeautifulSoup
 
 import ckan.model as model
 import ckan.plugins.toolkit as tk
@@ -436,3 +439,44 @@ def dga_hash_string(value: str) -> str:
 
 def dga_pretty_json(value: str) -> str:
     return json.dumps(json.loads(value), indent=2, sort_keys=True)
+
+
+def dga_fetch_alert() -> str:
+    """Fetch alert from Drupal site.
+
+    The alert is cached for a duration defined in the configuration.
+
+    Returns:
+        HTML string of the alert content or empty string if no alert.
+    """
+    drupal_base_url = config.alert_drupal_base_url()
+    alert_cache = Cache(duration=config.alert_cache_ttl())
+
+    @alert_cache
+    def _fetch_alert() -> str:
+        try:
+            response = requests.get(f"{drupal_base_url}/banner", timeout=10)
+        except requests.RequestException:
+            log.debug("Failed to fetch alerts from Drupal site")
+            return ""
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        try:
+            article = soup.find("article", class_="node--type-article")
+            content_div = article.find("div", class_="field--name-body")  # type: ignore
+            first_p = content_div.find("p")
+
+            if first_p.get_text(strip=True).lower() != "enabled":
+                return ""
+
+            sibling_div = first_p.find_next_sibling("div")
+
+        except AttributeError:
+            # One of the elements was missing (article, content_div, or p)
+            log.debug("Alert structure not found in Drupal banner page")
+            return ""
+        else:
+            return str(sibling_div) if sibling_div else ""
+
+    return _fetch_alert()

@@ -112,3 +112,13 @@ groups:
         type: list
         description: |
             The list of email addresses that will receive 'suggest a dataset' emails. If not provided, the emails are sent by default to all sysadmins of the portal.
+
+      - key: ckanext.datagovau.alerts.drupal_base_url
+        required: true
+        default: https://data.gov.au/
+        description: Base URL of the Drupal site to fetch alerts from.
+
+      - key: ckanext.datagovau.alerts.cache_ttl
+        type: int
+        default: 300
+        description: Time (in seconds) to cache alerts fetched from Drupal site.

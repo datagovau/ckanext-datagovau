@@ -109,7 +109,9 @@ class TestDatasetDuplicateDetector:
             assert len(result["duplicates"]) == len(copies)
 
             # Assert that the duplicates have the expected properties
-            for duplicate, expected_duplicate in zip(result["duplicates"], copies):
+            for duplicate, expected_duplicate in zip(
+                result["duplicates"], copies, strict=False
+            ):
                 assert duplicate["original_name"] == expected_duplicate["original_name"]
                 assert duplicate["title"] == expected_duplicate["title"]
                 assert duplicate["notes"] == expected_duplicate["notes"]

@@ -21,7 +21,6 @@
                 "license_id": {"default": "notspecified"},
                 "license": {"map": "license_id", "validators": ["dga_tsm_url_into_license"]},
 
-                "landingPage": {"map": "name", "validators": ["dga_tsm_name_from_url"]},
                 "distribution": {
                     "type": "Resource",
                     "multiple": true,

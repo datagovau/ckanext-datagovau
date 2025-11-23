@@ -32,6 +32,10 @@ class PackageController(p.SingletonPlugin):
 
         _set_extras_spatial_for_index(pkg_dict)
 
+        if (source := pkg_dict.get("original_harvest_source")) and isinstance(
+            source, dict
+        ):
+            pkg_dict["original_harvest_source"] = source.get("title", "")
         return pkg_dict
 
     def before_dataset_search(self, search_params: dict[str, Any]):

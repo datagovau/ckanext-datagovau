@@ -1,7 +1,7 @@
 ###############################################################################
 #                             requirements: start                             #
 ###############################################################################
-ckan_tag = ckan-2.11.3
+ckan_tag = ckan-2.11.4
 ext_list = security dcat officedocs pdfview zippreview spatial harvest \
 	agls xloader flakes googleanalytics charts harvest-basket transmute \
 	pygments check-link collection \
@@ -18,7 +18,7 @@ remote-pdfview = https://github.com/ckan/ckanext-pdfview.git tag 0.0.8
 remote-spatial = https://github.com/ckan/ckanext-spatial.git tag v2.2.0
 remote-xloader = https://github.com/ckan/ckanext-xloader.git tag 2.0.0
 remote-zippreview = https://github.com/datagovau/ckanext-zippreview commit e48ae35
-remote-harvest-basket = https://github.com/DataShades/ckanext-harvest-basket tag v1.5.3
+remote-harvest-basket = https://github.com/DataShades/ckanext-harvest-basket commit 4fff379
 remote-transmute = https://github.com/DataShades/ckanext-transmute branch master
 remote-pygments = https://github.com/DataShades/ckanext-pygments commit e947b34
 remote-check-link = https://github.com/DataShades/ckanext-check-link tag v0.3.1

@@ -1,5 +1,11 @@
 {% ckan_extends %}
 
+{% block header_wrapper %}
+    {{ super() }}
+
+    {{ h.dga_fetch_alert() | safe }}
+{% endblock %}
+
 {% block header_account_logged %}
     {% if c.userobj.sysadmin %}
         <li>
