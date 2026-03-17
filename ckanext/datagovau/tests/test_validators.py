@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import pytest
 from faker import Faker
@@ -23,7 +24,7 @@ class TestRestrictResourceFormat:
     ):
         with pytest.raises(
             tk.ValidationError,
-            match="Upload at least one CSV file before uploading PDF",
+            match="Upload at least one file of any format before uploading PDF",
         ):
             create_with_upload(
                 "hello", "file.pdf", {"user": "default"}, package_id=dataset["id"]

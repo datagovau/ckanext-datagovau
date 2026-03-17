@@ -1,24 +1,25 @@
 ###############################################################################
 #                             requirements: start                             #
 ###############################################################################
-ckan_tag = ckan-2.11.3
+ckan_tag = ckan-2.11.4
 ext_list = security dcat officedocs pdfview zippreview spatial harvest \
 	agls xloader flakes googleanalytics charts harvest-basket transmute \
 	pygments check-link collection \
 	search-tweaks composite-search search-autocomplete \
-	drupal-api admin-panel hierarchy mailcraft metaexport
+	drupal-api admin-panel hierarchy mailcraft metaexport \
+	iso19115
 
 remote-agls = https://github.com/DataShades/ckanext-agls.git tag v0.1.0
 remote-charts = https://github.com/DataShades/ckanext-charts.git tag c417d21
-remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v2.0.0
+remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v2.1.0
 remote-flakes = https://github.com/DataShades/ckanext-flakes.git tag v0.4.5
-remote-harvest = https://github.com/DataShades/ckanext-harvest.git branch fix-migrations
+remote-harvest = https://github.com/ckan/ckanext-harvest.git tag v1.6.2
 remote-officedocs = https://github.com/DataShades/ckanext-officedocs.git commit fac01df
 remote-pdfview = https://github.com/ckan/ckanext-pdfview.git tag 0.0.8
 remote-spatial = https://github.com/ckan/ckanext-spatial.git tag v2.2.0
 remote-xloader = https://github.com/ckan/ckanext-xloader.git tag 2.0.0
 remote-zippreview = https://github.com/datagovau/ckanext-zippreview commit e48ae35
-remote-harvest-basket = https://github.com/DataShades/ckanext-harvest-basket tag v1.5.3
+remote-harvest-basket = https://github.com/DataShades/ckanext-harvest-basket commit 4fff379
 remote-transmute = https://github.com/DataShades/ckanext-transmute branch master
 remote-pygments = https://github.com/DataShades/ckanext-pygments commit e947b34
 remote-check-link = https://github.com/DataShades/ckanext-check-link tag v0.3.1
@@ -29,10 +30,11 @@ remote-search-autocomplete = https://github.com/DataShades/ckanext-search-autoco
 remote-drupal-api = https://github.com/DataShades/ckanext-drupal-api.git commit 42db9b7
 remote-admin-panel = https://github.com/DataShades/ckanext-admin-panel commit bde95ee
 remote-hierarchy = https://github.com/ckan/ckanext-hierarchy tag v1.2.1
-remote-mailcraft = https://github.com/DataShades/ckanext-mailcraft.git tag v0.2.2
+remote-mailcraft = https://github.com/DataShades/ckanext-mailcraft.git tag v0.9.4
 remote-metaexport = https://github.com/DataShades/ckanext-metaexport.git tag v0.1.1
 remote-security = https://github.com/DataShades/ckanext-security branch ckan-2.11
 remote-googleanalytics = https://github.com/ckan/ckanext-googleanalytics tag v2.5.1
+remote-iso19115 = https://github.com/DataShades/ckanext-iso19115 tag v0.2.2
 
 # removed
 #remote-odata = https://github.com/DataShades/ckanext-odata.git branch py3

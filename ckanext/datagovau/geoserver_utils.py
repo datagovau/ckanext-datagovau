@@ -7,8 +7,6 @@ import time
 from typing import Any
 from urllib.parse import quote
 
-import os
-
 import psycopg2
 import requests
 
@@ -130,7 +128,6 @@ class Geoserverobj:
             headers={"Content-Type": "application/json"},
             timeout=_timeout("post"),
         )
-
         if res_import.ok:
             import_data = res_import.json()
             if import_data["import"].get("tasks"):
@@ -472,9 +469,9 @@ class Geoserverobj:
                         data["name"] = (
                             dataset["title"] + " Web Feature Service API Link"
                         )
-                        data["description"] = (
-                            "WFS API Link for use in Desktop GIS tools"
-                        )
+                        data[
+                            "description"
+                        ] = "WFS API Link for use in Desktop GIS tools"
                         data["format"] = "wfs"
                         data["url"] = ws_addr + "wfs"
                         data["wfs_layer"] = layer_name

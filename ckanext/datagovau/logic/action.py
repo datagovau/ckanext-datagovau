@@ -332,7 +332,7 @@ def dga_notify_about_archival(
     for titles, names, recipient, email in model.Session.execute(stmt):
         datasets = [
             (title, tk.h.url_for("dataset.read", id=name, _external=True))
-            for title, name in zip(titles, names)
+            for title, name in zip(titles, names, strict=False)
         ]
 
         subject = "Dataset archival"

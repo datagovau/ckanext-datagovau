@@ -31,7 +31,6 @@ dependencies = [
              "requests",
              "shapely",
              "typing_extensions",
-             "ckanext-iso19115~=0.2.1",
              "redis>=5,<6", # solve conflice between charts and security extension
 ]
 dynamic = ["version"]
@@ -67,7 +66,7 @@ version = {attr = "ckanext.datagovau.__version__"}
 find = {}
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [
@@ -75,8 +74,8 @@ select = [
        "B",  # likely bugs and design problems
        # "BLE",  # do not catch blind exception
        "C4",  # better list/set/dict comprehensions
-       # # "C90",  # check McCabe complexity
-       # # "DTZ", # enforce timezone in date objects
+       # "C90",  # check McCabe complexity
+       # "DTZ", # enforce timezone in date objects
        "E",  # pycodestyle error
        "W",  # pycodestyle warning
        "F",  # pyflakes
@@ -85,12 +84,13 @@ select = [
        "N",  # naming conventions
        "I",  # isort
        "ICN", # import conventions
-       # # "D1",  # require doc
+       # "D1",  # require doc
        "D2",  # doc formatting
        "D4",  # doc convention
        # "PL",  # pylint
        "PERF", # performance anti-patterns
        "PT",  # pytest style
+       # "PTH", # replace os.path with pathlib
        "PIE",  # misc lints
        "RET",  # improvements for return statements
        "RSE",  # improvements for rise statements
@@ -103,13 +103,13 @@ select = [
        "UP",  # upgrade syntax for newer versions of the language
 ]
 ignore = [
-       "RET503", # don't enforce return-None
        "E712", # comparison to bool: violated by SQLAlchemy filters
        "PLC1901", # simplify comparison to empty string: violated by SQLAlchemy filters
+       "RET503", # don't enforce return-None
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"ckanext/datagovau/tests*" = ["S", "PL", "ANN"]
+"ckanext/datagovau/tests*" = ["S", "PL", "ANN", "D"]
 "ckanext/datagovau/logic/*" = [
             "D417", # actions don't describe context and data_dict
 ]
@@ -151,7 +151,15 @@ filterwarnings = [
                "ignore::DeprecationWarning",
 ]
 
+[tool.git-changelog]
+output = "CHANGELOG.md"
+convention = "conventional"
+parse-trailers = true
+
 [tool.pyright]
+extraPaths = [
+           "../ckan",
+]
 pythonVersion = "3.9"
 include = ["ckanext"]
 exclude = [

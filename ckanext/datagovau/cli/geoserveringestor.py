@@ -7,6 +7,8 @@ import click
 import ckan.plugins.toolkit as tk
 from ckan import model
 
+from ckanext.harvest.model import HarvestObject
+
 from ckanext.datagovau.geoserver_utils import CONFIG_PUBLIC_URL, run_ingestor
 
 log = logging.getLogger(__name__)
@@ -41,6 +43,15 @@ def geo_ingest(dataset: str | None, organization: str | None):
         )
 
     for dataset in query:
+        is_harvested = (
+            model.Session.query(HarvestObject.id)
+            .filter_by(package_id=dataset.id)
+            .first()
+        )
+        if is_harvested:
+            log.info("Dataset %s is harvested — skipping ingestion.", dataset.id)
+            continue
+
         run_ingestor(dataset.id)
 
 

@@ -220,7 +220,10 @@ def get_full_facet_list(package_type: str) -> str:
     controller = form.get("controller")
     action = form.get("action")
     if extras := form.get("extras"):
-        extras = json.loads(extras)
+        try:
+            extras = json.loads(extras)
+        except ValueError:
+            extras = {}
     return tk.render(
         "package/snippets/facet_items.html",
         extra_vars={

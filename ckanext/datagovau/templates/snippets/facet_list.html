@@ -34,7 +34,6 @@
                     {% for item in items[:10] %}
                       {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
                       {% set label = label_function(item) if label_function else item.display_name | replace("notspecified", _("Not Specified")) %}
-                      {% set label_truncated = label|truncate(22) if not label_function else label %}
                       {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
                       <li
                         class="nav-item m-0 p-0 py-2 {% if item.active %} active{% endif %}">
@@ -51,7 +50,7 @@
                                  onchange="window.location.href='{{ href }}'">
                           <label for="{{ safe_id }}" class="ms-2">
                             <span
-                              class="item-label">{{ label_truncated }} ({{ count }})</span>
+                              class="item-label">{{ label }} ({{ count }})</span>
                           </label>
                         </a>
                       </li>
@@ -75,7 +74,7 @@
                         hx-swap="beforeend">
                     <input type="hidden"
                            name="items"
-                           value='{{ h.dga_facet_to_json(items[10:]) }}'>
+                           value='{{ h.dga_facet_to_json(items[10:], name=name) }}'>
                     <input type="hidden"
                            name="name"
                            value='{{ name }}'>
@@ -87,7 +86,7 @@
                            value='{{ g.view }}'>
                     <input type="hidden"
                            name="extras"
-                           value='{{ dict(extras or {}, **request.args) | tojson }}'>
+                           value='{{ request.args.to_dict(flat=False) | tojson }}'>
                   </form>
                 </nav>
               {% else %}

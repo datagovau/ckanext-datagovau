@@ -10,6 +10,7 @@ dist/
 distribute-*
 .idea/
 !/admin/config/nginx/ckan_prod.conf
+*:Zone.Identifier
 deps.mk
 
 node_modules/
