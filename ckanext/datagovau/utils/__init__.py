@@ -47,7 +47,9 @@ def download(url: str, name: str, **kwargs: Any) -> requests.Response:
     return req
 
 
-def contains(value: Container[T], parts: Iterable[T], separate: bool = False) -> bool:
+def contains[T](
+    value: Container[T], parts: Iterable[T], separate: bool = False
+) -> bool:
     """Check if any part is included into value.
 
     Enabling `separate` flag enforces string search with additional check for

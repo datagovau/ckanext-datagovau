@@ -70,11 +70,11 @@ class DgaConverter(c.Converter):
         for res in self.pkg["resources"]:
             self.data.add_identificationInfo(
                 t.mri.MD_DataIdentification(
-                    h.citation(res["name"], presentationForm="documentDigital"),
-                    h.cs(res["description"]),
+                    h.citation(res.get("name", ""), presentationForm="documentDigital"),
+                    h.cs(res.get("description", "")),
                     resourceFormat=[
                         t.mrd.MD_Format(
-                            t.cit.CI_Citation(res["format"]),
+                            t.cit.CI_Citation(res.get("format", "")),
                             res.get("version"),
                         )
                     ],

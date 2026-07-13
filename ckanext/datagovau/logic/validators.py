@@ -164,7 +164,7 @@ def dga_detect_harvest_source(
         # Harvest source was probably removed without proper cleaning and we are
         # dealing with an orphan
         harvest_source = tk.get_action("harvest_source_show")(
-            {}, {"id": harvest_source_id}
+            {"ignore_auth": True}, {"id": harvest_source_id}
         )
     except tk.ObjectNotFound:
         data[key] = tk.h.dga_default_original_source(pkg)
@@ -284,3 +284,6 @@ def dga_resource_format(
             errors[key].append(
                 tk._("Upload at least one file of any format before uploading PDF.")
             )
+
+    if filepath and filepath.lower().endswith(".sav") and not data.get(format_key):
+        data[format_key] = "SAV"

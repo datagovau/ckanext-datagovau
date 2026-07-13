@@ -9,6 +9,7 @@ from ckan import model, types
 from ckan.common import CKANConfig
 from ckan.lib.plugins import DefaultTranslation
 
+from ckanext.harvest.model import HarvestObject
 from ckanext.metaexport.formatters import Format, Formatter
 from ckanext.metaexport.interfaces import IMetaexport
 from ckanext.transmute.interfaces import ITransmute
@@ -73,6 +74,13 @@ class DataGovAuPlugin(
             or not isinstance(entity, model.Package)
             or entity.state != "active"
         ):
+            return
+
+        is_harvested = (
+            model.Session.query(HarvestObject).filter_by(package_id=entity.id).first()
+        )
+        if is_harvested:
+            log.info("Dataset %s is harvested — skipping ingestion.", entity.id)
             return
 
         ingest_resources = [

@@ -1,11 +1,25 @@
 {% for item in items %}
-  {% set updated_extras = dict(extras, **{name: item.name}) %}
-  {% set href = h.remove_url_param(name, item.name, controller=controller, action=action, extras=extras) if item.active else h.add_url_param(controller=controller, action=action, extras=updated_extras) %}
+  {% set my_extras = extras.copy() %}
+  {% set current_vals = my_extras.get(name, []) %}
+  {% if current_vals is string %}
+    {% set current_vals = [current_vals] %}
+  {% endif %}
+  {% if item.active %}
+    {% set new_vals = [] %}
+    {% for val in current_vals %}
+      {% if val != item.name %}
+        {% do new_vals.append(val) %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% set new_vals = current_vals + [item.name] %}
+  {% endif %}
+  {% do my_extras.update({name: new_vals}) %}
+  {% set href = h.url_for(controller=controller, action=action, **my_extras) %}
   {% set label = label_function(item) if label_function else item.display_name | replace("notspecified", _("Not Specified")) %}
-  {% set label_truncated = label|truncate(22) if not label_function else label %}
   {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
   <li class="nav-item m-0 p-0 py-2 {% if item.active %} active{% endif %}"
-          {% if hidden %} hidden{% endif %}>
+    {% if hidden %} hidden{% endif %}>
     <a href="{{ href }}"
        class="facet-item d-flex align-items-center m-0 p-0 ">
       {% set safe_id = name ~ "-" ~ h.dga_hash_string(item.name) %}
@@ -13,11 +27,11 @@
              id="{{ safe_id }}"
              name="{{ name }}"
              value="{{ item.name }}"
-              {% if item.active %} checked{% endif %}
+        {% if item.active %} checked{% endif %}
              onclick="event.stopPropagation();"
              onchange="window.location.href='{{ href }}'">
       <label for="{{ safe_id }}" class="ms-2">
-        <span class="item-label">{{ label_truncated }} ({{ count }})</span>
+        <span class="item-label">{{ label }} ({{ count }})</span>
       </label>
     </a>
   </li>

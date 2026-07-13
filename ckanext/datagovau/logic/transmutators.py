@@ -5,16 +5,19 @@ import json
 import re
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from dateutil.parser import ParserError, parse
 from shapely import geometry
 
 import ckan.plugins.toolkit as tk
+from ckan import model
 from ckan.authz import get_local_functions
 from ckan.lib import munge
 from ckan.lib.helpers import markdown_extract
 
+from ckanext.iso19115.helpers import codelist
+from ckanext.scheming.helpers import scheming_field_by_name, scheming_get_dataset_schema
 from ckanext.transmute.types import Field
 
 
@@ -62,7 +65,10 @@ def dga_tsm_contact_email(field: Field):
 
 def dga_tsm_parse_issued_date(field: Field):
     """Parse temporal_coverage_from date string to a datetime object."""
-    field.value = parse(field.value)
+    if field.value == "{{modified:toISO}}":
+        field.value = None
+    else:
+        field.value = parse(field.value)
     return field
 
 
@@ -88,13 +94,20 @@ def dga_tsm_from_extras(field: Field, key: str):
             field.value = extra["value"]
             break
 
+    if key == "contact-email" and not field.value:
+        owner_org = field.data["owner_org"]
+        field.value = (
+            model.Session.query(model.GroupExtra.value)
+            .filter_by(group_id=owner_org, key="email")
+            .scalar()
+        )
     return field
 
 
 def dga_tsm_parse_spatial(field: Field):
     """Parse and convert a spatial coverage string to GeoJSON format."""
     # Check if the value is empty or contains the compute property placeholder
-    spatial_placeholders = {"extent:computeSpatialProperty", "extent"}
+    spatial_placeholders = {"extent:computeSpatialProperty", "extent", '""'}
     if not field.value or any(
         placeholder in field.value for placeholder in spatial_placeholders
     ):
@@ -261,10 +274,41 @@ def dga_tsm_sa_geospatial_topic(field: Field):
     causing unexpected choice errors. If there are multiple values,
     they are stored as a list. Single values remain as a string.
     """
-    if isinstance(field.value, str):
-        split_values = field.value.split(",")
+    cl_dict = {}
+    value = field.value
+    maps = {
+        "Planning and Cadastre": "Planning cadastre",
+        "Climatology Meteorology and Atmosphere": "Climatology meteorology atmosphere",
+    }
+
+    if (
+        (dataset_schema := scheming_get_dataset_schema("dataset"))
+        and (
+            geospatial_topic := scheming_field_by_name(
+                dataset_schema.get("dataset_fields"), "geospatial_topic"
+            )
+        )
+        and (cl := codelist(geospatial_topic))
+    ):
+        cl_dict = {item["label"].lower(): item["value"] for item in cl}
+
+    if isinstance(value, str):
+        split_values = value.split(",")
         if len(split_values) >= 2:
-            field.value = [item.strip() for item in field.value.split(",")]
+            field.value = [
+                cl_dict.get(item.strip().lower())
+                for item in split_values
+                if cl_dict.get(item.strip().lower())
+            ]
+        else:
+            value = maps[value] if maps.get(value) else value
+
+            field.value = (
+                cl_dict.get(value.strip().lower())
+                if cl_dict.get(value.strip().lower())
+                else value
+            )
+
     return field
 
 
@@ -397,7 +441,7 @@ def dga_tsm_gbrmpa_to_spatial(field: Field) -> Field:
 
 def dga_tsm_time_from_unix_timestamp(field: Field) -> Field:
     if isinstance(field.value, int):
-        field.value = datetime.fromtimestamp(field.value / 1000, timezone.utc)
+        field.value = datetime.fromtimestamp(field.value / 1000, UTC)
     else:
         field.value = ""
 

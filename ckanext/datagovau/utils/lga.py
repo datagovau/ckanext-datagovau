@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from functools import reduce
-from typing import Any, Callable
+from typing import Any
 
 import requests
 from pyproj import CRS, Transformer

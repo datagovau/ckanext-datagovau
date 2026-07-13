@@ -21,7 +21,9 @@ def test_presence_of_the_location_filter(page: Page):
 
     page.get_by_label("Apply spatial search").click()
 
+
     expect(page.locator(".filter-list")).to_have_text(
         "Location extent: West longitude 1.0°, South latitude 3.0°,"
-        " East longitude 2.0°, North latitude 4.0°"
+        " East longitude 2.0°, North latitude 4.0°",
+        timeout=3000,
     )

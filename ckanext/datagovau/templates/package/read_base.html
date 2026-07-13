@@ -17,13 +17,9 @@
     More information about structured data:
     https://developers.google.com/search/docs/guides/intro-structured-data
     #}
-
-  {% if h.helper_available('structured_data') %}
     <script type="application/ld+json">
-          {{ h.structured_data(pkg.id, ["dga_schemaorg"])|safe }}
-
+      {{ h.structured_data(pkg.id, ["dga_schemaorg"])|safe }}
     </script>
-  {% endif %}
 {% endblock %}
 
 {% block content_action %}

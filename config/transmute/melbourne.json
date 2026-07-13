@@ -18,7 +18,6 @@
                 "license_id": {"default": "other"},
                 "rights": {"map": "license_id", "validators": ["dga_tsm_southern_grampians_parse_license"]},
 
-                "landingPage": {"map": "name", "validators": ["dga_tsm_melbourne_from_url"]},
                 "distribution": {
                     "type": "Resource",
                     "multiple": true,

@@ -5,7 +5,7 @@ from ckan.lib.authenticator import default_authenticate
 password = "Password123"
 
 
-@pytest.fixture()
+@pytest.fixture
 def authenticator():
     return default_authenticate
 
