@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import json
 from typing import Any, cast
 
@@ -40,7 +41,9 @@ class DgaGroupView(GroupView):
         context["is_member"] = True
         users_groups = tk.get_action("group_list_authz")(context, {"id": id})
 
-        pkg_group_ids = {group["id"] for group in pkg_dict.get("groups", [])}
+        pkg_groups = pkg_dict.get("groups", [])
+        pkg_group_ids = {group["id"] for group in pkg_groups}
+        pkg_group_names = [group["name"] for group in pkg_groups]
 
         user_group_ids = {group["id"] for group in users_groups}
 
@@ -77,18 +80,18 @@ class DgaGroupView(GroupView):
             context["user_is_admin"] = current_user.sysadmin  # type: ignore
 
         try:
-            data_dict_global_results: dict[str, Any] = {
-                "all_fields": True,
-                "q": q,
-                "sort": sort_by,
-                "type": "group",
-            }
-            global_results = tk.get_action("group_list")(
-                context, data_dict_global_results
-            )
-            global_results = [
-                group["id"] for group in global_results if group["id"] in pkg_group_ids
-            ]
+            if pkg_group_names:
+                data_dict_global_results: dict[str, Any] = {
+                    "groups": pkg_group_names,
+                    "q": q,
+                    "sort": sort_by,
+                    "type": "group",
+                }
+                global_results = tk.get_action("group_list")(
+                    context, data_dict_global_results
+                )
+            else:
+                global_results = []
         except tk.ValidationError as e:
             if e.error_dict and e.error_dict.get("message"):
                 msg: Any = e.error_dict["message"]
@@ -99,22 +102,7 @@ class DgaGroupView(GroupView):
             extra_vars["group_type"] = "group"
             return base.render("package/group_list.html", extra_vars)
 
-        data_dict_page_results: dict[str, Any] = {
-            "all_fields": True,
-            "q": q,
-            "sort": sort_by,
-            "type": "group",
-            "limit": items_per_page,
-            "offset": items_per_page * (page - 1),
-            "include_extras": True,
-        }
-        page_results = tk.get_action("group_list")(context, data_dict_page_results)
-        page_results = [group for group in page_results if group["id"] in pkg_group_ids]
-
-        for group in page_results:
-            group["user_member"] = group["id"] in user_group_ids
-
-        extra_vars["page"] = Page(
+        group_page = Page(
             collection=global_results,
             page=page,
             url=tk.h.pager_url,
@@ -124,7 +112,23 @@ class DgaGroupView(GroupView):
             package_type=package_type,
         )
 
-        extra_vars["page"].items = page_results
+        if group_page.items:
+            data_dict_page_results: dict[str, Any] = {
+                "all_fields": True,
+                "groups": group_page.items,
+                "sort": sort_by,
+                "type": "group",
+                "include_extras": True,
+            }
+            page_results = tk.get_action("group_list")(context, data_dict_page_results)
+        else:
+            page_results = []
+
+        for group in page_results:
+            group["user_member"] = group["id"] in user_group_ids
+
+        group_page.items = page_results
+        extra_vars["page"] = group_page
         extra_vars["group_type"] = "group"
         extra_vars["dataset_type"] = "dataset"
         extra_vars["pkg_dict"] = pkg_dict
@@ -212,22 +216,50 @@ dataset.add_url_rule(
 
 
 @dataset.route("/dga-load-facets", methods=["POST"])
-def get_full_facet_list(package_type: str) -> str:
+def get_full_facet_list(package_type: str = "dataset") -> str:
+    # Some facets have thousands of values, so this POST can exceed the default form
+    # limit.
+    tk.request.max_form_memory_size = 20 * 1024 * 1024
     form = tk.request.form
-    if items := form.get("items"):
-        items = json.loads(items)
+
+    raw_items_json = form.get("raw_items")
+    items = json.loads(raw_items_json) if raw_items_json else []
+
     name = form.get("name")
     controller = form.get("controller")
     action = form.get("action")
-    if extras := form.get("extras"):
-        try:
-            extras = json.loads(extras)
-        except ValueError:
-            extras = {}
+
+    alternative_url = form.get("base_url") or None
+
+    extras = {}
+    if extras_json := form.get("extras"):
+        with contextlib.suppress(ValueError):
+            extras = json.loads(extras_json)
+
+    enhanced_items = []
+    for item in items:
+        enhanced_item = item.copy()
+
+        if item.get("active"):
+            enhanced_item["href"] = tk.h.remove_url_param(
+                name, item["name"], extras=extras, alternative_url=alternative_url
+            )
+        else:
+            enhanced_item["href"] = tk.h.add_url_param(
+                new_params={name: item["name"]},
+                extras=extras,
+                alternative_url=alternative_url,
+            )
+
+            if enhanced_item.get("display_name") == "notspecified":
+                enhanced_item["display_name"] = tk._("Not Specified")
+
+        enhanced_items.append(enhanced_item)
+
     return tk.render(
         "package/snippets/facet_items.html",
         extra_vars={
-            "items": items,
+            "items": enhanced_items,
             "name": name,
             "controller": controller,
             "action": action,
