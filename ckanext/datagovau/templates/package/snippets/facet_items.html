@@ -5,12 +5,7 @@
     {% set current_vals = [current_vals] %}
   {% endif %}
   {% if item.active %}
-    {% set new_vals = [] %}
-    {% for val in current_vals %}
-      {% if val != item.name %}
-        {% do new_vals.append(val) %}
-      {% endif %}
-    {% endfor %}
+    {% set new_vals = current_vals | reject("equalto", item.name) | list %}
   {% else %}
     {% set new_vals = current_vals + [item.name] %}
   {% endif %}

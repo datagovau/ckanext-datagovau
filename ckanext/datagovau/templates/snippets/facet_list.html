@@ -73,8 +73,8 @@
                         hx-target="#facet-container-{{ name }}"
                         hx-swap="beforeend">
                     <input type="hidden"
-                           name="items"
-                           value='{{ h.dga_facet_to_json(items[10:], name=name) }}'>
+                           name="raw_items"
+                           value='{{ items[10:] | tojson }}'>
                     <input type="hidden"
                            name="name"
                            value='{{ name }}'>
@@ -84,9 +84,14 @@
                     <input type="hidden"
                            name="action"
                            value='{{ g.view }}'>
+                    {% set params = request.args.to_dict(flat=False) %}
+                    {% set merged_params = dict(params, **extras) if extras else params %}
                     <input type="hidden"
                            name="extras"
-                           value='{{ request.args.to_dict(flat=False) | tojson }}'>
+                           value='{{ merged_params | tojson }}'>
+                    <input type="hidden"
+                           name="base_url"
+                           value='{{ alternative_url or request.path }}'>
                   </form>
                 </nav>
               {% else %}

@@ -170,7 +170,19 @@ def dga_detect_harvest_source(
         data[key] = tk.h.dga_default_original_source(pkg)
         return
 
-    dataset_href = f"{harvest_source['url'].rstrip('/')}/dataset/{pkg['name']}"
+    pkg_name = pkg['name']
+
+    try:
+        source_config = json.loads(harvest_object.source.config)
+    except (TypeError, ValueError):
+        pass
+    else:
+        # DataNSW transmutation schema adds `nsw-` prefix to dataset names to
+        # avoid conflicts
+        if source_config.get("tsm_named_schema") == "nsw":
+            pkg_name = pkg_name[4:]
+
+    dataset_href = f"{harvest_source['url'].rstrip('/')}/dataset/{pkg_name}"
 
     if harvest_source.get("source_type") == "ckan":
         data[key] = {

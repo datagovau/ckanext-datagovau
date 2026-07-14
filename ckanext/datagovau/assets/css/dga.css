@@ -980,6 +980,9 @@ display:block;
 top:45%;
 left:50%;
 transform:translate(-50%,-50%) rotate(45deg)
+}.secondary .facet-card .nav-item .item-label{
+white-space:normal;
+overflow-wrap:anywhere
 }.secondary .facet-card .form-control{
 padding:.375rem .75rem
 }.search-form .filter-list{
@@ -5017,9 +5020,7 @@ padding-left:24px
 padding-left:1.5rem;
 padding-right:1.5rem
 }
-}@media (max-width:1199.98px){.secondary .facet-card .nav-item.active a span{
-white-space:normal
-}.masthead .main-navbar ul li a{
+}@media (max-width:1199.98px){.masthead .main-navbar ul li a{
 padding:.5rem 10px
 }
 }@media (max-width:1024px){.dga-activity-dashboard .main,.dga-dashboard-datasets .main,.dga-dashboard-groups .main,.dga-dashboard-organizations .main{

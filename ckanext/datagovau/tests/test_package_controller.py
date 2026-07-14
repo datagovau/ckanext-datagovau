@@ -2,10 +2,30 @@ import pytest
 
 from ckan.tests.helpers import call_action
 
+from ckanext.datagovau.implementations.package_controller import (
+    _hide_showcases_from_search,
+)
 from ckanext.datagovau.tests.conftest import DatasetFactory, OrganizationFactory
 
 SPATIAL_1 = '{"type": "Point", "coordinates": [23, 45]}'
 SPATIAL_2 = '{"type": "Point", "coordinates": [67, 89]}'
+
+
+@pytest.mark.parametrize(
+    ("search_params", "expected_fq"),
+    [
+        ({}, "-dataset_type:showcase"),
+        (
+            {"fq": "organization:example-org"},
+            "organization:example-org -dataset_type:showcase",
+        ),
+        ({"fq": "dataset_type:showcase"}, "dataset_type:showcase"),
+    ],
+)
+def test_hide_showcases_from_search(search_params, expected_fq):
+    _hide_showcases_from_search(search_params)
+
+    assert search_params["fq"] == expected_fq
 
 
 @pytest.mark.usefixtures("with_plugins", "clean_db")

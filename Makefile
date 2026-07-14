@@ -1,7 +1,7 @@
 ###############################################################################
 #                             requirements: start                             #
 ###############################################################################
-ckan_tag = ckan-2.11.4
+ckan_tag = ckan-2.11.5
 ext_list = security dcat officedocs pdfview zippreview spatial harvest \
 	agls xloader flakes googleanalytics charts harvest-basket transmute \
 	pygments check-link collection \
@@ -10,7 +10,7 @@ ext_list = security dcat officedocs pdfview zippreview spatial harvest \
 	iso19115
 
 remote-agls = https://github.com/DataShades/ckanext-agls.git tag v0.1.0
-remote-charts = https://github.com/DataShades/ckanext-charts.git tag c417d21
+remote-charts = https://github.com/DataShades/ckanext-charts.git commit d0c59cc # 2026-05-29
 remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v2.1.0
 remote-flakes = https://github.com/DataShades/ckanext-flakes.git tag v0.4.5
 remote-harvest = https://github.com/ckan/ckanext-harvest.git tag v1.6.2
@@ -20,7 +20,7 @@ remote-spatial = https://github.com/ckan/ckanext-spatial.git tag v2.2.0
 remote-xloader = https://github.com/ckan/ckanext-xloader.git tag 2.0.0
 remote-zippreview = https://github.com/datagovau/ckanext-zippreview commit e48ae35
 remote-harvest-basket = https://github.com/DataShades/ckanext-harvest-basket commit 4fff379
-remote-transmute = https://github.com/DataShades/ckanext-transmute branch master
+remote-transmute = https://github.com/DataShades/ckanext-transmute tag v1.8.0 # harvest basket requires <2
 remote-pygments = https://github.com/DataShades/ckanext-pygments commit e947b34
 remote-check-link = https://github.com/DataShades/ckanext-check-link tag v0.3.1
 remote-collection = https://github.com/DataShades/ckanext-collection tag v0.3.0

@@ -162,39 +162,6 @@ def dga_default_original_source(pkg: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def dga_facet_to_json(
-    facets: list[dict[str, Any]],
-    name: str | None = None,
-    extras: dict[str, Any] | None = None,
-    alternative_url: str | None = None,
-):
-    """Convert facet items to JSON with dynamically generated URLs.
-
-    Returns:
-        JSON string of facet items with added href for each item.
-    """
-    enhanced_facets = []
-    for item in facets:
-        enhanced_item = item.copy()
-
-        if item.get("active"):
-            enhanced_item["href"] = tk.h.remove_url_param(
-                name, item["name"], extras=extras, alternative_url=alternative_url
-            )
-        else:
-            enhanced_item["href"] = tk.h.add_url_param(
-                new_params={name: item["name"]},
-                extras=extras,
-                alternative_url=alternative_url,
-            )
-            if enhanced_item["display_name"] == "notspecified":
-                enhanced_item["display_name"] = tk._("Not Specified")
-
-        enhanced_facets.append(enhanced_item)
-
-    return json.dumps(enhanced_facets)
-
-
 def dga_detect_duplicates(package_dict: dict[str, Any]) -> dict[str, Any]:
     """Detect duplicates for a dataset."""
     return find_copies(package_dict)

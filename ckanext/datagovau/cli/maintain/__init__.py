@@ -501,3 +501,37 @@ def remove_cesium_view():
         model.Session.delete(resource_view)
     model.Session.commit()
     click.secho("National Map previews removed", fg="green")
+
+
+@maintain.command()
+@click.option("--dry-run", is_flag=True, help="Only list datasets to delete.")
+@click.help_option("-h", "--help")
+def delete_legacy_showcases(dry_run: bool):
+    """Delete legacy showcase packages without enabling ckanext-showcase."""
+    packages = [
+        {"id": pkg.id, "name": pkg.name, "title": pkg.title}
+        for pkg in model.Session.query(model.Package)
+        .filter_by(type="showcase")
+        .filter(model.Package.state != "deleted")
+        .order_by(model.Package.name)
+    ]
+
+    if not packages:
+        return click.secho("No legacy showcase datasets found.", fg="green")
+
+    click.secho(f"Found {len(packages)} legacy showcase datasets.")
+    for pkg in packages:
+        click.secho(f"- {pkg['name']} ({pkg['id']}): {pkg['title'] or ''}")
+
+    if dry_run:
+        return click.secho("Dry run only. No datasets were deleted.", fg="yellow")
+
+    site_user = tk.get_action("get_site_user")({"ignore_auth": True}, {})
+    context = {"ignore_auth": True, "user": site_user["name"]}
+
+    package_delete = tk.get_action("package_delete")
+    for pkg in packages:
+        package_delete(context.copy(), {"id": pkg["id"]})
+        click.secho(f"Deleted <{pkg['name']}> via package_delete.")
+
+    click.secho(f"Deleted {len(packages)} legacy showcase datasets.", fg="green")

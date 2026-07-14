@@ -5,7 +5,10 @@ import pytest
 import ckan.model as model
 from ckan.model.core import State
 
-from ckanext.datagovau.cli.maintain import purge_deleted_users
+from ckanext.datagovau.cli.maintain import (
+    delete_legacy_showcases,
+    purge_deleted_users,
+)
 
 
 @pytest.mark.usefixtures("with_plugins", "clean_db")
@@ -113,3 +116,28 @@ class TestDgaUserPurge:
         assert f"The user <{user['name']}> cannot be purged" in result.output
         assert not result.exit_code
         assert model.Session.query(model.User).filter_by(id=user["id"]).all()
+
+
+@pytest.mark.usefixtures("with_plugins", "clean_db")
+class TestDeleteLegacyShowcases:
+    def test_dry_run_does_not_delete_showcases(self, cli: Any, dataset_factory: Any):
+        package = dataset_factory(type="showcase")
+
+        result = cli.invoke(delete_legacy_showcases, ["--dry-run"])
+
+        pkg = model.Package.get(package["id"])
+        assert "Found 1 legacy showcase datasets" in result.output
+        assert "Dry run only" in result.output
+        assert pkg.state == State.ACTIVE
+        assert not result.exit_code
+
+    def test_deletes_showcases(self, cli: Any, dataset_factory: Any):
+        showcase = dataset_factory(type="showcase")
+        dataset = dataset_factory()
+
+        result = cli.invoke(delete_legacy_showcases)
+
+        assert model.Package.get(showcase["id"]).state == State.DELETED
+        assert model.Package.get(dataset["id"]).state == State.ACTIVE
+        assert "Deleted 1 legacy showcase datasets" in result.output
+        assert not result.exit_code

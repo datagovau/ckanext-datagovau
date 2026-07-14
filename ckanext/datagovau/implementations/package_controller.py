@@ -11,6 +11,8 @@ from ckan.lib import jobs
 from ckanext.datagovau import config
 from ckanext.datagovau.geoserver_utils import delete_ingested
 
+SHOWCASE_DATASET_TYPE_FILTER = "dataset_type:showcase"
+
 
 class PackageController(p.SingletonPlugin):
     p.implements(p.IPackageController, inherit=True)
@@ -39,6 +41,8 @@ class PackageController(p.SingletonPlugin):
         return pkg_dict
 
     def before_dataset_search(self, search_params: dict[str, Any]):
+        _hide_showcases_from_search(search_params)
+
         extras: dict[str, Any] = search_params["extras"]
 
         start_d = extras.get("ext_startdate")
@@ -81,6 +85,19 @@ def _set_spatial_from_org(pkg_dict: dict[str, Any]) -> None:
     spatial_coverage = _fetch_org_spatial_coverage(pkg_dict)
     if spatial_coverage:
         pkg_dict["spatial"] = spatial_coverage
+
+
+def _hide_showcases_from_search(search_params: dict[str, Any]) -> None:
+    """Hide legacy showcase packages from search when ckanext-showcase is disabled.
+
+    A client environment has old records with package.type=showcase. If they are
+    returned in regular dataset search, rendering fails because showcase.read is
+    not registered unless ckanext-showcase is enabled.
+    """
+    fq = search_params.get("fq") or ""
+    if SHOWCASE_DATASET_TYPE_FILTER in fq:
+        return
+    search_params["fq"] = f"{fq} -{SHOWCASE_DATASET_TYPE_FILTER}".strip()
 
 
 def _set_extras_spatial_for_index(pkg_dict: dict[str, Any]) -> None:

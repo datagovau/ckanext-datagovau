@@ -146,12 +146,6 @@
         &:before {
             content: unset
         }
-
-        @media (max-width: 1199.98px) {
-            span {
-                white-space: normal;
-            }
-        }
     }
 
     .nav-item {
@@ -201,6 +195,11 @@
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(45deg); //
             }
+        }
+
+        .item-label {
+            white-space: normal;
+            overflow-wrap: anywhere;
         }
     }
 
